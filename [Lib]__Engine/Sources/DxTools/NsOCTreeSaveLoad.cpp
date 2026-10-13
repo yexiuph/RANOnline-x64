@@ -128,7 +128,7 @@ void OBJOCTree::ThreadLoad( LOADINGDATALIST &listLoadingData, CRITICAL_SECTION &
 	if( m_bCheck )	return;	// 다시 안 들어오도록 체크해야 한다.
 	m_bCheck = TRUE;
 
-	DWORD dwData = (DWORD)(this);
+	DWORD_PTR dwData = (DWORD_PTR)(this);
 
 	// Note : 로딩 데이터에 삽입해 넣는다.
 	EnterCriticalSection(&CSLockLoading);

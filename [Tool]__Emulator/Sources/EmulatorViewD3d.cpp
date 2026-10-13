@@ -233,7 +233,7 @@ HRESULT CEmulatorView::OneTimeSceneInit()
 	RANPARAM::SETUSERID ( "userid" );
 
 	hr = DxFieldInstance::Create ( pApp->m_szAppPath, &DxDirectMsgServer::GetInstance(), &DxSetConsoleMsg::GetInstance(), NULL, SP_MINCOMS, m_strMapList.GetString(),
-								   FIELDSERVER_MAX , 1000, true, 0, FALSE, FALSE, 3);	
+								   FIELDSERVER_MAX , 1000, true, 0, FALSE, 3);	
 	if ( FAILED(hr) )	return E_FAIL;
 
 	//	Note : Game Stage.

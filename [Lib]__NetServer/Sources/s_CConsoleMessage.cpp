@@ -11,15 +11,11 @@ CConsoleMessage::CConsoleMessage(int nType)
 	: m_pLog( NULL )
 	, m_pEditBox( NULL )
 	, m_pEditBoxInfo( NULL )
-	, m_pLogNPROTECT( NULL )
 	, m_pLogDB( NULL )
-	, m_pLogAPEX( NULL )
 	, m_pLogChar( NULL )
 {		
 	m_pLog         = new SERVER_UTIL::CLogSystem( _T("NETWORK") );
-	m_pLogNPROTECT = new SERVER_UTIL::CLogSystem( _T("NPROTECT") );
 	m_pLogDB       = new SERVER_UTIL::CLogSystem( _T("DB") );
-	m_pLogAPEX     = new SERVER_UTIL::CLogSystem( _T("APEX") );
 	m_pLogChar	   = new SERVER_UTIL::CLogSystem( _T("CharSave") );
 	m_nDefaultType = nType;
 }
@@ -27,9 +23,7 @@ CConsoleMessage::CConsoleMessage(int nType)
 CConsoleMessage::~CConsoleMessage()
 {
 	SAFE_DELETE( m_pLog );
-	SAFE_DELETE( m_pLogNPROTECT );
 	SAFE_DELETE( m_pLogDB );
-	SAFE_DELETE( m_pLogAPEX );
 	SAFE_DELETE( m_pLogChar );
 }
 
@@ -74,32 +68,6 @@ void CConsoleMessage::WriteDatabase( const TCHAR* msg, ... )
 	StringCchVPrintf( szBuf, C_BUFFER_SIZE+1, msg, ap );
 	va_end( ap );
 	Write( LOG_TEXT_DATABASE, C_MSG_NORMAL, szBuf );
-}
-
-void CConsoleMessage::WriteAPEX( const TCHAR* msg, ... )
-{
-	if (msg == NULL) return;
-
-	TCHAR szBuf[C_BUFFER_SIZE+1] = {0};	
-
-	va_list ap;
-	va_start(ap, msg);
-	StringCchVPrintf(szBuf, C_BUFFER_SIZE+1, msg, ap);	
-	va_end(ap);	
-	Write( LOG_TEXT_APEX, C_MSG_NORMAL, szBuf );
-}
-
-void CConsoleMessage::WriteNPROTECT( const TCHAR* msg, ... )
-{
-	if (msg == NULL) return;
-
-	TCHAR szBuf[C_BUFFER_SIZE+1] = {0};	
-
-	va_list ap;
-	va_start(ap, msg);
-	StringCchVPrintf(szBuf, C_BUFFER_SIZE+1, msg, ap);	
-	va_end(ap);	
-	Write( LOG_TEXT_NPROTECT, C_MSG_NORMAL, szBuf );
 }
 
 void CConsoleMessage::WriteFile(
@@ -225,12 +193,6 @@ void CConsoleMessage::Write( int nType, int nPosition, const TCHAR* msg, ... )
 
 	switch (nType)
 	{
-	case LOG_TEXT_NPROTECT:
-		if (m_pLogNPROTECT) m_pLogNPROTECT->Write(szBuf); // Write to file
-		break;		
-	case LOG_TEXT_APEX:
-		if (m_pLogAPEX) m_pLogAPEX->Write(szBuf); // Write to file
-		break;
 	case LOG_TEXT_DATABASE:
 		if (m_pLogDB) m_pLogDB->Write(szBuf); // Write to file
 		UpdateEditControl( szBuf, nPosition );
@@ -274,7 +236,7 @@ void CConsoleMessage::UpdateEditControl( TCHAR* sbuf )
 	if ( !sbuf ) return;
 	if ( !m_pEditBox ) return;
 
-	DWORD dwRetCode = 0;
+	DWORD_PTR dwRetCode = 0;
 	
 	// Update Control and Scroll to end of the line
 	TCHAR TempBuffer[C_BUFFER_SIZE+3] = {0};
@@ -304,7 +266,7 @@ void CConsoleMessage::UpdateEditControlInfo( TCHAR* sbuf )
 	if ( !sbuf ) return;
 	if ( !m_pEditBoxInfo ) return;
 
-	DWORD dwRetCode = 0;
+	DWORD_PTR dwRetCode = 0;
 	
 	// Update Control and Scroll to end of the line	
 	TCHAR TempBuffer[C_BUFFER_SIZE+3] = {0};

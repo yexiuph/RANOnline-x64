@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "ran-online",
+  "version-string": "ep7",
+  "builtin-baseline": "4002e3abc6d3e468c73d2d9777a7dd96af5dc224",
+  "dependencies": [
+    "assimp",
+    {
+      "name": "libogg",
+      "platform": "x64"
+    },
+    {
+      "name": "libvorbis",
+      "platform": "x64"
+    },
+    {
+      "name": "lzo",
+      "platform": "x64"
+    }
+  ]
+}

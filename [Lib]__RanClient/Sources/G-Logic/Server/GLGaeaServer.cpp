@@ -1,9 +1,6 @@
 #include "pch.h"
 #include "Psapi.h"
 #pragma comment( lib, "Psapi.lib" )
-#include "tbb/task_scheduler_init.h"
-#include "tbb/blocked_range.h"
-#include "tbb/parallel_for.h"
 #include "./GLGaeaServer.h"
 #include "GLClubDeathMatch.h"
 
@@ -23,8 +20,6 @@ GLGaeaServer::GLGaeaServer(void) :
 	m_pDBMan(NULL),
 	m_nServerChannel(0),
 	m_dwFieldSvrID(0),
-
-	m_bUseIntelTBB(FALSE),
 
 	m_dwAgentSlot(0),
 
@@ -260,7 +255,7 @@ HRESULT GLGaeaServer::OneTimeSceneInit ()
 	return S_OK;
 }
 
-HRESULT GLGaeaServer::Create ( DWORD dwMaxClient, DxMsgServer *pMsgServer, DxConsoleMsg* pConsoleMsg, GLDBMan* pDBMan, int nServiceProvider, const char* szMapList, DWORD dwFieldSID, int nChannel, BOOL bUseIntelTBB )
+HRESULT GLGaeaServer::Create ( DWORD dwMaxClient, DxMsgServer *pMsgServer, DxConsoleMsg* pConsoleMsg, GLDBMan* pDBMan, int nServiceProvider, const char* szMapList, DWORD dwFieldSID, int nChannel )
 {
 	HRESULT hr;
 	CleanUp ();
@@ -273,8 +268,6 @@ HRESULT GLGaeaServer::Create ( DWORD dwMaxClient, DxMsgServer *pMsgServer, DxCon
 	m_pDBMan = pDBMan;
 
 	m_nServerChannel = nChannel;
-
-	m_bUseIntelTBB   = bUseIntelTBB;
 
 	m_nServiceProvider = nServiceProvider;
 
@@ -1755,29 +1748,6 @@ BOOL GLGaeaServer::RequestReBirth ( const DWORD dwGaeaID, const SNATIVEID &sNID_
 	return TRUE;
 }
 
-
-
-struct LandMan_parallel_for 
-{
-	float fTime;
-	float fElapsedTime;
-	void operator()( const tbb::blocked_range<int>& range ) const 
-	{
-		int i_end = range.end();
-		int i;
-		GLGaeaServer::VEC_LANDMAN vecLandMan = GLGaeaServer::GetInstance().GetLandMan();
-		for( i=range.begin(); i!=i_end; ++i ) 
-		{
-			vecLandMan[i]->FrameMove( fTime, fElapsedTime );
-		}
-	}
-
-	LandMan_parallel_for( float fTime, float fElapsedTime )
-		: fTime(fTime), fElapsedTime(fElapsedTime)
-	{
-	}
-};
-
 void GLGaeaServer::FrameMoveGLChar( float fElapsedTime )
 {
 	if ( m_dwServerCrashTime )
@@ -1798,12 +1768,6 @@ void GLGaeaServer::FrameMoveLandMan( float fTime, float fElapsedTime )
 {
 	//	Note : 각각의 지형과 그에 위치한 개체를 갱신.
 	//
-	//if( m_bUseIntelTBB )
-	//{
-	//	size_t size = m_vecLandMan.size();
-	//	//		tbb::task_scheduler_init Init(threads_high);
-	//	tbb::parallel_for( tbb::blocked_range<int>( 0, size, 32 ), LandMan_parallel_for( fTime, fElapsedTime ) );
-	//}else
 	{
 		size_t i, size = m_vecLandMan.size();
 		for( i = 0; i < size; i++ )

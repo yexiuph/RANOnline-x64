@@ -18,10 +18,62 @@
 #include "./DxRenderStates.h"
 
 #include "./DxEffectNeon.h"
+#include "SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+//	On-disk (x86) image of DXMATERIAL_NEON, see SerialLayout.h.
+struct DXMATERIAL_NEON_DISK
+{
+	BOOL					bUse;
+	D3DXVECTOR2				vMoveTex;
+	D3DXVECTOR2				vScaleUV;
+	D3DCOLOR				vColor;
+	SerialLayout::PTR32		pSrcTex;
+	SerialLayout::PTR32		pNeonTex;
+	char					szTexture[MAX_PATH];
+	char					szNeonTex[MAX_PATH];
+};
+
+static_assert ( sizeof(DXMATERIAL_NEON_DISK) == 552, "x86 size of DXMATERIAL_NEON" );
+
+#if SERIAL_LAYOUT_NATIVE_X86
+SERIAL_LAYOUT_ASSERT_SIZE ( DXMATERIAL_NEON_DISK, DXMATERIAL_NEON );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_NEON_DISK, DXMATERIAL_NEON, bUse );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_NEON_DISK, DXMATERIAL_NEON, vMoveTex );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_NEON_DISK, DXMATERIAL_NEON, vScaleUV );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_NEON_DISK, DXMATERIAL_NEON, vColor );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_NEON_DISK, DXMATERIAL_NEON, pSrcTex );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_NEON_DISK, DXMATERIAL_NEON, pNeonTex );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_NEON_DISK, DXMATERIAL_NEON, szTexture );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_NEON_DISK, DXMATERIAL_NEON, szNeonTex );
+#endif
+
+inline void SerialFromDisk ( DXMATERIAL_NEON& d, const DXMATERIAL_NEON_DISK& s )
+{
+	d.bUse		= s.bUse;
+	d.vMoveTex	= s.vMoveTex;
+	d.vScaleUV	= s.vScaleUV;
+	d.vColor	= s.vColor;
+	d.pSrcTex	= NULL;
+	d.pNeonTex	= NULL;
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szNeonTex, s.szNeonTex, sizeof(d.szNeonTex) );
+}
+
+inline void SerialToDisk ( DXMATERIAL_NEON_DISK& d, const DXMATERIAL_NEON& s )
+{
+	d.bUse		= s.bUse;
+	d.vMoveTex	= s.vMoveTex;
+	d.vScaleUV	= s.vScaleUV;
+	d.vColor	= s.vColor;
+	d.pSrcTex	= SerialLayout::PtrToDisk ( s.pSrcTex );
+	d.pNeonTex	= SerialLayout::PtrToDisk ( s.pNeonTex );
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szNeonTex, s.szNeonTex, sizeof(d.szNeonTex) );
+}
 
 const DWORD DxEffectNeon::OBJECT::FVF = D3DFVF_XYZ|D3DFVF_TEX1;
 const DWORD DxEffectNeon::OBJECTNORMAL::FVF = D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1;
@@ -498,12 +550,12 @@ HRESULT	DxEffectNeon::ChangeObject ( LPDIRECT3DDEVICEQ pd3dDevice, float fScale 
 void DxEffectNeon::SaveBuffer ( CSerialFile &SFile )
 {
 	//	읽지 않고 스킵용으로 사용됨.
-	SFile << sizeof(DWORD)+sizeof(OBJECT)*m_dwVertices
+	SFile << (DWORD)( sizeof(DWORD)+sizeof(OBJECT)*m_dwVertices
 			+sizeof(OBJECTNORMAL)*m_dwVertices
 			+sizeof(DWORD)+sizeof(WORD)*m_dwFaces*3
 			+sizeof(D3DXVECTOR2)*m_dwVertices
 			+sizeof(DWORD)+sizeof(D3DXATTRIBUTERANGE)*m_dwAttribTable
-			+sizeof(DWORD)+sizeof(DXMATERIAL_NEON)*m_dwMaterials;
+			+sizeof(DWORD)+sizeof(DXMATERIAL_NEON_DISK)*m_dwMaterials );
 
 	//	버텍스 버퍼
 	SFile << m_dwVertices;
@@ -529,7 +581,7 @@ void DxEffectNeon::SaveBuffer ( CSerialFile &SFile )
 
 	//
 	SFile << m_dwMaterials;
-	SFile.WriteBuffer ( m_pMaterials, sizeof(DXMATERIAL_NEON)*m_dwMaterials );
+	SerialLayout::WriteArray<DXMATERIAL_NEON_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 }
 
 void DxEffectNeon::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEVICEQ pd3dDevice )
@@ -629,7 +681,7 @@ void DxEffectNeon::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDE
 	SFile >> m_dwMaterials;
 	SAFE_DELETE_ARRAY ( m_pMaterials );
 	m_pMaterials = new DXMATERIAL_NEON[m_dwMaterials];
-	SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_NEON)*m_dwMaterials );
+	SerialLayout::ReadArray<DXMATERIAL_NEON_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 	for ( DWORD i=0; i<m_dwMaterials; i++ )
 	{
@@ -725,7 +777,7 @@ void DxEffectNeon::LoadBuffer ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEVIC
 	SFile >> m_dwMaterials;
 	SAFE_DELETE_ARRAY ( m_pMaterials );
 	m_pMaterials = new DXMATERIAL_NEON[m_dwMaterials];
-	SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_NEON)*m_dwMaterials );
+	SerialLayout::ReadArray<DXMATERIAL_NEON_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 	for ( DWORD i=0; i<m_dwMaterials; i++ )
 	{

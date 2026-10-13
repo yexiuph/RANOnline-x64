@@ -1,7 +1,13 @@
 #pragma once
 
-#include "lzoconf.h"
-#include "lzo1x.h"
+#if defined(_WIN64)
+	// x64 uses the vcpkg build of LZO; Dependency\lzo only has an x86 library.
+	#include <lzo/lzoconf.h>
+	#include <lzo/lzo1x.h>
+#else
+	#include "lzoconf.h"
+	#include "lzo1x.h"
+#endif
 
 /**
  * \ingroup lzoTest

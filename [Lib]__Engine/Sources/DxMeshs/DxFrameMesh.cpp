@@ -195,10 +195,10 @@ HRESULT DxFrameMesh::LoadFrames ( LPD3DXFILEDATA pxofobjCur, DWORD fvf,
     LPD3DXFILEDATA pxofobjChild = NULL;
 
     GUID type;
-    DWORD cbSize;
+    SIZE_T cbSize;
     D3DXMATRIX *pmatNew;
     DxFrame *pframeCur;
-    DWORD cchName;
+    SIZE_T cchName;
     
     //	Note : 오브젝트의 타입.
 	//
@@ -358,7 +358,7 @@ HRESULT DxFrameMesh::LoadMesh ( LPD3DXFILEDATA pxofobjCur, DWORD fvf,
 	LPD3DXBUFFER pbufMaterials = NULL;
 	LPD3DXBUFFER pbufAdjacency = NULL;
     
-	DWORD cchName;
+	SIZE_T cchName;
 	UINT iMaterial;
     
 	//	Note : 메쉬 콘데이너 생성.
@@ -580,12 +580,12 @@ HRESULT DxFrameMesh::LoadAnimation ( LPD3DXFILEDATA pxofobjCur, DWORD fvf,
 	LPD3DXFILEDATA pxofobjChild = NULL;
     GUID type;
     
-	DWORD dwSize;
+	SIZE_T dwSize;
     PBYTE pData;
     DWORD dwKeyType;
     DWORD cKeys;
     DWORD iKey;
-    DWORD cchName;
+    SIZE_T cchName;
     char *szFrameName;
     
 	//	Note : 새로운 프레임 만듬. - Animation.

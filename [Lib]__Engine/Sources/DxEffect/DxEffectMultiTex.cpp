@@ -17,10 +17,42 @@
 #include "./DxRenderStates.h"
 
 #include "./DxEffectMultiTex.h"
+#include "SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+//	On-disk (x86) image of DXMATERIAL_MULTITEX, see SerialLayout.h.
+struct DXMATERIAL_MULTITEX_DISK
+{
+	D3DMATERIALQ			rgMaterial;
+	SerialLayout::PTR32		pTexture;
+	char					szTexture[MAX_PATH];
+};
+
+static_assert ( sizeof(DXMATERIAL_MULTITEX_DISK) == 332, "x86 size of DXMATERIAL_MULTITEX" );
+
+#if SERIAL_LAYOUT_NATIVE_X86
+SERIAL_LAYOUT_ASSERT_SIZE ( DXMATERIAL_MULTITEX_DISK, DXMATERIAL_MULTITEX );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_MULTITEX_DISK, DXMATERIAL_MULTITEX, rgMaterial );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_MULTITEX_DISK, DXMATERIAL_MULTITEX, pTexture );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_MULTITEX_DISK, DXMATERIAL_MULTITEX, szTexture );
+#endif
+
+inline void SerialFromDisk ( DXMATERIAL_MULTITEX& d, const DXMATERIAL_MULTITEX_DISK& s )
+{
+	d.rgMaterial	= s.rgMaterial;
+	d.pTexture	= NULL;
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+}
+
+inline void SerialToDisk ( DXMATERIAL_MULTITEX_DISK& d, const DXMATERIAL_MULTITEX& s )
+{
+	d.rgMaterial	= s.rgMaterial;
+	d.pTexture	= SerialLayout::PtrToDisk ( s.pTexture );
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+}
 
 const DWORD DxEffectMultiTex::TYPEID = DEF_EFFECT_MULTITEX;
 const DWORD	DxEffectMultiTex::VERSION = 0x00000101;
@@ -851,12 +883,12 @@ HRESULT	DxEffectMultiTex::ChangeObject ( VERTEX* pSrcVert, VERTEXCOLORTEX2* pDes
 void DxEffectMultiTex::SaveBuffer ( CSerialFile &SFile )
 {
 	//	읽지 않고 스킵용으로 사용됨.
-	SFile << sizeof(DWORD)+sizeof(VERTEX)*m_dwVertices
+	SFile << (DWORD)( sizeof(DWORD)+sizeof(VERTEX)*m_dwVertices
 			+sizeof(VERTEXCOLORTEX2)*m_dwVertices
 			+sizeof(DWORD)+sizeof(WORD)*m_dwFaces*3
 			+sizeof(D3DXVECTOR2)*m_dwVertices
 			+sizeof(DWORD)+sizeof(D3DXATTRIBUTERANGE)*m_dwAttribTableSize
-			+sizeof(DWORD)+sizeof(DXMATERIAL_MULTITEX)*m_cMaterials;
+			+sizeof(DWORD)+sizeof(DXMATERIAL_MULTITEX_DISK)*m_cMaterials );
 
 	//	버텍스 버퍼
 	SFile << m_dwVertices;
@@ -885,7 +917,7 @@ void DxEffectMultiTex::SaveBuffer ( CSerialFile &SFile )
 
 	// Material 저장
 	SFile << m_cMaterials;
-	SFile.WriteBuffer ( m_pMaterials, sizeof(DXMATERIAL_MULTITEX)*m_cMaterials );
+	SerialLayout::WriteArray<DXMATERIAL_MULTITEX_DISK> ( SFile, m_pMaterials, m_cMaterials );
 }
 
 void DxEffectMultiTex::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEVICEQ pd3dDevice )
@@ -964,7 +996,7 @@ void DxEffectMultiTex::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT
 	SFile >> m_cMaterials;
 	SAFE_DELETE_ARRAY ( m_pMaterials );
 	m_pMaterials = new DXMATERIAL_MULTITEX[m_cMaterials];
-	SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_MULTITEX)*m_cMaterials );
+	SerialLayout::ReadArray<DXMATERIAL_MULTITEX_DISK> ( SFile, m_pMaterials, m_cMaterials );
 
 	for ( DWORD i=0; i<m_cMaterials; i++ )
 	{
@@ -1049,7 +1081,7 @@ void DxEffectMultiTex::LoadBuffer ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DD
 	SFile >> m_cMaterials;
 	SAFE_DELETE_ARRAY ( m_pMaterials );
 	m_pMaterials = new DXMATERIAL_MULTITEX[m_cMaterials];
-	SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_MULTITEX)*m_cMaterials );
+	SerialLayout::ReadArray<DXMATERIAL_MULTITEX_DISK> ( SFile, m_pMaterials, m_cMaterials );
 
 	for ( DWORD i=0; i<m_cMaterials; i++ )
 	{

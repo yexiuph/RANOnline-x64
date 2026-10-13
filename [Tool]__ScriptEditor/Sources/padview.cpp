@@ -248,7 +248,7 @@ BOOL CPadView::SetWordWrap(BOOL bWordWrap)
 	// detach old window, attach new
 	SetDlgCtrlID((UINT)nID+1);
 	HWND hWndOld = Detach();
-	::SetWindowLongPtr(hWndOld, GWL_WNDPROC, (LONG_PTR)*GetSuperWndProcAddr());
+	::SetWindowLongPtr(hWndOld, GWLP_WNDPROC, (LONG_PTR)*GetSuperWndProcAddr());
 	ASSERT(m_hWnd == NULL);
 	SubclassWindow(hWnd);
 	ASSERT(m_hWnd == hWnd);
@@ -619,7 +619,7 @@ void CPadView::OnEditCut()
 	CEditView::OnEditCut();
 }
 
-void CPadView::OnTimer(UINT nIDEvent)
+void CPadView::OnTimer(UINT_PTR nIDEvent)
 {
 	if (m_uTimerID != nIDEvent) // not our timer
 	{

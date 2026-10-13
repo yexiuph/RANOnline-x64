@@ -501,8 +501,7 @@ void DxSetLandMan::Clone_MouseShift( LPDIRECT3DDEVICEQ pd3dDevice, LPD3DXMATRIX&
 	PLANDEFF pCur = m_pLandEffList;
 	while ( pCur )
 	{
-		DWORD dwBuffer = (DWORD)&pCur->m_matWorld;
-		if( dwBuffer == (DWORD)pMatrix )
+		if( (LPD3DXMATRIX)&pCur->m_matWorld == pMatrix )
 		{
 			DXLANDEFF *pLandEff;
 			pLandEff = new DXLANDEFF;

@@ -173,15 +173,15 @@ BOOL CItemEditDlg::OnInitDialog()
 	char szTempChar[MAX_PATH] = {0,};
 
 	sprintf_s( szTempChar, "MID/SID" );
-	pComobWnd->SendMessage( CB_ADDSTRING, 0, (long)szTempChar );
+	pComobWnd->SendMessage( CB_ADDSTRING, 0, (LPARAM)szTempChar );
 	sprintf_s( szTempChar, "Item Name" );
-	pComobWnd->SendMessage( CB_ADDSTRING, 0, (long)szTempChar );
+	pComobWnd->SendMessage( CB_ADDSTRING, 0, (LPARAM)szTempChar );
 	sprintf_s( szTempChar, "USE DDS" );
-	pComobWnd->SendMessage( CB_ADDSTRING, 0, (long)szTempChar );
+	pComobWnd->SendMessage( CB_ADDSTRING, 0, (LPARAM)szTempChar );
 	sprintf_s( szTempChar, "USE CPS" );
-	pComobWnd->SendMessage( CB_ADDSTRING, 0, (long)szTempChar );
+	pComobWnd->SendMessage( CB_ADDSTRING, 0, (LPARAM)szTempChar );
 	sprintf_s( szTempChar, "ITEM TYPE" );
-	pComobWnd->SendMessage( CB_ADDSTRING, 0, (long)szTempChar );
+	pComobWnd->SendMessage( CB_ADDSTRING, 0, (LPARAM)szTempChar );
 
 	pComobWnd->SendMessage( CB_SETCURSEL, 0, 0 );	
 

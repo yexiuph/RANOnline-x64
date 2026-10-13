@@ -93,9 +93,9 @@ int COdbcManager::DaumUserCheck(
 
 	SQLCHAR szKorUserID[KOR_MAX_GID_LENGTH] = {0};
 //	SQLCHAR szKorUserIP[KOR_USERIP] = {0};
-	TIMESTAMP_STRUCT sLoginDate; SQLINTEGER cbLoginDate = SQL_NTS;
+	TIMESTAMP_STRUCT sLoginDate; SQLLEN cbLoginDate = SQL_NTS;
 	
-	SQLINTEGER cbKorUserID = SQL_NTS;	
+	SQLLEN cbKorUserID = SQL_NTS;	
 //	SQLINTEGER cbKorUserIP = SQL_NTS;
 
 	int nRowCount = 0;
@@ -415,10 +415,10 @@ int COdbcManager::GspUserCheck(
 
 	SQLCHAR szGspUserID2[GSP_USERID] = {0};
 	SQLCHAR szGspUserIP[GSP_USERIP] = {0};
-	TIMESTAMP_STRUCT sLoginDate; SQLINTEGER cbLoginDate = SQL_NTS;
+	TIMESTAMP_STRUCT sLoginDate; SQLLEN cbLoginDate = SQL_NTS;
 	
-	SQLINTEGER cbGspUserID = SQL_NTS;
-	SQLINTEGER cbGspUserIP = SQL_NTS;
+	SQLLEN cbGspUserID = SQL_NTS;
+	SQLLEN cbGspUserIP = SQL_NTS;
 
 	int nRowCount = 0;
 
@@ -577,7 +577,7 @@ int COdbcManager::TerraUserCheck(
 	}
 
 	SQLCHAR szTLoginName[TERRA_TLOGIN_NAME+1] = {0};
-	SQLINTEGER cbTLoginName = SQL_NTS;
+	SQLLEN cbTLoginName = SQL_NTS;
 	int nRowCount = 0;
 
 	while (true)
@@ -663,9 +663,9 @@ int COdbcManager::TerraUserCheck(
 	SQLCHAR szTIcNo[TERRA_TICNO+1]     = {0};
 	SQLCHAR szTDOB[TERRA_TDOB+1]       = {0};
 
-	SQLINTEGER cbTGender = SQL_NTS;
-	SQLINTEGER cbTIcNo = SQL_NTS;
-	SQLINTEGER cbTDOB = SQL_NTS;
+	SQLLEN cbTGender = SQL_NTS;
+	SQLLEN cbTIcNo = SQL_NTS;
+	SQLLEN cbTDOB = SQL_NTS;
 
     while (true)
 	{
@@ -888,7 +888,7 @@ int	COdbcManager::ThaiUserClassCheck(
 //	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-	SQLCHAR szCC_Class[2] = {0}; SQLINTEGER cbCC_Class = SQL_NTS;
+	SQLCHAR szCC_Class[2] = {0}; SQLLEN cbCC_Class = SQL_NTS;
 	
 	TCHAR szTemp[256] = {0};
 
@@ -983,7 +983,7 @@ int	COdbcManager::MyUserClassCheck(
 //	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-	SQLCHAR szCC_Class[2] = {0}; SQLINTEGER cbCC_Class = SQL_NTS;
+	SQLCHAR szCC_Class[2] = {0}; SQLLEN cbCC_Class = SQL_NTS;
 	
 	TCHAR szTemp[256] = {0};
 

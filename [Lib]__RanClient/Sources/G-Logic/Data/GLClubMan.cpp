@@ -432,7 +432,7 @@ bool GLCLUB::IsMember ( DWORD dwCharID )
 	return pos!=m_mapMembers.end();
 }
 
-inline GLCLUBMEMBER* GLCLUB::GetMember ( DWORD dwCharID )
+GLCLUBMEMBER* GLCLUB::GetMember ( DWORD dwCharID )
 {
 	CLUBMEMBERS_ITER pos = m_mapMembers.find(dwCharID);
 	if ( pos==m_mapMembers.end() )		return NULL;

@@ -187,8 +187,8 @@ public:
 public:
 	CString	GetText ( int nIndex );
 
-	void SetTextData ( int nIndex, DWORD dwData );
-	DWORD GetTextData ( int nIndex );
+	void SetTextData ( int nIndex, DWORD_PTR dwData );
+	DWORD_PTR GetTextData ( int nIndex );
 
 	void SetTextDataEx ( int nIndex, DWORD dwData );
 	DWORD GetTextDataEx ( int nIndex );

@@ -19,6 +19,8 @@
 
 #include "DxSkinMesh9_CPU.h"
 
+#include <xmmintrin.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -104,128 +106,55 @@ VS_OUTPUT VShade(VS_INPUT i, uniform int NumBones)
 
 void DxSkinMesh9_CPU::PhysiqueTransform_SSE( VERTEX* pResult, BYTE* pBoneVertex, DWORD dwBoneSize, DWORD dwVertexNum, D3DXMATRIXA16* pAniMatrix )
 {
-	DWORD	  dwResultSize = sizeof(VERTEX);
+	//	Source vertex : position(0x00), normal(0x0C), influence count(0x18), { bone index, weight } pairs
+	//					from 0x1C, texture coordinates in the last 8 bytes (dwBoneSize varies with the pair count).
+	//	Result vertex : position(0x00), normal(0x0C), texture coordinates(0x18).
+	//	The additions are grouped exactly as the original SSE assembly did, so results are bit-identical.
+	BYTE* pDst = (BYTE*)pResult;
 
-	__asm
+	for ( DWORD dwVertex=0; dwVertex<dwVertexNum; ++dwVertex )
 	{
-		mov		   	   esi,	   pBoneVertex		   	   	   // esi <- 버텍스와 본정보가 들어있는 구조체 포인터 세팅
-		mov		   	   edi,	   pResult		   	   	   	   // edi <- 최종 데이터가 저장되야할 데이터 포인터 세팅
-		mov		   	   ecx,	   dwVertexNum		   	   	   // ecx <- 처리해야할 버텍스수 세팅(루프용)
-		mov		   	   edx,	   pAniMatrix	 	   	   	   // edx <- 애니 매트릭스 포인터 세팅
+		const float* pVector = (const float*)pBoneVertex;
+		const DWORD dwInfluence = *(const DWORD*)( pBoneVertex + 0x18 );
+		const BYTE* pInfluence = pBoneVertex + 0x1C;
 
-		PHYSIQUETRANSFORM:
-		// 버텍스값 계산
-		movss	  	   xmm0,	  [esi]	  	   	   	   	   // xmm0 에 버텍스x~값을 세팅
-		movss	  	   xmm1,	  [esi+0x4]	  	   	   	   // xmm1 에 버텍스y~값 세팅
-		movss	  	   xmm2,	  [esi+0x8]	  	   	   	   // xmm2 에 버텍스z~값 세팅
-		shufps	 	   xmm0,	  xmm0, 0x0	  	   	   	   // xmm0의 4칸을, 버텍스x 로 채움
-		shufps	 	   xmm1,	  xmm1, 0x0	  	   	   	   // xmm1의 4칸을, 버텍스y 로 채움
-		shufps	 	   xmm2,	  xmm2, 0x0	  	   	   	   // xmm2의 4칸을, 버텍스z 로 채움
+		//	Position : sum of weight * ( x*row0 + y*row1 + z*row2 + row3 ).
+		__m128 vX = _mm_set1_ps( pVector[0] );
+		__m128 vY = _mm_set1_ps( pVector[1] );
+		__m128 vZ = _mm_set1_ps( pVector[2] );
+		__m128 vSum = _mm_setzero_ps();
+		for ( DWORD i=0; i<dwInfluence; ++i )
+		{
+			const float* pMatrix = (const float*)&pAniMatrix[ *(const int*)( pInfluence + i*8 ) ];
+			const __m128 vXY = _mm_add_ps( _mm_mul_ps( _mm_load_ps( pMatrix+4 ), vY ), _mm_mul_ps( _mm_load_ps( pMatrix ), vX ) );
+			const __m128 vZW = _mm_add_ps( _mm_mul_ps( _mm_load_ps( pMatrix+8 ), vZ ), _mm_load_ps( pMatrix+12 ) );
+			const __m128 vWeight = _mm_set1_ps( *(const float*)( pInfluence + i*8 + 4 ) );
+			vSum = _mm_add_ps( vSum, _mm_mul_ps( _mm_add_ps( vXY, vZW ), vWeight ) );
+		}
+		_mm_storeu_ps( (float*)pDst, vSum );	// The 4th float spills into the normal, written next.
 
-		xorps	  	   xmm3,	  xmm3
-		mov		   	   eax,	   0
+		//	Normal : sum of weight * ( x*row0 + y*row1 + z*row2 ).
+		vX = _mm_set1_ps( pVector[3] );
+		vY = _mm_set1_ps( pVector[4] );
+		vZ = _mm_set1_ps( pVector[5] );
+		vSum = _mm_setzero_ps();
+		for ( DWORD i=0; i<dwInfluence; ++i )
+		{
+			const float* pMatrix = (const float*)&pAniMatrix[ *(const int*)( pInfluence + i*8 ) ];
+			const __m128 vXY = _mm_add_ps( _mm_mul_ps( _mm_load_ps( pMatrix+4 ), vY ), _mm_mul_ps( _mm_load_ps( pMatrix ), vX ) );
+			const __m128 vXYZ = _mm_add_ps( vXY, _mm_mul_ps( _mm_load_ps( pMatrix+8 ), vZ ) );
+			const __m128 vWeight = _mm_set1_ps( *(const float*)( pInfluence + i*8 + 4 ) );
+			vSum = _mm_add_ps( vSum, _mm_mul_ps( vXYZ, vWeight ) );
+		}
+		_mm_storeu_ps( (float*)( pDst+0x0C ), vSum );	// The 4th float spills into texture u, written next.
 
-			PROCESSVERTEX:
-			mov		   	   ebx,	   [esi+0x1C+eax*8]	   // esi+0x10(2 -> eax 번째 본인덱스를 ebx 에 저장
-			imul		ebx,	0x40
-			add			ebx,	edx
+		pBoneVertex += dwBoneSize;
 
-			movaps	 	   xmm4,	  [ebx]	  	   	   // xmm4 에 매트릭스 11, 12, 13, 14 세팅
-			movaps	 	   xmm5,	  [ebx+0x10]	 	   // xmm4 에 매트릭스 21, 22, 23, 24 세팅
-			movaps	 	   xmm6,	  [ebx+0x20]	 	   // xmm4 에 매트릭스 31, 32, 33, 34 세팅
-			movaps	 	   xmm7,	  [ebx+0x30]	 	   // xmm4 에 매트릭스 41, 42, 43, 44 세팅
+		//	Texture coordinates.
+		*(DWORD*)( pDst+0x18 ) = *(const DWORD*)( pBoneVertex-0x8 );
+		*(DWORD*)( pDst+0x1C ) = *(const DWORD*)( pBoneVertex-0x4 );
 
-			mulps	  	   xmm4,	  xmm0	   	   	   	   // 버텍스 X와 매트릭스 11, 12, 13, 14 곱함
-			mulps	  	   xmm5,	  xmm1	   	   	   	   // 버텍스 Y와 매트릭스 21, 22, 23, 34 곱함
-			mulps	  	   xmm6,	  xmm2	   	   	   	   // 버텍스 Z와 매트릭스 31, 32, 33, 34 곱함
-
-			addps	  	   xmm5,	  xmm4	   	   	   	   // xmm5(Y*Matrix) 에 xmm4(X*Matrix)을 더함
-			addps	  	   xmm6,	  xmm7	   	   	   	   // xmm5 에 xmm6(Z*Matrix)을 더함			xmm5,	  xmm6
-			addps	  	   xmm5,	  xmm6	   	   	   	   // xmm5 에 xmm6(Z*Matrix)을 더함			xmm5,	  xmm7
-
-			movss	  	   xmm7,	  [esi+0x20+eax*8]	   // xmm7 에 Weight 값 세팅
-			shufps	 	   xmm7,	  xmm7, 0x0	  	   	   // xmm7 를 모두 Weight 으로 세팅
-			mulps	  	   xmm5,	  xmm7	   	   	   	   // xmm1(버텍스와 매트릭스곱)에 Weight 값을 곱해준다.
-			addps	  	   xmm3,	  xmm5	   	   	   	   // xmm3 에 결과를 더해준다.
-
-			inc		   	   eax	// ++1
-			cmp		   	   eax, [esi+0x18]		   	   	   	   // esi+0x18(24) -> 버텍스가 참고하는 본 갯수
-			jnz		   	   PROCESSVERTEX	  	   	   	   	   // 버텍스가 참고하는 본 갯수만큼(피지크갯수) 루프
-
-		movups	 	   [edi],	 xmm3	   	   	   	   	   // 최종 결과에 xmm3 넣음
-
-		// 노말값 계산
-		movss	  	   xmm0,	  [esi+0xC]	  	   	   	   // xmm0 에 노멀x~값을 세팅
-		movss	  	   xmm1,	  [esi+0x10]	 	   	   	   // xmm1 에 노멀y~값 세팅
-		movss	  	   xmm2,	  [esi+0x14]	 	   	   	   // xmm2 에 노멀z~값 세팅
-		shufps	 	   xmm0,	  xmm0, 0x0	  	   	   	   // xmm0의 4칸을, 버텍스x 로 채움
-		shufps	 	   xmm1,	  xmm1, 0x0	  	   	   	   // xmm1의 4칸을, 버텍스y 로 채움
-		shufps	 	   xmm2,	  xmm2, 0x0	  	   	   	   // xmm2의 4칸을, 버텍스z 로 채움
-
-		xorps	  	   xmm3,	  xmm3
-		mov		   	   eax,	   0
-			PROCESSNORMAL:
-			mov		   	   ebx,	   [esi+0x1C+eax*8]	   // esi+0x10(2 -> eax 번째 본인덱스를 ebx 에 저장
-			imul		ebx,	0x40
-			add			ebx,	edx
-
-			movaps	 	   xmm4,	  [ebx]	  	   	   // xmm4 에 매트릭스 11, 12, 13, 14 세팅
-			movaps	 	   xmm5,	  [ebx+0x10]	 	   // xmm4 에 매트릭스 21, 22, 23, 24 세팅
-			movaps	 	   xmm6,	  [ebx+0x20]	 	   // xmm4 에 매트릭스 31, 32, 33, 34 세팅
-
-			mulps	  	   xmm4,	  xmm0	   	   	   	   // 버텍스 X와 매트릭스 11, 12, 13, 14 곱함
-			mulps	  	   xmm5,	  xmm1	   	   	   	   // 버텍스 Y와 매트릭스 21, 22, 23, 34 곱함
-			mulps	  	   xmm6,	  xmm2	   	   	   	   // 버텍스 Z와 매트릭스 31, 32, 33, 34 곱함
-
-			addps	  	   xmm5,	  xmm4	   	   	   	   // xmm5(Y*Matrix) 에 xmm4(X*Matrix)을 더함
-			addps	  	   xmm5,	  xmm6	   	   	   	   // xmm5 에 xmm6(Z*Matrix)을 더함
-
-			movss	  	   xmm7,	  [esi+0x20+eax*8]	   // xmm7 에 Weight 값 세팅
-			shufps	 	   xmm7,	  xmm7, 0x0	  	   	   // xmm7 를 모두 Weight 으로 세팅
-			mulps	  	   xmm5,	  xmm7	   	   	   	   // xmm1(버텍스와 매트릭스곱)에 Weight 값을 곱해준다.
-			addps	  	   xmm3,	  xmm5	   	   	   	   // xmm3 에 결과를 더해준다.
-			
-			inc		   	   eax	// ++1
-			cmp		   	   eax, [esi+0x18]		   	   	   	   // esi+0x18(24) -> 버텍스가 참고하는 본 갯수
-			jnz		   	   PROCESSNORMAL	  	   	   	   	   // 버텍스가 참고하는 본 갯수만큼(피지크갯수) 루프
-
-		//// x y z 0
-		//// y z x 0
-		//// z x y 0
-		//// 노말값 노말라이즈	
-		////	 아마 GPU 시간이 남을 것이다. 굳이 CPU 부하를 안 줘도 될듯 하다.
-		////
-		//movaps	 	   xmm4, xmm3
-		//movaps	 	   xmm5, xmm3
-		//movaps	 	   xmm6, xmm3
-		//shufps	 	   xmm5, xmm5, 0xC9	   // 00111001
-		//shufps	 	   xmm6, xmm6, 0xD2	   // 11010010
-		//mulps	  	   xmm4, xmm4	 	   	   // xmm4 = x*x y*y z*z
-		//mulps	  	   xmm5, xmm5	 	   	   // xmm5 = y*y z*z x*x
-		//mulps	  	   xmm6, xmm6	 	   	   // xmm6 = z*z x*x y*y
-		//addps	  	   xmm4, xmm5
-		//addps	  	   xmm4, xmm6
-		//rsqrtps		   xmm4, xmm4
-		//mulps	  	   xmm3, xmm4
-
-		//	 Normal 값 삽입.
-		movups	 	   [edi+0x0c],	 xmm3	// -0x14
-
-		// 처리된만큼 넘겨주자.
-		add		   	   esi,	   dwBoneSize	 	   	   	   // 버텍스정보 포인터를 다음차례로 넘김.
-	//	add		   	   edi,	   dwResultSize	   	   	   // 결과저장 포인터도 다음차례로 넘겨줌
-
-		// Note : 텍스쳐 값이다.
-		mov			ebx,		[esi-0x8]		// 1
-		mov			[edi+0x18],	ebx				// 1	mov			[edi-0x8],	ebx
-		mov			ebx,		[esi-0x4]		// 1
-		mov			[edi+0x1c],	ebx				// 1	mov			[edi-0x8],	ebx
-
-		// 처리된만큼 넘겨주자.
-		//add		   	   esi,	   dwBoneSize	 	   	   	   // 버텍스정보 포인터를 다음차례로 넘김.
-		add		   	   edi,	   dwResultSize	   	   	   // 결과저장 포인터도 다음차례로 넘겨줌
-		dec		   	   ecx		   	   	   	   	   	   	   	   // 버텍스수만큼 루프
-		jnz		   	   PHYSIQUETRANSFORM	  	   	   	   	   // (카운터에서 1을 빼주고 남아있으면 다시 루프)
+		pDst += sizeof(VERTEX);
 	}
 }
 
@@ -1346,160 +1275,48 @@ void DxSkinMesh9_CPU::LoadLOD( CSerialFile& SFile, IDirect3DDevice9 *pd3dDevice 
 
 void SMatrix4_SSE::mul(const SMatrix4_SSE& left, const SMatrix4_SSE& right)
 {
-	      float*	    	      fDst	  = m;
-	      const float*	    	        fSrc1	      = left.m;
-	      const float*	    	        fSrc2	      = right.m;
+	//	Each result row is a row of right multiplied by left : its four components are broadcast
+	//	against left's rows and summed as ( w*L3 + z*L2 ) + ( y*L1 + x*L0 ), like the original assembly.
+	const __m128 vL0 = left._m[0];
+	const __m128 vL1 = left._m[1];
+	const __m128 vL2 = left._m[2];
+	const __m128 vL3 = left._m[3];
 
-	      __asm
-	      {
-	      	   mov	 	         eax,	    fDst
-	      	   mov	 	         ecx,	    fSrc1
-	      	   mov	 	         edx,	    fSrc2
- 
+	_mm_prefetch( (const char*)( left.m + 16 ), _MM_HINT_T0 );
+	_mm_prefetch( (const char*)( left.m + 24 ), _MM_HINT_T0 );
+	_mm_prefetch( (const char*)( right.m + 8 ), _MM_HINT_T0 );
+	_mm_prefetch( (const char*)( right.m + 16 ), _MM_HINT_T0 );
 
-	      	   movaps	   xmm0,	     xmmword ptr [ecx]
-	      	   movaps	   xmm1,	     xmmword ptr [ecx + 0x10]
-	      	   movaps	   xmm2,	     xmmword ptr [ecx + 0x20]
-	      	   movaps	   xmm3,	     xmmword ptr [ecx + 0x30]
+	for ( int nRow=0; nRow<4; ++nRow )
+	{
+		const __m128 vRow = right._m[nRow];
+		const __m128 vX = _mm_shuffle_ps( vRow, vRow, 0x00 );
+		const __m128 vY = _mm_shuffle_ps( vRow, vRow, 0x55 );
+		const __m128 vZ = _mm_shuffle_ps( vRow, vRow, 0xaa );
+		const __m128 vW = _mm_shuffle_ps( vRow, vRow, 0xff );
 
-	   	      prefetcht0 [ecx+0x40]
-	   	      prefetcht0 [ecx+0x60]
-	      	   // First Row 
-
-	      	   movaps	   xmm7,	      xmmword ptr [edx]
-	   	      prefetcht0 [edx+0x20]
-
-	   	      movaps	   xmm6,	      xmm7
-	      	   movaps	   xmm5,	      xmm7
-	      	   movaps	   xmm4,	      xmm7
-
-	      	   shufps	   xmm7,	      xmm7, 0x0
-	      	   shufps	   xmm6,	      xmm6, 0x55
-	      	   shufps	   xmm5,	      xmm5, 0xaa
-	      	   shufps	   xmm4,	      xmm4, 0xff
-
-	      	   mulps	     xmm7,	    xmm0
-	      	   mulps	     xmm6,	    xmm1
-	      	   mulps	     xmm5,	    xmm2
-	      	   mulps	     xmm4,	    xmm3
-
-	      	   addps	     xmm6,	    xmm7
-	      	   addps	     xmm4,	    xmm5
-	      	   addps	     xmm4,	    xmm6
-
-	      	   movntps	  xmmword ptr [eax], xmm4
-
-	      	   // Second Row
- 
-	      	   movaps	   xmm7,	      xmmword ptr [edx + 0x10]
-	      	   movaps	   xmm6,	      xmm7
-	      	   movaps	   xmm5,	      xmm7
-	      	   movaps	   xmm4,	      xmm7
-
-	      	   shufps	   xmm7,	      xmm7, 0x0
-	      	   shufps	   xmm6,	      xmm6, 0x55
-	      	   shufps	   xmm5,	      xmm5, 0xaa
-	      	   shufps	   xmm4,	      xmm4, 0xff
-
-	      	   mulps	     xmm7,	    xmm0
-	      	   mulps	     xmm6,	    xmm1
-	      	   mulps	     xmm5,	    xmm2
-	      	   mulps	     xmm4,	    xmm3
-
-	      	   addps	     xmm6,	    xmm7
-	      	   addps	     xmm4,	    xmm5
-	      	   addps	     xmm4,	    xmm6
-
-	      	   movntps	   xmmword ptr [eax + 0x10], xmm4
-
-	      	   // Third Row  
-
-	      	   movaps	   xmm7,	      xmmword ptr [edx + 0x20]
-	   	      prefetcht0 [edx+0x40]
-
-	      	   movaps	   xmm6,	      xmm7
-	      	   movaps	   xmm5,	      xmm7
-	      	   movaps	   xmm4,	      xmm7
-
-	      	   shufps	   xmm7,	      xmm7, 0x0
-	      	   shufps	   xmm6,	      xmm6, 0x55
-	      	   shufps	   xmm5,	      xmm5, 0xaa
-	      	   shufps	   xmm4,	      xmm4, 0xff
-
-	      	   mulps	     xmm7,	    xmm0
-	      	   mulps	     xmm6,	    xmm1
-	      	   mulps	     xmm5,	    xmm2
-	      	   mulps	     xmm4,	    xmm3
-
-	      	   addps	     xmm6,	    xmm7
-	      	   addps	     xmm4,	    xmm5
-	      	   addps	     xmm4,	    xmm6
-
-	      	   movntps	   xmmword ptr [eax + 0x20], xmm4
-
-	      	   // Fourth Row  
- 
-	      	   movaps	   xmm7,	      xmmword ptr [edx + 0x30]
-	      	   movaps	   xmm6,	      xmm7
-	      	   movaps	   xmm5,	      xmm7
-	      	   movaps	   xmm4,	      xmm7
-
-	      	   shufps	   xmm7,	      xmm7, 0x0
-	      	   shufps	   xmm6,	      xmm6, 0x55
-	      	   shufps	   xmm5,	      xmm5, 0xaa
-	      	   shufps	   xmm4,	      xmm4, 0xff
-
-	      	   mulps	     xmm7,	    xmm0
-	      	   mulps	     xmm6,	    xmm1
-	      	   mulps	     xmm5,	    xmm2
-	      	   mulps	     xmm4,	    xmm3
-
-	      	   addps	     xmm6,	    xmm7
-	      	   addps	     xmm4,	    xmm5
-	      	   addps	     xmm4,	    xmm6
-
-	      	   movntps	   xmmword ptr [eax + 0x30], xmm4
-	      }
+		const __m128 vXY = _mm_add_ps( _mm_mul_ps( vY, vL1 ), _mm_mul_ps( vX, vL0 ) );
+		const __m128 vZW = _mm_add_ps( _mm_mul_ps( vW, vL3 ), _mm_mul_ps( vZ, vL2 ) );
+		_mm_stream_ps( m + nRow*4, _mm_add_ps( vZW, vXY ) );
+	}
 }
 
 void SMatrix4_SSE::add(const SMatrix4_SSE& left, const SMatrix4_SSE& right)
 {
-	float*	    	    fDst	  = m;			// 주소를 받아 놓는다.
-	const float*	    fSrc1	  = left.m;		// 들어온 값1
-	const float*	    fSrc2	  = right.m;	// 들어온 값2
+	_mm_prefetch( (const char*)( left.m + 16 ), _MM_HINT_T0 );
+	_mm_prefetch( (const char*)( left.m + 24 ), _MM_HINT_T0 );
+	_mm_prefetch( (const char*)( right.m + 16 ), _MM_HINT_T0 );
+	_mm_prefetch( (const char*)( right.m + 24 ), _MM_HINT_T0 );
 
-	__asm
-	{
-		mov	 	         eax,	    fDst
-		mov	 	         ecx,	    fSrc1
-		mov	 	         edx,	    fSrc2
+	const __m128 v0 = _mm_add_ps( left._m[0], right._m[0] );
+	const __m128 v1 = _mm_add_ps( left._m[1], right._m[1] );
+	const __m128 v2 = _mm_add_ps( left._m[2], right._m[2] );
+	const __m128 v3 = _mm_add_ps( left._m[3], right._m[3] );
 
-		movaps	   xmm0,	     xmmword ptr [ecx]			// xmmword : 16 byte로 가져온다.
-		movaps	   xmm1,	     xmmword ptr [ecx + 0x10]	// 16
-		movaps	   xmm2,	     xmmword ptr [ecx + 0x20]	// 32
-		movaps	   xmm3,	     xmmword ptr [ecx + 0x30]	// 48
-
-		prefetcht0 [ecx+0x40]
-		prefetcht0 [ecx+0x60]
-
-		movaps	   xmm4,	     xmmword ptr [edx]
-		movaps	   xmm5,	     xmmword ptr [edx + 0x10]
-		movaps	   xmm6,	     xmmword ptr [edx + 0x20]
-		movaps	   xmm7,	     xmmword ptr [edx + 0x30]
-
-		prefetcht0 [edx+0x40]
-		prefetcht0 [edx+0x60]
-
-		addps	    xmm0,	     xmm4
-		addps	    xmm1,	     xmm5
-		addps	    xmm2,	     xmm6
-		addps	    xmm3,	     xmm7
-
-		movntps	   xmmword ptr [eax], xmm0
-		movntps	   xmmword ptr [eax + 0x10], xmm1
-		movntps	   xmmword ptr [eax + 0x20], xmm2
-		movntps	   xmmword ptr [eax + 0x30], xmm3
-	}
+	_mm_stream_ps( m, v0 );
+	_mm_stream_ps( m + 4, v1 );
+	_mm_stream_ps( m + 8, v2 );
+	_mm_stream_ps( m + 12, v3 );
 }
 
 

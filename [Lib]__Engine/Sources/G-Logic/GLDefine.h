@@ -11,7 +11,13 @@
 #define RANDOM_POS		(((FLOAT)rand())/RAND_MAX)		// 0.f ~ 1.f
 #define RANDOM_NUM		( (RANDOM_POS*2.f)-1.f )		// -1.f ~ 1.f
 
+//	x64 has no x87 precision or infinity control (passing _MCW_PC/_MCW_IC there aborts),
+//	so only the exception masks and the rounding mode are set.
+#ifdef _WIN64
+#define FLOAT_SET	( _MCW_EM | _RC_UP )
+#else
 #define FLOAT_SET	0xe021f
+#endif
 
 inline bool cast_bool ( BOOL b )	{ return b ? true : false; }
 
@@ -38,14 +44,22 @@ inline unsigned int SetControlfp( bool bSet )
 	if ( bSet ) 
 	{
 		unsigned int currControl = 0;
+#ifndef _WIN64
 		_controlfp_s( &currControl, _PC_24, _MCW_PC ); 
+#endif
 		_controlfp_s( &currControl, _RC_UP, _MCW_RC );
+#ifndef _WIN64
 		_controlfp_s( &currControl, _IC_AFFINE, _MCW_IC );
+#endif
 	}
 	else
 	{
 		unsigned int currControl = 0;
+#ifdef _WIN64
+		_controlfp_s( &currControl, _CW_DEFAULT, _MCW_EM | _MCW_RC );
+#else
 		_controlfp_s( &currControl, _CW_DEFAULT, 0xfffff );
+#endif
 	}
 	
 	unsigned int nextControl = 0;

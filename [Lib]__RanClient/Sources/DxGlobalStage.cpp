@@ -196,16 +196,6 @@ DxGlobalStage::~DxGlobalStage (void)
 	DeleteCriticalSection(&m_CSMsgProcLock);
 
 	_clear_emul_msg();
-
-	{
-		int nSize = (int) m_GGAuthBuffer.size();
-		for( int i=0; i<nSize; ++i)
-		{
-			P_AUTH_DATA pData = m_GGAuthBuffer.front();
-			SAFE_DELETE( pData );
-			m_GGAuthBuffer.pop();
-		}
-	}
 }
 
 void DxGlobalStage::OnInitLogin ()
@@ -889,8 +879,6 @@ void DxGlobalStage::MsgProcessFrame ( NET_MSG_GENERIC *nmg )
 
 	case NET_MSG_EVENT_LOTTERY_FB:
 
-	case NET_MSG_APEX_ANSWER:
-
 		{
 			m_GameStage.MsgProcess ( nmg );
 		}
@@ -1455,61 +1443,10 @@ void DxGlobalStage::MsgProcessFrame ( NET_MSG_GENERIC *nmg )
 		}
 		break;
 
-	case NET_MSG_GAMEGUARD_AUTH:
-		{
-			const NET_GAMEGUARD_AUTH * pNGA;
-			pNGA = reinterpret_cast<NET_GAMEGUARD_AUTH*>(nmg);
-
-			P_AUTH_DATA pAD = new AUTH_DATA;
-			memmove( &(pAD->gg_Auth_Data), &(pNGA->ggad), sizeof(GG_AUTH_DATA) );
-			pAD->Auth_Msg = NET_MSG_GAMEGUARD_AUTH;
-			m_GGAuthBuffer.push( pAD );
-		}
-		break;
-
-	case NET_MSG_GAMEGUARD_AUTH_1:
-		{
-			const NET_GAMEGUARD_AUTH_1 * pNGA;
-			pNGA = reinterpret_cast<NET_GAMEGUARD_AUTH_1*>(nmg);
-
-			P_AUTH_DATA pAD = new AUTH_DATA;
-			memmove( &(pAD->gg_Auth_Data), &(pNGA->ggad), sizeof(GG_AUTH_DATA) );
-			pAD->Auth_Msg = NET_MSG_GAMEGUARD_AUTH_1;
-			m_GGAuthBuffer.push( pAD );
-		}
-		break;
-
-	case NET_MSG_GAMEGUARD_AUTH_2:
-		{
-			const NET_GAMEGUARD_AUTH_2 * pNGA;
-			pNGA = reinterpret_cast<NET_GAMEGUARD_AUTH_2*>(nmg);
-
-			P_AUTH_DATA pAD = new AUTH_DATA;
-			memmove( &(pAD->gg_Auth_Data), &(pNGA->ggad), sizeof(GG_AUTH_DATA) );
-			pAD->Auth_Msg = NET_MSG_GAMEGUARD_AUTH_2;
-			m_GGAuthBuffer.push( pAD );
-		}
-		break;
-
 	default:
 		CDebugSet::ToListView ( "DxGlobalStage::MsgProcessFrame() not classified message : TYPE[%d]", nmg->nType );
 		break;
 	};
-}
-
-UINT DxGlobalStage::GetGGAuthData( PGG_AUTH_DATA pGG )
-{
-	if( m_GGAuthBuffer.empty() ) return 0;
-
-	P_AUTH_DATA pData = m_GGAuthBuffer.front();
-
-	memmove( pGG, &(pData->gg_Auth_Data), sizeof(GG_AUTH_DATA) );
-	UINT nRet = pData->Auth_Msg;
-
-	SAFE_DELETE( pData );
-	m_GGAuthBuffer.pop();
-
-	return nRet;
 }
 
 HRESULT DxGlobalStage::ChangeWndMode ()

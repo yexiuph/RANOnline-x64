@@ -262,3 +262,5 @@ __pycache__/
 
 # Client
 game-client/
+# vcpkg manifest-mode install tree
+vcpkg_installed/

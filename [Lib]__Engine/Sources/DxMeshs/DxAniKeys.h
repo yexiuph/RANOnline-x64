@@ -92,12 +92,33 @@ struct SMatrixKey
 		_mm_free(p);
 	}
 
+	//	Debug builds allocate through MFC's DEBUG_NEW : new(THIS_FILE, __LINE__).
+	void* operator new(size_t i, LPCSTR, int)
+	{
+		return _mm_malloc(i, 16);
+	}
+
+	void operator delete(void* p, LPCSTR, int)
+	{
+		_mm_free(p);
+	}
+
 	void* operator new[](size_t i)
 	{
 		return _mm_malloc(i, 16);
 	}
 
 	void operator delete[](void* p)
+	{
+		_mm_free(p);
+	}
+
+	void* operator new[](size_t i, LPCSTR, int)
+	{
+		return _mm_malloc(i, 16);
+	}
+
+	void operator delete[](void* p, LPCSTR, int)
 	{
 		_mm_free(p);
 	}

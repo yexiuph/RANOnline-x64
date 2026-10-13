@@ -92,8 +92,6 @@ public :
 	virtual  int WebDatabaseProc()  { return 0; }; // Web Database thread function
 //	virtual  int WebDatabaseProc(); ///< Web Database thread function
 
-			void WriteNprotectLog( DWORD dwClient, DWORD dwResult );
-
 	        void Send			( DWORD nClient,  LPPER_IO_OPERATION_DATA PerIoData, DWORD dwSize );
 	virtual  int SendClient		( DWORD dwClient, LPVOID pBuffer );
 	virtual  int SendAgent		( DWORD dwClient, LPVOID pBuffer );

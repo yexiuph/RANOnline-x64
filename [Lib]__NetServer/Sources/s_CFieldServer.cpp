@@ -223,38 +223,11 @@ int CFieldServer::Start()
 	if (StartDbManager()    == NET_ERROR) return NET_ERROR;
 	if (StartWorkThread()	== NET_ERROR) return NET_ERROR;
 
-	// nProtect GameGuard dll 을 초기화 한다.
-	DWORD dwGGErrCode = ERROR_SUCCESS;
-	dwGGErrCode = InitGameguardAuth ("", 1000, FALSE, 0x03);
-	if (dwGGErrCode != ERROR_SUCCESS)
-	{	
-		m_bGameGuardInit = false;
-		CConsoleMessage::GetInstance()->Write(
-			                                  _T("nProtect GameGuard server DLL load failed"));
-	}
-	else
-	{
-		m_bGameGuardInit = true;		
-		CConsoleMessage::GetInstance()->Write(
-			                                  _T("nProtect GameGuard server DLL load success"));
-		m_bGameGuardAuth = CCfg::GetInstance()->GemeGuardAuth();
-		if (m_bGameGuardAuth == true)
-		{
-			CConsoleMessage::GetInstance()->Write( _T("nProtect GameGuard Auth ON") );
-		}
-		else
-		{
-			CConsoleMessage::GetInstance()->Write(
-		                                          _T("nProtect GameGuard Auth OFF"));
-		}
-	}
-	
 	//	Note : 가이아 서버 생성.
 	m_dwFieldServerID = CCfg::GetInstance()->GetServerField();
 	DWORD dwMaxClient = CCfg::GetInstance()->GetMaxClient();
 	int nChannel = CCfg::GetInstance()->GetServerChannel();
 	bool bPKMODE = CCfg::GetInstance()->IsPKServer() == true;
-	BOOL bUseIntelTbb = CCfg::GetInstance()->IsUseIntelTBB();
 	SERVER_UTIL::CSystemInfo SysInfo;
 
 	hr = DxFieldInstance::Create(SysInfo.GetAppPath(),
@@ -268,7 +241,6 @@ int CFieldServer::Start()
 								 bPKMODE,
 								 nChannel,
 								 m_bPKLess,
-								 bUseIntelTbb, 
 								 m_dwLangSet );
 	if ( FAILED(hr) )
 	{
@@ -365,12 +337,6 @@ int CFieldServer::FinalStop()
 	CConsoleMessage::GetInstance()->Write(LOG_CONSOLE, "== Database Manager closed");
 	// CFG class 종료
 	CCfg::GetInstance()->ReleaseInstance();
-
-	// nProtect GameGuard 종료
-	if (m_bGameGuardInit == true)
-	{
-		CleanupGameguardAuth();		
-	}
 
 	// Put message to console
 	CConsoleMessage::GetInstance()->Write(LOG_CONSOLE, "=======================================================");	

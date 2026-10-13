@@ -62,68 +62,68 @@ SCHARDATA2* COdbcManager::GetCharacter(int nUserNumber, int nChaNum)
 
 	if (pChaData == NULL) return NULL;
 
-	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLINTEGER cbChaName = SQL_NTS;
-	SQLCHAR    szChaGuName[CHAR_SZNAME+1] = {0}; SQLINTEGER cbChaGuName = SQL_NTS;
-	SQLCHAR    szChaPhNum[SMS_RECEIVER] = {0}; SQLINTEGER cbChaPhNum = SQL_NTS;
+	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLLEN cbChaName = SQL_NTS;
+	SQLCHAR    szChaGuName[CHAR_SZNAME+1] = {0}; SQLLEN cbChaGuName = SQL_NTS;
+	SQLCHAR    szChaPhNum[SMS_RECEIVER] = {0}; SQLLEN cbChaPhNum = SQL_NTS;
 
-    SQLINTEGER nUserNum = 0, cbUserNum=SQL_NTS;
-	SQLINTEGER nChaTribe = 0, cbChaTribe=SQL_NTS;
-	SQLINTEGER nChaClass = 0, cbChaClass=SQL_NTS;
-	SQLINTEGER nSGNum = 0, cbSGNum=SQL_NTS;
+    SQLINTEGER nUserNum = 0; SQLLEN cbUserNum=SQL_NTS;
+	SQLINTEGER nChaTribe = 0; SQLLEN cbChaTribe=SQL_NTS;
+	SQLINTEGER nChaClass = 0; SQLLEN cbChaClass=SQL_NTS;
+	SQLINTEGER nSGNum = 0; SQLLEN cbSGNum=SQL_NTS;
 
-    SQLINTEGER nChaLevel = 0, cbChaLevel=SQL_NTS;
-	SQLINTEGER nChaPower = 0, cbChaPower=SQL_NTS; 
-	SQLINTEGER nChaStrong = 0, cbChaStrong=SQL_NTS;   
-	SQLINTEGER nChaStrength = 0, cbChaStrength=SQL_NTS; 
-	SQLINTEGER nChaSpirit = 0, cbChaSpirit=SQL_NTS;
+    SQLINTEGER nChaLevel = 0; SQLLEN cbChaLevel=SQL_NTS;
+	SQLINTEGER nChaPower = 0; SQLLEN cbChaPower=SQL_NTS; 
+	SQLINTEGER nChaStrong = 0; SQLLEN cbChaStrong=SQL_NTS;   
+	SQLINTEGER nChaStrength = 0; SQLLEN cbChaStrength=SQL_NTS; 
+	SQLINTEGER nChaSpirit = 0; SQLLEN cbChaSpirit=SQL_NTS;
 
-	SQLINTEGER nChaDex = 0, cbChaDex=SQL_NTS;
-	SQLINTEGER nChaIntel = 0, cbChaIntel=SQL_NTS;
-	SQLINTEGER nChaStRemain = 0, cbChaStRemain=SQL_NTS; 
-	SQLINTEGER nChaHP = 0, cbChaHP=SQL_NTS;
-	SQLINTEGER nChaMP = 0, cbChaMP=SQL_NTS;
+	SQLINTEGER nChaDex = 0; SQLLEN cbChaDex=SQL_NTS;
+	SQLINTEGER nChaIntel = 0; SQLLEN cbChaIntel=SQL_NTS;
+	SQLINTEGER nChaStRemain = 0; SQLLEN cbChaStRemain=SQL_NTS; 
+	SQLINTEGER nChaHP = 0; SQLLEN cbChaHP=SQL_NTS;
+	SQLINTEGER nChaMP = 0; SQLLEN cbChaMP=SQL_NTS;
 	
-	SQLINTEGER nChaStartMap = 0, cbChaStartMap=SQL_NTS;
-	SQLINTEGER nChaStartGate = 0, cbChaStartGate=SQL_NTS;
-	SQLFLOAT fChaPosX = 0; SQLINTEGER cbChaPosX=SQL_NTS;
-	SQLFLOAT fChaPosY = 0; SQLINTEGER cbChaPosY=SQL_NTS;
-	SQLFLOAT fChaPosZ = 0; SQLINTEGER cbChaPosZ=SQL_NTS;
+	SQLINTEGER nChaStartMap = 0; SQLLEN cbChaStartMap=SQL_NTS;
+	SQLINTEGER nChaStartGate = 0; SQLLEN cbChaStartGate=SQL_NTS;
+	SQLFLOAT fChaPosX = 0; SQLLEN cbChaPosX=SQL_NTS;
+	SQLFLOAT fChaPosY = 0; SQLLEN cbChaPosY=SQL_NTS;
+	SQLFLOAT fChaPosZ = 0; SQLLEN cbChaPosZ=SQL_NTS;
 
-	SQLINTEGER nGuNum = 0, cbGuNum=SQL_NTS;
-	SQLINTEGER nChaBright = 0, cbChaBright=SQL_NTS;
-	SQLINTEGER nChaAttackP = 0, cbChaAttackP=SQL_NTS;
-	SQLINTEGER nChaDefenseP = 0, cbChaDefenseP=SQL_NTS;
-	SQLINTEGER nChaFightA = 0, cbChaFightA=SQL_NTS;
+	SQLINTEGER nGuNum = 0; SQLLEN cbGuNum=SQL_NTS;
+	SQLINTEGER nChaBright = 0; SQLLEN cbChaBright=SQL_NTS;
+	SQLINTEGER nChaAttackP = 0; SQLLEN cbChaAttackP=SQL_NTS;
+	SQLINTEGER nChaDefenseP = 0; SQLLEN cbChaDefenseP=SQL_NTS;
+	SQLINTEGER nChaFightA = 0; SQLLEN cbChaFightA=SQL_NTS;
 
-	SQLINTEGER nChaShootA = 0, cbChaShootA=SQL_NTS;
-	SQLINTEGER nChaSP = 0, cbChaSP=SQL_NTS;
-	SQLINTEGER nChaPK = 0, cbChaPK=SQL_NTS;
-	SQLINTEGER nChaSkillPoint = 0, cbChaSkillPoint=SQL_NTS;
+	SQLINTEGER nChaShootA = 0; SQLLEN cbChaShootA=SQL_NTS;
+	SQLINTEGER nChaSP = 0; SQLLEN cbChaSP=SQL_NTS;
+	SQLINTEGER nChaPK = 0; SQLLEN cbChaPK=SQL_NTS;
+	SQLINTEGER nChaSkillPoint = 0; SQLLEN cbChaSkillPoint=SQL_NTS;
 
-	SQLINTEGER nChaSaveMap = 0, cbChaSaveMap=SQL_NTS;
-	SQLFLOAT fChaSavePosX = 0; SQLINTEGER cbChaSavePosX=SQL_NTS;
-	SQLFLOAT fChaSavePosY = 0; SQLINTEGER cbChaSavePosY=SQL_NTS;
-	SQLFLOAT fChaSavePosZ = 0; SQLINTEGER cbChaSavePosZ=SQL_NTS;
+	SQLINTEGER nChaSaveMap = 0; SQLLEN cbChaSaveMap=SQL_NTS;
+	SQLFLOAT fChaSavePosX = 0; SQLLEN cbChaSavePosX=SQL_NTS;
+	SQLFLOAT fChaSavePosY = 0; SQLLEN cbChaSavePosY=SQL_NTS;
+	SQLFLOAT fChaSavePosZ = 0; SQLLEN cbChaSavePosZ=SQL_NTS;
 
-	SQLINTEGER nChaSchool = 0, cbChaSchool = SQL_NTS;
-	SQLINTEGER nChaHair = 0, cbChaHair = SQL_NTS;
-	SQLINTEGER nChaFace = 0, cbChaFace = SQL_NTS;
-	SQLINTEGER nChaLiving = 0, cbChaLiving = SQL_NTS;
+	SQLINTEGER nChaSchool = 0; SQLLEN cbChaSchool = SQL_NTS;
+	SQLINTEGER nChaHair = 0; SQLLEN cbChaHair = SQL_NTS;
+	SQLINTEGER nChaFace = 0; SQLLEN cbChaFace = SQL_NTS;
+	SQLINTEGER nChaLiving = 0; SQLLEN cbChaLiving = SQL_NTS;
     
 	LONGLONG   llChaExp = 0, llChaMoney = 0;
-	SQLINTEGER cbChaExp=SQL_NTS, cbChaMoney=SQL_NTS; 
+	SQLLEN cbChaExp=SQL_NTS, cbChaMoney=SQL_NTS; 
 
-    SQLINTEGER nChaReturnMap  = 0; SQLINTEGER cbChaReturnMap  = SQL_NTS;
-	SQLFLOAT   fChaReturnPosX = 0; SQLINTEGER cbChaReturnPosX = SQL_NTS;
-	SQLFLOAT   fChaReturnPosY = 0; SQLINTEGER cbChaReturnPosY = SQL_NTS;
-	SQLFLOAT   fChaReturnPosZ = 0; SQLINTEGER cbChaReturnPosZ = SQL_NTS;
+    SQLINTEGER nChaReturnMap  = 0; SQLLEN cbChaReturnMap  = SQL_NTS;
+	SQLFLOAT   fChaReturnPosX = 0; SQLLEN cbChaReturnPosX = SQL_NTS;
+	SQLFLOAT   fChaReturnPosY = 0; SQLLEN cbChaReturnPosY = SQL_NTS;
+	SQLFLOAT   fChaReturnPosZ = 0; SQLLEN cbChaReturnPosZ = SQL_NTS;
 
-    SQLINTEGER nChaInvenLine = 0; SQLINTEGER cbChaInvenLine = SQL_NTS;
-    TIMESTAMP_STRUCT sChaGuSecede; SQLINTEGER cbChaGuSecede = SQL_NTS;
+    SQLINTEGER nChaInvenLine = 0; SQLLEN cbChaInvenLine = SQL_NTS;
+    TIMESTAMP_STRUCT sChaGuSecede; SQLLEN cbChaGuSecede = SQL_NTS;
 
 	// 2005-12-29 Jgkim:Add ChaSex, ChaHairColor 
-	SQLSMALLINT nChaSex = 0; SQLINTEGER cbChaSex = SQL_NTS;
-	SQLINTEGER nChaHairColor =0, cbChaHairColor = SQL_NTS;
+	SQLSMALLINT nChaSex = 0; SQLLEN cbChaSex = SQL_NTS;
+	SQLINTEGER nChaHairColor =0; SQLLEN cbChaHairColor = SQL_NTS;
 
 	while (true)
 	{
@@ -380,75 +380,75 @@ int COdbcManager::GetCharacterInfo(int nUserNumber,
         return DB_ERROR;
 	}
 
-	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLINTEGER cbChaName = SQL_NTS; // 캐릭터명
-	SQLCHAR    szChaGuName[CHAR_SZNAME+1] = {0}; SQLINTEGER cbChaGuName = SQL_NTS;// 클럽에서의 닉네임
+	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLLEN cbChaName = SQL_NTS; // 캐릭터명
+	SQLCHAR    szChaGuName[CHAR_SZNAME+1] = {0}; SQLLEN cbChaGuName = SQL_NTS;// 클럽에서의 닉네임
 	
-    SQLINTEGER nUserNum = 0, cbUserNum=SQL_NTS;
-	SQLINTEGER nChaTribe = 0, cbChaTribe=SQL_NTS;
-	SQLINTEGER nChaClass = 0, cbChaClass=SQL_NTS;
-	SQLINTEGER nSGNum = 0, cbSGNum=SQL_NTS;
+    SQLINTEGER nUserNum = 0; SQLLEN cbUserNum=SQL_NTS;
+	SQLINTEGER nChaTribe = 0; SQLLEN cbChaTribe=SQL_NTS;
+	SQLINTEGER nChaClass = 0; SQLLEN cbChaClass=SQL_NTS;
+	SQLINTEGER nSGNum = 0; SQLLEN cbSGNum=SQL_NTS;
 
-    SQLINTEGER nChaLevel = 0, cbChaLevel=SQL_NTS;
-	SQLINTEGER nChaPower = 0, cbChaPower=SQL_NTS; 
-	SQLINTEGER nChaStrong = 0, cbChaStrong=SQL_NTS;   
-	SQLINTEGER nChaStrength = 0, cbChaStrength=SQL_NTS; 
-	SQLINTEGER nChaSpirit = 0, cbChaSpirit=SQL_NTS;
+    SQLINTEGER nChaLevel = 0; SQLLEN cbChaLevel=SQL_NTS;
+	SQLINTEGER nChaPower = 0; SQLLEN cbChaPower=SQL_NTS; 
+	SQLINTEGER nChaStrong = 0; SQLLEN cbChaStrong=SQL_NTS;   
+	SQLINTEGER nChaStrength = 0; SQLLEN cbChaStrength=SQL_NTS; 
+	SQLINTEGER nChaSpirit = 0; SQLLEN cbChaSpirit=SQL_NTS;
 
-	SQLINTEGER nChaDex = 0, cbChaDex=SQL_NTS;
-	SQLINTEGER nChaIntel = 0, cbChaIntel=SQL_NTS;
-	SQLINTEGER nChaStRemain = 0, cbChaStRemain=SQL_NTS; 
-	SQLINTEGER nChaHP = 0, cbChaHP=SQL_NTS;
-	SQLINTEGER nChaMP = 0, cbChaMP=SQL_NTS;
+	SQLINTEGER nChaDex = 0; SQLLEN cbChaDex=SQL_NTS;
+	SQLINTEGER nChaIntel = 0; SQLLEN cbChaIntel=SQL_NTS;
+	SQLINTEGER nChaStRemain = 0; SQLLEN cbChaStRemain=SQL_NTS; 
+	SQLINTEGER nChaHP = 0; SQLLEN cbChaHP=SQL_NTS;
+	SQLINTEGER nChaMP = 0; SQLLEN cbChaMP=SQL_NTS;
 	
-	SQLINTEGER nChaStartMap = 0, cbChaStartMap=SQL_NTS;
-	SQLINTEGER nChaStartGate = 0, cbChaStartGate=SQL_NTS;
-	SQLFLOAT fChaPosX = 0; SQLINTEGER cbChaPosX=SQL_NTS;
-	SQLFLOAT fChaPosY = 0; SQLINTEGER cbChaPosY=SQL_NTS;
-	SQLFLOAT fChaPosZ = 0; SQLINTEGER cbChaPosZ=SQL_NTS;
+	SQLINTEGER nChaStartMap = 0; SQLLEN cbChaStartMap=SQL_NTS;
+	SQLINTEGER nChaStartGate = 0; SQLLEN cbChaStartGate=SQL_NTS;
+	SQLFLOAT fChaPosX = 0; SQLLEN cbChaPosX=SQL_NTS;
+	SQLFLOAT fChaPosY = 0; SQLLEN cbChaPosY=SQL_NTS;
+	SQLFLOAT fChaPosZ = 0; SQLLEN cbChaPosZ=SQL_NTS;
 
 	// SQLINTEGER nGuNum, cbGuNum=SQL_NTS;
-	SQLINTEGER nChaBright = 0, cbChaBright=SQL_NTS;
-	SQLINTEGER nChaAttackP = 0, cbChaAttackP=SQL_NTS;
-	SQLINTEGER nChaDefenseP = 0, cbChaDefenseP=SQL_NTS;
-	SQLINTEGER nChaFightA = 0, cbChaFightA=SQL_NTS;
+	SQLINTEGER nChaBright = 0; SQLLEN cbChaBright=SQL_NTS;
+	SQLINTEGER nChaAttackP = 0; SQLLEN cbChaAttackP=SQL_NTS;
+	SQLINTEGER nChaDefenseP = 0; SQLLEN cbChaDefenseP=SQL_NTS;
+	SQLINTEGER nChaFightA = 0; SQLLEN cbChaFightA=SQL_NTS;
 
-	SQLINTEGER nChaShootA = 0, cbChaShootA=SQL_NTS;
-	SQLINTEGER nChaSP = 0, cbChaSP=SQL_NTS;
-	SQLINTEGER nChaPK = 0, cbChaPK=SQL_NTS;
-	SQLINTEGER nChaSkillPoint = 0, cbChaSkillPoint=SQL_NTS;
-	SQLINTEGER nChaSaveMap = 0, cbChaSaveMap=SQL_NTS;
+	SQLINTEGER nChaShootA = 0; SQLLEN cbChaShootA=SQL_NTS;
+	SQLINTEGER nChaSP = 0; SQLLEN cbChaSP=SQL_NTS;
+	SQLINTEGER nChaPK = 0; SQLLEN cbChaPK=SQL_NTS;
+	SQLINTEGER nChaSkillPoint = 0; SQLLEN cbChaSkillPoint=SQL_NTS;
+	SQLINTEGER nChaSaveMap = 0; SQLLEN cbChaSaveMap=SQL_NTS;
 
-	SQLFLOAT fChaSavePosX = 0; SQLINTEGER cbChaSavePosX=SQL_NTS;
-	SQLFLOAT fChaSavePosY = 0; SQLINTEGER cbChaSavePosY=SQL_NTS;
-	SQLFLOAT fChaSavePosZ = 0; SQLINTEGER cbChaSavePosZ=SQL_NTS;
+	SQLFLOAT fChaSavePosX = 0; SQLLEN cbChaSavePosX=SQL_NTS;
+	SQLFLOAT fChaSavePosY = 0; SQLLEN cbChaSavePosY=SQL_NTS;
+	SQLFLOAT fChaSavePosZ = 0; SQLLEN cbChaSavePosZ=SQL_NTS;
 
-	SQLINTEGER nChaSchool = 0, cbChaSchool = SQL_NTS;
-	SQLINTEGER nChaHair = 0, cbChaHair = SQL_NTS;
-	SQLINTEGER nChaFace = 0, cbChaFace = SQL_NTS;
-	SQLINTEGER nChaLiving = 0, cbChaLiving = SQL_NTS;
+	SQLINTEGER nChaSchool = 0; SQLLEN cbChaSchool = SQL_NTS;
+	SQLINTEGER nChaHair = 0; SQLLEN cbChaHair = SQL_NTS;
+	SQLINTEGER nChaFace = 0; SQLLEN cbChaFace = SQL_NTS;
+	SQLINTEGER nChaLiving = 0; SQLLEN cbChaLiving = SQL_NTS;
 	
 	// 2005-12-29 Jgkim:Add ChaSex, ChaHairColor 
-	SQLSMALLINT nChaSex = 0; SQLINTEGER cbChaSex = SQL_NTS;
-	SQLINTEGER nChaHairColor =0, cbChaHairColor = SQL_NTS;
+	SQLSMALLINT nChaSex = 0; SQLLEN cbChaSex = SQL_NTS;
+	SQLINTEGER nChaHairColor =0; SQLLEN cbChaHairColor = SQL_NTS;
     
 	LONGLONG   llChaExp = 0, llChaMoney = 0;
-	SQLINTEGER cbChaExp=SQL_NTS, cbChaMoney=SQL_NTS; 
+	SQLLEN cbChaExp=SQL_NTS, cbChaMoney=SQL_NTS; 
     
-    SQLINTEGER nChaInvenLine = 0; SQLINTEGER cbChaInvenLine = SQL_NTS;
-    SQLINTEGER nGuNum = 0; SQLINTEGER cbGuNum = SQL_NTS;
+    SQLINTEGER nChaInvenLine = 0; SQLLEN cbChaInvenLine = SQL_NTS;
+    SQLINTEGER nGuNum = 0; SQLLEN cbGuNum = SQL_NTS;
 
-    SQLINTEGER nChaReturnMap  = 0; SQLINTEGER cbChaReturnMap  = SQL_NTS;
-	SQLFLOAT   fChaReturnPosX = 0; SQLINTEGER cbChaReturnPosX = SQL_NTS;
-	SQLFLOAT   fChaReturnPosY = 0; SQLINTEGER cbChaReturnPosY = SQL_NTS;
-	SQLFLOAT   fChaReturnPosZ = 0; SQLINTEGER cbChaReturnPosZ = SQL_NTS;
+    SQLINTEGER nChaReturnMap  = 0; SQLLEN cbChaReturnMap  = SQL_NTS;
+	SQLFLOAT   fChaReturnPosX = 0; SQLLEN cbChaReturnPosX = SQL_NTS;
+	SQLFLOAT   fChaReturnPosY = 0; SQLLEN cbChaReturnPosY = SQL_NTS;
+	SQLFLOAT   fChaReturnPosZ = 0; SQLLEN cbChaReturnPosZ = SQL_NTS;
 
 	// Add to ChaReExp
 	LONGLONG   llChaReExp = 0;
-	SQLINTEGER cbChaReExp=SQL_NTS;
+	SQLLEN cbChaReExp=SQL_NTS;
 
 	// Add to ChaSpMID, ChaSpSID
-	SQLINTEGER nChaSpMID = 0, cbChaSpMID=SQL_NTS;
-	SQLINTEGER nChaSpSID = 0, cbChaSpSID=SQL_NTS;
+	SQLINTEGER nChaSpMID = 0; SQLLEN cbChaSpMID=SQL_NTS;
+	SQLINTEGER nChaSpSID = 0; SQLLEN cbChaSpSID=SQL_NTS;
 
 
 
@@ -746,30 +746,30 @@ int	COdbcManager::GetChaBInfo(int nUserNum,
 		return DB_ERROR;
 	}
 
-	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLINTEGER cbChaName = SQL_NTS;
-	SQLINTEGER nChaClass = 0, cbChaClass=SQL_NTS;
-	SQLINTEGER nChaSchool = 0, cbChaSchool=SQL_NTS;
-	SQLINTEGER nChaDex = 0, cbChaDex=SQL_NTS;
-	SQLINTEGER nChaIntel = 0, cbChaIntel=SQL_NTS;
-	SQLINTEGER nChaPower = 0, cbChaPower=SQL_NTS; 
+	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLLEN cbChaName = SQL_NTS;
+	SQLINTEGER nChaClass = 0; SQLLEN cbChaClass=SQL_NTS;
+	SQLINTEGER nChaSchool = 0; SQLLEN cbChaSchool=SQL_NTS;
+	SQLINTEGER nChaDex = 0; SQLLEN cbChaDex=SQL_NTS;
+	SQLINTEGER nChaIntel = 0; SQLLEN cbChaIntel=SQL_NTS;
+	SQLINTEGER nChaPower = 0; SQLLEN cbChaPower=SQL_NTS; 
 	
-	SQLINTEGER nChaStrong = 0, cbChaStrong=SQL_NTS;   
-	SQLINTEGER nChaSpirit = 0, cbChaSpirit=SQL_NTS;
-	SQLINTEGER nChaStrength = 0, cbChaStrength=SQL_NTS; 
-	SQLINTEGER nChaLevel = 0, cbChaLevel=SQL_NTS;
-	SQLINTEGER nChaHair = 0, cbChaHair = SQL_NTS;
+	SQLINTEGER nChaStrong = 0; SQLLEN cbChaStrong=SQL_NTS;   
+	SQLINTEGER nChaSpirit = 0; SQLLEN cbChaSpirit=SQL_NTS;
+	SQLINTEGER nChaStrength = 0; SQLLEN cbChaStrength=SQL_NTS; 
+	SQLINTEGER nChaLevel = 0; SQLLEN cbChaLevel=SQL_NTS;
+	SQLINTEGER nChaHair = 0; SQLLEN cbChaHair = SQL_NTS;
 	
-	SQLINTEGER nChaFace = 0, cbChaFace = SQL_NTS;	
-	SQLINTEGER nChaBright = 0, cbChaBright=SQL_NTS;
+	SQLINTEGER nChaFace = 0; SQLLEN cbChaFace = SQL_NTS;	
+	SQLINTEGER nChaBright = 0; SQLLEN cbChaBright=SQL_NTS;
 	
 	// 2005-12-29 Jgkim:Add ChaSex, ChaHairColor 
-	SQLSMALLINT nChaSex = 0; SQLINTEGER cbChaSex = SQL_NTS;
-	SQLINTEGER nChaHairColor =0, cbChaHairColor = SQL_NTS;
+	SQLSMALLINT nChaSex = 0; SQLLEN cbChaSex = SQL_NTS;
+	SQLINTEGER nChaHairColor =0; SQLLEN cbChaHairColor = SQL_NTS;
 
-	SQLINTEGER nChaSaveMap = 0, cbChaSaveMap=SQL_NTS;
-	SQLINTEGER nChaHP = 0, cbChaHP=SQL_NTS;
+	SQLINTEGER nChaSaveMap = 0; SQLLEN cbChaSaveMap=SQL_NTS;
+	SQLINTEGER nChaHP = 0; SQLLEN cbChaHP=SQL_NTS;
 
-	LONGLONG   llChaExp = 0; SQLINTEGER cbChaExp=SQL_NTS;
+	LONGLONG   llChaExp = 0; SQLLEN cbChaExp=SQL_NTS;
 
 	while (true)
 	{
@@ -905,7 +905,7 @@ int COdbcManager::GetChaPhoneNumber(
         return DB_ERROR;
 	}
 
-	SQLCHAR szChaPhNum[SMS_RECEIVER] = {0}; SQLINTEGER cbChaPhNum = SQL_NTS;
+	SQLCHAR szChaPhNum[SMS_RECEIVER] = {0}; SQLLEN cbChaPhNum = SQL_NTS;
 
 	while (true)
 	{
@@ -967,8 +967,8 @@ int COdbcManager::GetVTCharInfo( int nChaNum,
 	}
 
 	LONGLONG   llChaSaveExp = 0, llChaSaveMoney = 0;	
-	SQLINTEGER cbChaSaveExp = SQL_NTS, cbChaSaveMoney = SQL_NTS; 
-	SQLINTEGER nChaitemCount = 0, cbChaitemCount = SQL_NTS;
+	SQLLEN cbChaSaveExp = SQL_NTS, cbChaSaveMoney = SQL_NTS; 
+	SQLINTEGER nChaitemCount = 0; SQLLEN cbChaitemCount = SQL_NTS;
 
 	while (true)
 	{
@@ -1029,8 +1029,8 @@ int COdbcManager::GetLastCharInfo(
 		//	SQLINTEGER cbChaSaveMoney = SQL_NTS; 
 	
 		// 캐릭터 로그아웃 할때의 ChaMoney
-		SQLCHAR    szTempMoney[CHAR_TEMPMONEY] = {0}; SQLINTEGER cbTempMoney = SQL_NTS;
-		SQLINTEGER nChaLevel = 0, cbChaLevel = SQL_NTS;
+		SQLCHAR    szTempMoney[CHAR_TEMPMONEY] = {0}; SQLLEN cbTempMoney = SQL_NTS;
+		SQLINTEGER nChaLevel = 0; SQLLEN cbChaLevel = SQL_NTS;
 	
 		while (true)
 		{
@@ -1100,7 +1100,7 @@ int COdbcManager::GetLastCharInfo(
 		//	LONGLONG   llUserSaveMoney = 0;
 		//	SQLINTEGER cbUserSaveMoney = SQL_NTS;	
 		SQLCHAR    szTempStorageMoney[CHAR_TEMPMONEY] = {0}; 
-		SQLINTEGER cbTempStorageMoney = SQL_NTS;
+		SQLLEN cbTempStorageMoney = SQL_NTS;
 
 		while (true)
 		{

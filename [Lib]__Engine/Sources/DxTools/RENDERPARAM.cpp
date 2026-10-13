@@ -14,6 +14,8 @@
 
 #include "RENDERPARAM.h"
 
+#include <intrin.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -46,15 +48,9 @@ namespace RENDERPARAM
 	// MMX 제공하는지 체크
 	bool isMMXSupported() 
 	{ 
-		int fSupported; 
-
-		__asm 
-		{ 
-		mov eax,1 // CPUID level 1 
-		cpuid  // EDX = feature flag 
-		and edx,0x800000 // test bit 23 of feature flag 
-		mov fSupported,edx // != 0 if MMX is supported 
-		} 
+		int nInfo[4];
+		__cpuid ( nInfo, 1 );
+		int fSupported = nInfo[3] & 0x800000;	// EDX bit 23
 
 		if(fSupported != 0)
 		{
@@ -69,31 +65,17 @@ namespace RENDERPARAM
 	// SSE 제공하는지 체크
 	bool isISSESupported() 
 	{ 
-		int processor; 
-		int features; 
-		int ext_features = 0; 
+		int nInfo[4];
+		__cpuid ( nInfo, 1 );
+		int features = nInfo[3];
 
-		__asm 
-		{ 
-			pusha 
-			mov eax,1 
-			cpuid 
-			mov processor,eax     // Store processor family/model/step 
-			mov features,edx      // Store features bits 
-
-			mov eax,080000000h 
-			cpuid 
-			// Check which extended functions can be called 
-			cmp eax,080000001h      // Extended Feature Bits 
-			jb  no_features         // jump if not supported 
-
-			mov eax,080000001h      // Select function 0x80000001 
-			cpuid 
-			mov ext_features,edx  // Store extended features bits 
-
-		no_features: 
-			popa 
-		} 
+		int ext_features = 0;
+		__cpuid ( nInfo, 0x80000000 );
+		if ( (unsigned int)nInfo[0] >= 0x80000001 )
+		{
+			__cpuid ( nInfo, 0x80000001 );
+			ext_features = nInfo[3];
+		}
 
 		if (((features >> 25) & 1) != 0) 
 		{

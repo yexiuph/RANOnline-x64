@@ -97,41 +97,6 @@ void CInnerInterface::MsgProcess ( LPVOID msgBuffer )
 		}
 		break;
 	
-	case NET_MSG_APEX_ANSWER: 
-		{
-			NET_APEX_ANSWER* pNetMsg = (NET_APEX_ANSWER*) nmg;
-			switch( pNetMsg->wAction )
-			{
-			case 1: // 핵을 사용하는것을 발견했을때 유저한테 경고를 주는 메세지
-				{
-					CString strTemp( ID2GAMEINTEXT( "APEX_ACTION_MESSAGE_WARNING" ) );
-					PrintConsoleText( strTemp.GetString() );
-					DoModal( strTemp, MODAL_INFOMATION, OK, NO_ID );
-				}
-				break;
-			case 2: // 대화 금지
-				{
-					CString strTemp;
-					strTemp.Format( ID2GAMEINTEXT( "APEX_ACTION_MESSAGE_CHATBLOCK" ), (pNetMsg->wHour*60) );
-					PrintConsoleText( strTemp.GetString() );
-					DoModal( strTemp, MODAL_INFOMATION, OK, NO_ID );
-				}
-				break;
-			case 3: // 유저 킥
-			case 4: // 유저 블록
-				{
-					CString strTemp( ID2GAMEINTEXT( "APEX_ACTION_MESSAGE_KICK" ) );
-					PrintConsoleText( strTemp.GetString() );
-					WAITSERVER_DIALOGUE_OPEN( strTemp, WAITSERVER_CLOSEGAME, 30.0f );
-				}
-				break;
-			default:
-				GASSERT( 0 && "ERROR : DxGameStage::MsgProcess, NET_MSG_APEX_ANSER" );
-				break;
-			}
-		}
-		break;
-	
 	case NET_MSG_CHAT_CTRL_FB:			// 관리자용 채팅메시지
 		{
 			NET_CHAT_CTRL_FB* pNc = (NET_CHAT_CTRL_FB*) nmg;

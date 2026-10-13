@@ -133,11 +133,11 @@ int COdbcManager::GetVehicle(
 		return DB_ERROR;
 	}
 
-	SQLINTEGER nOwnerNum = 0, cbOwnerNum = SQL_NTS;	
-	SQLINTEGER nVehicleCardMID = 0, cbVehicleCardMID = SQL_NTS;
-	SQLINTEGER nVehicleCardSID = 0, cbVehicleCardSID = SQL_NTS;
-	SQLINTEGER nType = 0, cbType = SQL_NTS;
-	SQLINTEGER nFull = 0, cbFull = SQL_NTS;
+	SQLINTEGER nOwnerNum = 0; SQLLEN cbOwnerNum = SQL_NTS;	
+	SQLINTEGER nVehicleCardMID = 0; SQLLEN cbVehicleCardMID = SQL_NTS;
+	SQLINTEGER nVehicleCardSID = 0; SQLLEN cbVehicleCardSID = SQL_NTS;
+	SQLINTEGER nType = 0; SQLLEN cbType = SQL_NTS;
+	SQLINTEGER nFull = 0; SQLLEN cbFull = SQL_NTS;
 
 	while (true)
 	{

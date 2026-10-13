@@ -1,8 +1,5 @@
 #include "pch.h"
 //#include "./DbExecuter.h"
-#include "tbb/task_scheduler_init.h"
-#include "tbb/blocked_range.h"
-#include "tbb/parallel_for.h"
 #include "s_CFieldServer.h"
 
 #ifdef _DEBUG
@@ -339,16 +336,7 @@ int CFieldServer::Update()
 int CFieldServer::UpdateProc()
 {
 	int returnValue = 0;
-	BOOL bUseIntelTBB = GLGaeaServer::GetInstance().GetUseIntelTBB();
-	if( bUseIntelTBB )
-	{
-		// 자동으로 cpu 갯수 얻어오는 부분
-		int threads = tbb::task_scheduler_init::automatic;
-		tbb::task_scheduler_init Init(threads);
-		returnValue = Update();
-	}else{
-		returnValue = Update();
-	}
+	returnValue = Update();
 
 
 	return returnValue;
@@ -375,11 +363,13 @@ int CFieldServer::WorkProc()
 		while (m_bIsRunning)
 		{
 			// Wait for I/O to complete on any socket
+			ULONG_PTR dwCompletionKey = 0;
 			nRetCode = GetQueuedCompletionStatus(m_hIOServer,
 												 &dwByteTrans,
-												 (LPDWORD) &dwClient,
+												 &dwCompletionKey,
 												 (LPOVERLAPPED *) &pPerIoData,
 												 INFINITE);
+			dwClient = (DWORD) dwCompletionKey;
 			
 			// 서버를 종료하기 위해서 종료처리 루틴을 호출했을때...
 			if (dwClient == m_dwCompKey && pPerIoData == NULL && dwByteTrans == 0)

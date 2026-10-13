@@ -459,14 +459,6 @@ void CAgentServer::ChinaMsgLoginBack( NET_LOGIN_FEEDBACK_DATA2* nlfd2 )
 
 			SendClient( dwClient, &nlfd ); // 결과전송
 
-			// Apex 적용
-			APEX_SERVER::NoticeApexProxy_UserLogin( dwClient, nlfd2->szUserid );
-
-//			char* szIp = m_pClientManager->GetClientIP( dwClient );
-//			int nIp  = inet_addr(szIp);
-			
-//			APEX_SERVER::NoticeApexProxy_UserIP( dwClient, nIp );
-			
 			return;
 		}
 		// 로그인성공이지만 이미 오프라인일때...

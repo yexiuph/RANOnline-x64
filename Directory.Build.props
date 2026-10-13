@@ -1,0 +1,20 @@
+<Project>
+  <!--
+    vcpkg (manifest mode, see vcpkg.json) supplies Assimp for every platform and the x64 builds of
+    the third-party libraries that Dependency\ only ships as x86 binaries (lzo, ogg, vorbis).
+
+    vcpkg is looked up in VCPKG_ROOT first, then in the copy bundled with Visual Studio.
+    Libraries are never auto-linked: each project or source file names the libraries it needs,
+    so vcpkg's zlib/minizip can't collide with [Lib]__ZLib. Projects that need nothing from vcpkg
+    set <VcpkgEnabled>false</VcpkgEnabled> in their Globals property group.
+  -->
+  <PropertyGroup>
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and '$(VCPKG_ROOT)' != ''">$(VCPKG_ROOT)</VcpkgRoot>
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and Exists('$(VsInstallRoot)\VC\vcpkg\vcpkg.exe')">$(VsInstallRoot)\VC\vcpkg</VcpkgRoot>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgAutoLink>false</VcpkgAutoLink>
+    <!-- Copy runtime DLLs with vcpkg itself: applocal.ps1 treats the [Lib]/[Tool] folder names as wildcards. -->
+    <VcpkgXUseBuiltInApplocalDeps>true</VcpkgXUseBuiltInApplocalDeps>
+  </PropertyGroup>
+  <Import Project="$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.props" Condition="'$(VcpkgRoot)' != '' and Exists('$(VcpkgRoot)\scripts\buildsystems\msbuild\vcpkg.props')" />
+</Project>

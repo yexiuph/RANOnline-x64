@@ -2237,7 +2237,7 @@ BOOL GLCHARLOGIC::SIMPLE_CHECK_ITEM ( SNATIVEID sNativeID, SNATIVEID sDisguiseID
 	if ( pItem==NULL )											return FALSE;
 
 	SITEM* pItemDisguise = GLItemMan::GetInstance().GetItem ( sDisguiseID );
-	if ( pItem==NULL )											return FALSE;
+	if ( pItemDisguise==NULL )									return FALSE;
 
 	const SITEM &sItem = *pItem;
 	const SITEM &sItemDisguise = *pItemDisguise;
@@ -2265,7 +2265,7 @@ BOOL GLCHARLOGIC::ACCEPT_ITEM ( SNATIVEID sNativeID, SNATIVEID sDisguiseID )
 	if ( pItem==NULL )											return FALSE;
 
 	SITEM* pItemDisguise = GLItemMan::GetInstance().GetItem ( sDisguiseID );
-	if ( pItem==NULL )											return FALSE;
+	if ( pItemDisguise==NULL )									return FALSE;
 
 	const SITEM &sItem = *pItem;
 	const SITEM &sItemDisguise = *pItemDisguise;

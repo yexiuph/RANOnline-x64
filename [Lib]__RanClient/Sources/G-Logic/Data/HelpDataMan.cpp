@@ -25,20 +25,20 @@ const INT LEVEL = 3;
 BOOL SHELPNODE::SaveFile ( CSerialFile& SFile )
 {
 	{
-		HELPNODE_SIZE nSize = strTitle.size () + 1;
+		HELPNODE_SIZE nSize = (HELPNODE_SIZE) ( strTitle.size () + 1 );
 		SFile.WriteBuffer ( &nSize, sizeof ( HELPNODE_SIZE ) );
 		SFile.WriteBuffer ( strTitle.c_str (), (DWORD) (sizeof ( char ) * nSize) );
 	}
 
 	{
-		HELPNODE_SIZE nSize = strContents.size () + 1;
+		HELPNODE_SIZE nSize = (HELPNODE_SIZE) ( strContents.size () + 1 );
 		SFile.WriteBuffer ( &nSize, sizeof ( HELPNODE_SIZE ) );
 		SFile.WriteBuffer ( strContents.c_str (), (DWORD) (sizeof ( char ) * nSize) );
 	}
 	
 	{
 		BOOL bResult = FALSE;
-		HELPNODE_SIZE nSize = listSubNode.size ();
+		HELPNODE_SIZE nSize = (HELPNODE_SIZE) listSubNode.size ();
 		SFile.WriteBuffer ( &nSize, (DWORD)sizeof ( HELPNODE_SIZE ) );
 
 		HELPNODE_LIST_ITER iter = listSubNode.begin ();
@@ -398,7 +398,7 @@ BOOL	CHelpDataMan::SaveFile ( CString strFileName )
 	{
 		SFile.WriteBuffer ( &SHELPNODE::VER, (DWORD)sizeof ( WORD ) );
 
-		HELPNODE_SIZE nSize = m_listHelp.size ();
+		HELPNODE_SIZE nSize = (HELPNODE_SIZE) m_listHelp.size ();
 		SFile.WriteBuffer ( &nSize, (DWORD)sizeof ( HELPNODE_SIZE ) );
 
 		HELPNODE_LIST_ITER iter = m_listHelp.begin ();

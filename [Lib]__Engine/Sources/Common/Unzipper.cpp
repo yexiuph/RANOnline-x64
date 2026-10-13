@@ -6,11 +6,18 @@
 #include "./Unzipper.h"
 #include "../[Lib]__ZLib/Sources/iowin32.h"
 
-#ifdef _DEBUG
+#if defined(_WIN64) && defined(_DEBUG)
+#pragma comment(lib, "../[Lib]__ZLib/Bin/x64/ZLibD.lib")
+#elif defined(_WIN64)
+#pragma comment(lib, "../[Lib]__ZLib/Bin/x64/ZLib.lib")
+#elif defined(_DEBUG)
 #pragma comment(lib, "../[Lib]__ZLib/Bin/ZLibD.lib")
-#define new DEBUG_NEW
 #else
 #pragma comment(lib, "../[Lib]__ZLib/Bin/ZLib.lib")
+#endif
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
 #endif
 
 //////////////////////////////////////////////////////////////////////

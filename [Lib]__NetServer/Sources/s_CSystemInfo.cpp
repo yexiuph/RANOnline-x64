@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "s_CSystemInfo.h"
 
+#include <intrin.h>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -205,14 +207,8 @@ DWORD CSystemInfo::GetCpuSpeed(void)
 // Stolen from AMD
 DWORD CSystemInfo::DetermineTimeStamp(void)
 {
-	DWORD dwTickVal;
-	__asm
-	{
-		_emit 0Fh
-		_emit 31h
-		mov   dwTickVal, eax
-	}
-	return (dwTickVal);
+	// Low 32 bits of the time-stamp counter (RDTSC).
+	return (DWORD)__rdtsc();
 }
 
 DWORD CSystemInfo::CalculateCpuSpeed()

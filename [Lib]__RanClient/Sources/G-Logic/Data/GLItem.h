@@ -2632,12 +2632,22 @@ struct SINVENITEM
 		: wBackX(0)
 		, wBackY(0)
 	{
+		//	The union members (wPosX, wPosY, sItemCustom) are never constructed automatically, so
+		//	start from an empty item : no costume is SNATIVEID(false), not the real item 0,0.
+		wPosX = 0;
+		wPosY = 0;
+		sItemCustom = SITEMCUSTOM();
 	}
 
 	SINVENITEM ( WORD _wPosX, WORD _wPosY ) 
 		: wBackX( _wPosX )
 		, wBackY( _wPosY )
 	{
+		//	The union members (wPosX, wPosY, sItemCustom) are never constructed automatically, so
+		//	start from an empty item : no costume is SNATIVEID(false), not the real item 0,0.
+		wPosX = 0;
+		wPosY = 0;
+		sItemCustom = SITEMCUSTOM();
 	}
 
 	bool operator== ( SINVENITEM &value )

@@ -76,8 +76,8 @@ namespace TextureManager
 		SAFE_RELEASE(m_pddsTexture);
 		SAFE_RELEASE(m_pddsCubeTexture);
 
-		NSCHARSG::ReleaseTexture( (DWORD)m_pddsTexture );
-		NSCHARSG::ReleaseTexture( (DWORD)m_pddsCubeTexture );
+		NSCHARSG::ReleaseTexture( (DWORD_PTR)m_pddsTexture );
+		NSCHARSG::ReleaseTexture( (DWORD_PTR)m_pddsCubeTexture );
 
 		if ( m_ppNameExt )
 		{

@@ -50,6 +50,29 @@ This source code will remain in EP7 until I decide to update it to a newer EP. S
 - [Quiirex](http://forum.ragezone.com/members/1333385074.html)
 - [lars](http://forum.ragezone.com/members/2000202916.html)
 
+## Building
+
+Open `RanOnline.sln` in Visual Studio 2022 (toolset v143) and pick a configuration (`Debug`, `Release`, `Release_RZ`) and a platform (`Win32` or `x64`).
+
+- **vcpkg** supplies Assimp on both platforms and the x64 builds of lzo, ogg and vorbis (see `vcpkg.json`). The packages are installed automatically on the first build. Set `VCPKG_ROOT` to your vcpkg checkout, or leave it unset to use the vcpkg bundled with Visual Studio.
+- **Output**: Win32 programs go to `..\game-client\`, x64 programs to `..\game-client\x64\`, together with the vcpkg DLLs they need.
+- **Runtime**: the x64 client needs the 64-bit `d3dx9_26.dll` from the DirectX End-User Runtime (June 2010). `d3dxof.dll` is no longer used; skeletons are read by YXCore.
+- Win32 and x64 programs read the same data files and speak the same network protocol.
+
+### YXCore
+
+`YXCore` holds the model loading that replaces the parts of DirectX 9 that don't exist on x64:
+
+- `yx::LoadFrameHierarchy` reads skeleton frame hierarchies. `.x` files are read by YXCore's own reader so the bones match DirectX bit for bit; other formats go through Assimp.
+- `yx::LoadMeshHierarchy` is an Assimp-based replacement for `D3DXLoadMeshHierarchyFromX`. The engine uses it for skins in formats other than `.x` (FBX, glTF, OBJ, DAE, ...). `.x` skins stay on D3DX, because trace points in `.cps` pieces and the `.enm`/`.ehs`/`.nor` files store vertex indices that depend on D3DX's vertex order.
+
+`YXModelVerify` checks those claims against real client data:
+
+```bat
+YXModelVerify "<client>\data\skeleton" "<client>\data\skin"         rem frame hierarchies vs DirectX
+YXModelVerify --meshes "<client>\data\skin"                          rem skins: D3DX vs Assimp
+```
+
 # Game Client
 
 [Ran Online Client Based on PH V822](https://gitlab.com/ragezone/ranonline/game-client)

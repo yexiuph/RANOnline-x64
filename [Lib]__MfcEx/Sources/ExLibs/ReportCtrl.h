@@ -212,8 +212,8 @@ public:
 	BOOL SetItem(int nItem, int nSubItem, UINT nMask, LPCTSTR lpszItem, int nImage, UINT nState, UINT nStateMask, LPARAM lParam);
 	BOOL SetItem(const LVITEM* pItem);
 	BOOL GetItem(LVITEM* pItem) const;
-	DWORD GetItemData(int nItem) const;
-	BOOL SetItemData(int nItem, DWORD dwData);
+	DWORD_PTR GetItemData(int nItem) const;
+	BOOL SetItemData(int nItem, DWORD_PTR dwData);
 	DWORD SetExtendedStyle(DWORD dwNewStyle);
 	BOOL ModifyStyle(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0);
 	BOOL ModifyStyleEx(DWORD dwRemove, DWORD dwAdd, UINT nFlags = 0);

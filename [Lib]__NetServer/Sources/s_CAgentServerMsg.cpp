@@ -102,17 +102,13 @@ int CAgentServer::MsgProcess(MSG_LIST* pMsg)
 	case NET_MSG_AGENT_REQ_JOIN:			MsgAgentReqJoin(pMsg);				break;
 	// Field->Agent : 캐릭터가 조인했음 
 	case MET_MSG_GAME_JOIN_FIELDSVR_FB :	MsgLobbyCharJoinField(pMsg);		break;		
-	// Apex Data 메세지	// Apex 적용
-	case NET_MSG_APEX_DATA:					MsgApexData(pMsg);					break;
-	// Apex 적용( 홍콩 )
-	case NET_MSG_APEX_RETURN:				MsgApexReturn(pMsg);				break;
-	
-	// GameGuard 인증용 메세지
-	case NET_MSG_GAMEGUARD_ANSWER:			MsgGameGuardAnswer(pMsg);			break;
-	// GameGuard 인증용 메세지 #1
-	case NET_MSG_GAMEGUARD_ANSWER_1:		MsgGameGuardAnswerFirst( pMsg );	break;
-	// GameGuard 인증용 메세지 #2
-	case NET_MSG_GAMEGUARD_ANSWER_2:		MsgGameGuardAnswerSecond( pMsg );	break;
+	// Apex / GameGuard removed: drop these legacy messages here (do not forward them to the field server)
+	case NET_MSG_APEX_DATA:
+	case NET_MSG_APEX_RETURN:
+	case NET_MSG_GAMEGUARD_ANSWER:
+	case NET_MSG_GAMEGUARD_ANSWER_1:
+	case NET_MSG_GAMEGUARD_ANSWER_2:
+		break;
 	// 필드서버와 클라이언트에서 받은 추적 로그를 찍는다.
 	case NET_MSG_LOG_UPDATE_TRACING_CHARACTER: MsgTracingLogPrint( pMsg );		break;
 
@@ -494,37 +490,6 @@ void CAgentServer::MsgGameJoin(MSG_LIST* pMsg)
 	if (pMsg == NULL) return;
 
 	DWORD dwClient = pMsg->dwClient;
-
-	// nProtect 서버 인증을 사용한다면 캐릭터가 접속할때 인증이 왔는지 체크한다.	
-	if (m_bGameGuardInit == true && 
-		m_bGameGuardAuth == true)
-	{
-		if ( m_pClientManager->nProtectFirstAuthPass( dwClient ) == false )		
-		{
-			// nProtect 인증 실패
-			// 연결을 종료시킨다.
-			CloseClient(dwClient);
-			return;
-		}
-		else
-		{
-			// 현재 nProtect 받기상태라면
-			if (m_bHeartBeat == false)
-			{
-				// 다시 한번 인증쿼리 전송
-				NET_GAMEGUARD_AUTH nga;
-				// 인증상태를 리셋 시킨다.
-				m_pClientManager->nProtectResetAuth(dwClient);
-				// 게임가드 인증 쿼리 가져오기 준비
-				if (m_pClientManager->nProtectSetAuthQuery(dwClient) == true)
-				{
-					// 게임가드 인증 쿼리 전송
-					nga.ggad = m_pClientManager->nProtectGetAuthQuery(dwClient);
-					SendClient(dwClient, &nga);
-				}
-			}
-		}
-	}
 
 	// 인증을 통과하지 않은 상태에서 캐릭터 정보요청함
 	if (m_pClientManager->IsAccountPass(dwClient) == false)
@@ -1409,27 +1374,6 @@ void CAgentServer::MsgLogLotteryBack(int nResult, DWORD dwClient, const char* sz
         SendClient(dwClient, &msg);
     }
 }
-
-void CAgentServer::MsgApexData( MSG_LIST* pMsg )
-{
-	if (pMsg == NULL) return;
-
-	DWORD dwClient = pMsg->dwClient;
-	NET_APEX_DATA* msg = reinterpret_cast<NET_APEX_DATA*> (pMsg->Buffer);
-	int nLength = msg->nmg.dwSize - sizeof(NET_MSG_GENERIC);
-	APEX_SERVER::NoticeApexProxy_UserData( dwClient, msg->szData, nLength );
-}
-
-// Apex 적용( 홍콩 )
-void CAgentServer::MsgApexReturn( MSG_LIST* pMsg )
-{
-	if (pMsg == NULL) return;
-
-	DWORD dwClient = pMsg->dwClient;
-	NET_APEX_RETURN* msg = reinterpret_cast<NET_APEX_RETURN*> (pMsg->Buffer);
-	APEX_SERVER::NoticeApexProxy_UserReturn( dwClient, msg->nReturn );
-}
-
 
 void CAgentServer::MsgTracingLogPrint( MSG_LIST* pMsg )
 {

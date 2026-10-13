@@ -695,7 +695,7 @@ BOOL SLEVEL_ETC_FUNC::SAVE ( CSerialFile &SFile )
 		// Save Land Effect
 		if( m_bUseFunction[EMETCFUNC_LANDEFFECT] )
 		{
-			SFile << m_vecLandEffect.size();
+			SFile << (DWORD)m_vecLandEffect.size();
 			for( int i = 0; i < (int)m_vecLandEffect.size(); i++ )
 			{
 				SLANDEFFECT landEffect = m_vecLandEffect[i];

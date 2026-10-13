@@ -348,7 +348,7 @@ HRESULT	DxEffCharUserColor::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3d
 		{
 			SAFE_DELETE_ARRAY ( m_pMaterials );
 			m_pMaterials = new DXMATERIAL_CHAR_EFF[m_dwMaterials];
-			SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_CHAR_EFF)*m_dwMaterials );
+			SerialLayout::ReadArray<DXMATERIAL_CHAR_EFF_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 			for ( DWORD i=0; i<m_dwMaterials; i++ )
 			{
@@ -407,7 +407,7 @@ HRESULT	DxEffCharUserColor::SaveFile ( basestream &SFile )
 	SFile << m_dwMaterials;
 	if ( m_dwMaterials )
 	{
-		SFile.WriteBuffer ( m_pMaterials, sizeof(DXMATERIAL_CHAR_EFF)*m_dwMaterials );
+		SerialLayout::WriteArray<DXMATERIAL_CHAR_EFF_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 	}
 
 	return S_OK;

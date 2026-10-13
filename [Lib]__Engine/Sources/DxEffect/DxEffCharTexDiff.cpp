@@ -19,10 +19,66 @@
 #include "./DxSkinPieceContainer.h"
 
 #include "./DxEffCharTexDiff.h"
+#include "SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+//	On-disk (x86) images of EFFCHAR_PROPERTY_TEXDIFF / _100, see SerialLayout.h.
+struct EFFCHAR_PROPERTY_TEXDIFF_100_DISK
+{
+	DWORD						m_dwFlag;
+	DWORD						m_dwMaterials;
+	float						m_fSpeed;
+	SerialLayout::STRING_X86	m_strTex;
+};
+
+struct EFFCHAR_PROPERTY_TEXDIFF_DISK
+{
+	DWORD						m_dwFlag;
+	DWORD						m_dwMaterials;
+	DWORD						m_dwIntensity;
+	float						m_fSpeed;
+	SerialLayout::STRING_X86	m_strTex;
+};
+
+static_assert ( sizeof(EFFCHAR_PROPERTY_TEXDIFF_100_DISK) == 36, "x86 size of EFFCHAR_PROPERTY_TEXDIFF_100" );
+static_assert ( sizeof(EFFCHAR_PROPERTY_TEXDIFF_DISK) == 40, "x86 size of EFFCHAR_PROPERTY_TEXDIFF" );
+
+#if SERIAL_LAYOUT_NATIVE_X86_STRING
+SERIAL_LAYOUT_ASSERT_SIZE ( EFFCHAR_PROPERTY_TEXDIFF_100_DISK, EFFCHAR_PROPERTY_TEXDIFF_100 );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_100_DISK, EFFCHAR_PROPERTY_TEXDIFF_100, m_dwFlag );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_100_DISK, EFFCHAR_PROPERTY_TEXDIFF_100, m_dwMaterials );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_100_DISK, EFFCHAR_PROPERTY_TEXDIFF_100, m_fSpeed );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_100_DISK, EFFCHAR_PROPERTY_TEXDIFF_100, m_strTex );
+SERIAL_LAYOUT_ASSERT_SIZE ( EFFCHAR_PROPERTY_TEXDIFF_DISK, EFFCHAR_PROPERTY_TEXDIFF );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_DISK, EFFCHAR_PROPERTY_TEXDIFF, m_dwFlag );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_DISK, EFFCHAR_PROPERTY_TEXDIFF, m_dwMaterials );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_DISK, EFFCHAR_PROPERTY_TEXDIFF, m_dwIntensity );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_DISK, EFFCHAR_PROPERTY_TEXDIFF, m_fSpeed );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_DISK, EFFCHAR_PROPERTY_TEXDIFF, m_strTex );
+#endif
+
+//	Only used on DxEffCharTexDiff::m_Property, whose std::string lives in an anonymous union and
+//	may never have been constructed: it is rebuilt in place (see SerialLayout::ConstructStringInPlace).
+inline void SerialFromDisk ( EFFCHAR_PROPERTY_TEXDIFF& d, const EFFCHAR_PROPERTY_TEXDIFF_DISK& s )
+{
+	d.m_dwFlag		= s.m_dwFlag;
+	d.m_dwMaterials	= s.m_dwMaterials;
+	d.m_dwIntensity	= s.m_dwIntensity;
+	d.m_fSpeed		= s.m_fSpeed;
+	SerialLayout::ConstructStringInPlace ( d.m_strTex, s.m_strTex );
+}
+
+inline void SerialToDisk ( EFFCHAR_PROPERTY_TEXDIFF_DISK& d, const EFFCHAR_PROPERTY_TEXDIFF& s )
+{
+	d.m_dwFlag		= s.m_dwFlag;
+	d.m_dwMaterials	= s.m_dwMaterials;
+	d.m_dwIntensity	= s.m_dwIntensity;
+	d.m_fSpeed		= s.m_fSpeed;
+	SerialLayout::EncodeString ( d.m_strTex, s.m_strTex );
+}
 
 DWORD		DxEffCharTexDiff::TYPEID			= EMEFFCHAR_TEXDIFF;
 DWORD		DxEffCharTexDiff::VERSION			= 0x0101;
@@ -376,14 +432,14 @@ HRESULT	DxEffCharTexDiff::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3dDe
 	{
 		//	Note : 이팩트의 Property 를 저장.
 		//
-		SFile.ReadBuffer ( &m_Property, sizeof(m_Property) );
+		SerialLayout::ReadArray<EFFCHAR_PROPERTY_TEXDIFF_DISK> ( SFile, &m_Property, 1 );
 
 		SFile >> m_dwMaterials;
 		if ( m_dwMaterials )
 		{
 			SAFE_DELETE_ARRAY ( m_pMaterials );
 			m_pMaterials = new DXMATERIAL_CHAR_EFF[m_dwMaterials];
-			SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_CHAR_EFF)*m_dwMaterials );
+			SerialLayout::ReadArray<DXMATERIAL_CHAR_EFF_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 			for ( DWORD i=0; i<m_dwMaterials; i++ )
 			{
@@ -400,16 +456,16 @@ HRESULT	DxEffCharTexDiff::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3dDe
 		hr = Create ( pd3dDevice );
 		if ( FAILED(hr) )	return hr;
 	}
-	else if ( 0x0100 == VERSION )
+	else if ( dwVer == 0x0100 )
 	{
 		//	Note : 이팩트의 Property 를 저장.
-		EFFCHAR_PROPERTY_TEXDIFF_100 sProp;
-		SFile.ReadBuffer ( &sProp, sizeof(EFFCHAR_PROPERTY_TEXDIFF_100) );
+		EFFCHAR_PROPERTY_TEXDIFF_100_DISK sProp;
+		SFile.ReadBuffer ( &sProp, sizeof(EFFCHAR_PROPERTY_TEXDIFF_100_DISK) );
 
 		m_Property.m_dwFlag		= sProp.m_dwFlag;
 		m_Property.m_dwMaterials = sProp.m_dwMaterials;
 		m_Property.m_fSpeed		= sProp.m_fSpeed;
-		m_Property.m_strTex		= sProp.m_strTex.c_str();
+		SerialLayout::ConstructStringInPlace ( m_Property.m_strTex, sProp.m_strTex );
 
 		m_Property.m_dwIntensity	= 0;	// Ver.101 에서 추가
 		m_Property.m_dwFlag			|= NO_UPDOWN;
@@ -419,7 +475,7 @@ HRESULT	DxEffCharTexDiff::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3dDe
 		{
 			SAFE_DELETE_ARRAY ( m_pMaterials );
 			m_pMaterials = new DXMATERIAL_CHAR_EFF[m_dwMaterials];
-			SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_CHAR_EFF)*m_dwMaterials );
+			SerialLayout::ReadArray<DXMATERIAL_CHAR_EFF_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 			for ( DWORD i=0; i<m_dwMaterials; i++ )
 			{
@@ -457,16 +513,16 @@ HRESULT	DxEffCharTexDiff::SaveFile ( basestream &SFile )
 
 	//	Note : DATA의 사이즈를 기록한다. Load 시에 버전이 틀릴 경우 사용됨.
 	//
-	SFile << (DWORD) ( sizeof(m_Property) + sizeof(DWORD) + sizeof(DXMATERIAL_CHAR_EFF)*m_dwMaterials );
+	SFile << (DWORD) ( sizeof(EFFCHAR_PROPERTY_TEXDIFF_DISK) + sizeof(DWORD) + sizeof(DXMATERIAL_CHAR_EFF_DISK)*m_dwMaterials );
 
 	//	Note : 이팩트의 Property 를 저장.
 	//
-	SFile.WriteBuffer ( &m_Property, sizeof(m_Property) );
+	SerialLayout::WriteArray<EFFCHAR_PROPERTY_TEXDIFF_DISK> ( SFile, &m_Property, 1 );
 
 	SFile << m_dwMaterials;
 	if ( m_dwMaterials )
 	{
-		SFile.WriteBuffer ( m_pMaterials, sizeof(DXMATERIAL_CHAR_EFF)*m_dwMaterials );
+		SerialLayout::WriteArray<DXMATERIAL_CHAR_EFF_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 	}
 
 	return S_OK;

@@ -72,22 +72,16 @@ namespace CLOCKCHECK
 	extern DWORD dwShi, dwSlo, dwEhi, dwElo;
 	inline void CLOCKCHK_ST ()
 	{
-		__asm
-		{
-			rdtsc                      ;클럭카운트를 edx:eax레지스터에 저장
-			mov     dwShi, edx       ;상위 dword 메모리에 백업
-			mov     dwSlo, eax       ;하위 dword 메모리에 백업       
-		}
+		const unsigned __int64 nTick = __rdtsc();
+		dwShi = (DWORD)( nTick >> 32 );
+		dwSlo = (DWORD)( nTick );
 	}
 
 	inline void CLOCKCHK_ED ( DWORD &dwHigh, DWORD &dwLow )
 	{
-		__asm
-		{
-			rdtsc                      ; 클럭카운트를 edx:eax레지스터에 저장
-			mov     dwElo, eax       ; 하위 dword 값 저장
-			mov     dwEhi, edx       ; 상위 dword값 저장
-		}
+		const unsigned __int64 nTick = __rdtsc();
+		dwEhi = (DWORD)( nTick >> 32 );
+		dwElo = (DWORD)( nTick );
 
 		dwHigh = dwEhi - dwShi;
 		dwLow = dwElo - dwSlo;

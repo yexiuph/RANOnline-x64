@@ -37,8 +37,6 @@
 //! Log Type
 enum EM_LOG
 {
-	LOG_TEXT_NPROTECT = 1,
-	LOG_TEXT_APEX     = 2,
 	LOG_TEXT_DATABASE = 3,
     LOG_TEXT_CONSOLE  = 4,	
     LOG_TEXT          = 5,
@@ -93,9 +91,7 @@ public:
 	virtual void Write( int nType, int nPositon, const TCHAR* msg, ... );
 			void WriteFile( const TCHAR* msg, ... );
 			void WriteConsole( const TCHAR* msg, ... );
-			void WriteNPROTECT( const TCHAR* msg, ... );
 			void WriteDatabase( const TCHAR* msg, ... );
-			void WriteAPEX( const TCHAR* msg, ... );
 			// Server 종료시 ChaInfo Save Log
 			void WriteCharSave( const TCHAR* msg, ... );
 
@@ -107,9 +103,7 @@ public:
 
 protected:	
 	SERVER_UTIL::CLogSystem* m_pLog;
-	SERVER_UTIL::CLogSystem* m_pLogNPROTECT;
 	SERVER_UTIL::CLogSystem* m_pLogDB;
-	SERVER_UTIL::CLogSystem* m_pLogAPEX;
 	SERVER_UTIL::CLogSystem* m_pLogChar;
 
 	HWND m_pEditBox; ///< Edit Box 의 Window Handle

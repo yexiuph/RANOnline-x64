@@ -385,47 +385,6 @@ public:
 	void ThaiSetFlag (WORD wFlag);
 	void ThaiSetTodayPlayTime (WORD wMinutes);
 	bool ThaiIs3HourOver (CTime& currentTime);
-
-	//////////////////////////////////////////////////////////////////////////////
-	// nProtect
-	//////////////////////////////////////////////////////////////////////////////
-protected:
-	CCSAuth2            m_csa; ///< nProtect GameGuard 인증용 클래스
-	bool                m_bNProtectAuth;
-	bool                m_bNProtectFirstCheck; ///< 접속후 nProtect 를 처음 인증받는가?	
-	bool                m_bNProtectFirstAuthPass; ///< 게임에 진입하기 전에 모든 인증을 완료했는가?
-	
-public:
-	//! nProtect 처음 인증인가?
-	bool nProtectIsFirstCheck();
-
-	//! nProtect 처음 인증여부 세팅
-	void nProtectSetFirstCheck(bool bState);
-
-	//! nProtect GameGuard 인증용 쿼리를 가져오기 전에 호출
-	bool nProtectSetAuthQuery();
-    	
-	//! nProtect GameGuard 인증용 쿼리 가져오기
-	GG_AUTH_DATA nProtectGetAuthQuery();
-
-	//! nProtect GameGuard 인증 응답 가져오기
-	GG_AUTH_DATA nProtectGetAuthAnswer();
-
-	//! nProtect GameGuard 인증 응답 설정
-	void nProtectSetAuthAnswer(GG_AUTH_DATA& ggad);
-
-	//! nProtect GameGuard 인증 결과 가져오기
-	DWORD nProtectCheckAuthAnswer();
-
-	//! nProtect GameGuard 인증 상태를 리셋시킨다.
-	void nProtectResetAuth();
-
-	//! nProtect GameGuard 처음 인증을 통과했는가?
-	//! 이 인증을 통과해야 게임플레이를 할 수 있다.
-	bool nProtectFirstAuthPass();
-
-	//! nProtect GameGuard 처음인증 통과상태 세팅
-	void nProtectSetFirstAuthPass(bool bState);
 };
 
 #endif // S_NETUSER_H_

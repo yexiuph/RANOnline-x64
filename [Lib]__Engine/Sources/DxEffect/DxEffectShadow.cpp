@@ -560,7 +560,7 @@ void DxEffectShadow::LoadBuffer ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEV
 		m_sShadowAABB.Load ( SFile );
 		return;
 	}
-	else if ( VERSION == 0x100 )
+	else if ( dwVer == 0x100 )
 	{
 		SFile >> dwBuffSize;
 

@@ -249,8 +249,7 @@ void CStaticSoundMan::Clone_MouseShift( LPD3DXMATRIX& pMatrix )
 	SVecSound* pVecSound = m_pVecSoundHead;
 	while( pVecSound )
 	{
-		DWORD dwBuffer = (DWORD)&pVecSound->m_matWorld;
-		if( dwBuffer == (DWORD)pMatrix )
+		if( (LPD3DXMATRIX)&pVecSound->m_matWorld == pMatrix )
 		{
 			//// Note : 새로 만들어 준다.
 			//DXLIGHT* pNewLight = new DXLIGHT;

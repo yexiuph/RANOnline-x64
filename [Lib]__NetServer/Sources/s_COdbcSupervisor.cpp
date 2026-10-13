@@ -318,7 +318,7 @@ int COdbcSupervisor::ExecuteSpInt( std::strstream& strSP )
 		
 	SQLRETURN  sReturn=0;
 	SQLINTEGER nOutput=0;
-	SQLINTEGER nLenBuffer=SQL_NTS;
+	SQLLEN nLenBuffer=SQL_NTS;
 
 	::SQLPrepare( pConn->hStmt, (SQLCHAR*) strSP.str(), SQL_NTS );
 	
@@ -416,7 +416,7 @@ int COdbcSupervisor::ExecuteSpInt( const TCHAR * szSP )
 
 	SQLRETURN  sReturn=0;
 	SQLINTEGER nOutput=0;
-	SQLINTEGER nLenBuffer=SQL_NTS;
+	SQLLEN nLenBuffer=SQL_NTS;
 
 	::SQLPrepare( pConn->hStmt, (SQLCHAR*)szSP, SQL_NTS );
 
@@ -467,7 +467,7 @@ int	COdbcSupervisor::ReadImagePet(
 	SQLRETURN	sReturn = 0; // SQL return value (short)	
 	ODBC_STMT*	pConn = NULL; // Handle of statement (void*)
 	SQLCHAR		pBinary[DB_IMAGE_BUF_SIZE] = {0};	// Declare a binary buffer to retrieve 1024 bytes of data at a time.
-	SQLINTEGER  lSize=0, lTotalSize=0;	
+	SQLINTEGER lTotalSize=0; SQLLEN lSize=0;	
 
 	pConn = GetConnection();
 	if (!pConn) return DB_ERROR;	
@@ -539,7 +539,7 @@ int	COdbcSupervisor::ReadImageVehicle(
 	SQLRETURN	sReturn = 0; // SQL return value (short)	
 	ODBC_STMT*	pConn = NULL; // Handle of statement (void*)
 	SQLCHAR		pBinary[DB_IMAGE_BUF_SIZE] = {0};	// Declare a binary buffer to retrieve 1024 bytes of data at a time.
-	SQLINTEGER  lSize=0, lTotalSize=0;	
+	SQLINTEGER lTotalSize=0; SQLLEN lSize=0;	
 
 	pConn = GetConnection();
 	if (!pConn) return DB_ERROR;	
@@ -610,7 +610,7 @@ int	COdbcSupervisor::ReadImage(
 	SQLRETURN	sReturn = 0; // SQL return value (short)	
 	ODBC_STMT*	pConn = NULL; // Handle of statement (void*)
 	SQLCHAR		pBinary[DB_IMAGE_BUF_SIZE] = {0};	// Declare a binary buffer to retrieve 1024 bytes of data at a time.
-	SQLINTEGER  lSize=0, lTotalSize=0;	
+	SQLINTEGER lTotalSize=0; SQLLEN lSize=0;	
 	
 	pConn = GetConnection();
     if (!pConn) return DB_ERROR;	
@@ -680,7 +680,7 @@ int	COdbcSupervisor::ReadImage(
 	SQLRETURN	sReturn = 0; // SQL return value (short)	
 	ODBC_STMT*	pConn = NULL; // Handle of statement (void*)
 	SQLCHAR		pBinary[DB_IMAGE_BUF_SIZE] = {0};	// Declare a binary buffer to retrieve 1024 bytes of data at a time.
-	SQLINTEGER  lSize=0, lTotalSize=0;
+	SQLINTEGER lTotalSize=0; SQLLEN lSize=0;
 	
 	pConn = GetConnection();
     if (!pConn) return DB_ERROR;
@@ -734,7 +734,7 @@ int COdbcSupervisor::WriteImage(
 	SQLRETURN	sReturn = 0; // SQL return value (short)	
 	ODBC_STMT*	pConn = NULL; // Handle of statement (void*)
 	// SQLCHAR		pBinary[1024];	// Declare a binary buffer to retrieve 1024 bytes of data at a time.
-	SQLINTEGER  lSize=0, lTotalSize=0;
+	SQLINTEGER lTotalSize=0; SQLLEN lSize=0;
 
 	pConn = GetConnection();
 	if (!pConn) return DB_ERROR;
@@ -749,7 +749,7 @@ int COdbcSupervisor::WriteImage(
 	}
 
 	// Bind parameter
-	SQLINTEGER cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
+	SQLLEN cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
 
 	sReturn = ::SQLBindParameter(pConn->hStmt, 
 		1, 
@@ -801,7 +801,7 @@ int COdbcSupervisor::WriteImage(
 	SQLRETURN	sReturn = 0; // SQL return value (short)	
 	ODBC_STMT*	pConn = NULL; // Handle of statement (void*)
 	// SQLCHAR		pBinary[1024];	// Declare a binary buffer to retrieve 1024 bytes of data at a time.
-	SQLINTEGER  lSize=0, lTotalSize=0;
+	SQLINTEGER lTotalSize=0; SQLLEN lSize=0;
 
 	pConn = GetConnection();
     if (!pConn) return DB_ERROR;
@@ -816,7 +816,7 @@ int COdbcSupervisor::WriteImage(
 	}
 
 	// Bind parameter
-	SQLINTEGER cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
+	SQLLEN cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
 
 	sReturn = ::SQLBindParameter(pConn->hStmt, 
 								1, 

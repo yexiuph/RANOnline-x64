@@ -606,7 +606,7 @@ void OBJOCTree::InsertColorList( LOADINGDATALIST &listColorData )
 	if( !IsLoad() )		return;
 	if( !m_pColor )		return;
 
-	DWORD dwData = (DWORD)(this);
+	DWORD_PTR dwData = (DWORD_PTR)(this);
 	listColorData.push_back( dwData );
 }
 

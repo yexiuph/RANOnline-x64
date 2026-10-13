@@ -60,7 +60,7 @@ void DxDynamicMesh::Reset()
 	m_vecAttributeIB.clear();
 }
 
-void DxDynamicMesh::InitVBIB( DWORD dwPointer )
+void DxDynamicMesh::InitVBIB( DWORD_PTR dwPointer )
 {
 	m_dwVertexCUR = 0;
 	m_dwFaceCUR = 0;
@@ -145,7 +145,7 @@ void DxDynamicMesh::InsertIB( LPDIRECT3DINDEXBUFFERQ pIB, const D3DXATTRIBUTERAN
 	m_vecAttributeIB.push_back( pNew );
 }
 
-void DxDynamicMesh::SetTexture( DWORD dwPointer )
+void DxDynamicMesh::SetTexture( DWORD_PTR dwPointer )
 {
 	m_rTexture = (LPDIRECT3DTEXTURE9) dwPointer;
 }
@@ -339,12 +339,12 @@ void SMeshDynamicRenderMan::Reset()
 	}
 }
 
-void SMeshDynamicRenderMan::Init( DWORD dwPointer, DWORD nCount )
+void SMeshDynamicRenderMan::Init( DWORD_PTR dwPointer, DWORD nCount )
 {
 	m_mapIndex.insert( std::make_pair( dwPointer, nCount ) );
 }
 
-void SMeshDynamicRenderMan::InsertVBIB( DWORD dwPointer, VERTEX* pVertices, WORD* pIndices, DWORD dwVertexNUM, DWORD dwFaceNUM )
+void SMeshDynamicRenderMan::InsertVBIB( DWORD_PTR dwPointer, VERTEX* pVertices, WORD* pIndices, DWORD dwVertexNUM, DWORD dwFaceNUM )
 {
 	MAP_INDEX_ITER iter = m_mapIndex.find( dwPointer );
 	if( iter==m_mapIndex.end() )	return;
@@ -364,7 +364,7 @@ void SMeshDynamicRenderMan::InsertVBIB( DWORD dwPointer, VERTEX* pVertices, WORD
 	m_vecDynamicRENDER[ dwIndexCUR ]->InsertVBIB( pVertices, pIndices, dwVertexNUM, dwFaceNUM );
 }
 
-void SMeshDynamicRenderMan::InsertIB( DWORD dwPointer, LPDIRECT3DINDEXBUFFERQ pIB, DWORD dwVertexStart, DWORD dwFaceStart, DWORD dwFaceCount )
+void SMeshDynamicRenderMan::InsertIB( DWORD_PTR dwPointer, LPDIRECT3DINDEXBUFFERQ pIB, DWORD dwVertexStart, DWORD dwFaceStart, DWORD dwFaceCount )
 {
 	//MAP_INDEX_ITER iter = m_mapIndex.find( dwPointer );
 	//if( iter==m_mapIndex.end() )	return;
@@ -380,7 +380,7 @@ void SMeshDynamicRenderMan::Clone( LPDIRECT3DVERTEXBUFFERQ pVB, LPDIRECT3DINDEXB
 	}
 }
 
-BYTE* SMeshDynamicRenderMan::GetFreeVB( DWORD dwPointer, DWORD dwVertexNUM )
+BYTE* SMeshDynamicRenderMan::GetFreeVB( DWORD_PTR dwPointer, DWORD dwVertexNUM )
 {
 	MAP_INDEX_ITER iter = m_mapIndex.find( dwPointer );
 	if( iter==m_mapIndex.end() )	return NULL;
@@ -401,7 +401,7 @@ BYTE* SMeshDynamicRenderMan::GetFreeVB( DWORD dwPointer, DWORD dwVertexNUM )
 	return m_vecDynamicRENDER[ dwIndexCUR ]->GetFreeVB( dwVertexNUM );
 }
 
-BOOL SMeshDynamicRenderMan::IsGetIndex( DWORD dwPointer, DWORD& dwIndex )
+BOOL SMeshDynamicRenderMan::IsGetIndex( DWORD_PTR dwPointer, DWORD& dwIndex )
 {
 	MAP_INDEX_ITER iter = m_mapIndex.find( dwPointer );
 	if( iter==m_mapIndex.end() )	return FALSE;
@@ -482,7 +482,7 @@ namespace NSCHARSG
 	};
 
 	// Note : 텍스쳐 ID, 렌더용 텍스쳐 ID
-	typedef std::map<DWORD,COUNTVERTEXFACE>	MAP_TEX;
+	typedef std::map<DWORD_PTR,COUNTVERTEXFACE>	MAP_TEX;
 	typedef MAP_TEX::iterator				MAP_TEX_ITER;
 	typedef MAP_TEX::reverse_iterator		MAP_TEX_RITER;
 
@@ -530,7 +530,7 @@ namespace NSCHARSG
 		}
 	}
 
-	void InsertRenderTexID( DWORD dwID, DWORD dwVertex, DWORD dwFace )
+	void InsertRenderTexID( DWORD_PTR dwID, DWORD dwVertex, DWORD dwFace )
 	{
 		MAP_TEX_ITER iter = g_mapIDnCOUNT.find( dwID );
 		if( iter!= g_mapIDnCOUNT.end() )	// 같은 값이 있다면.. !!
@@ -549,7 +549,7 @@ namespace NSCHARSG
 		}
 	}
 
-	void InsertVBIB( DWORD dwPointer, VERTEX* pVertices, WORD* pIndices, const D3DXATTRIBUTERANGE& dwAttrib )
+	void InsertVBIB( DWORD_PTR dwPointer, VERTEX* pVertices, WORD* pIndices, const D3DXATTRIBUTERANGE& dwAttrib )
 	{
 		g_sMeshDynamicRenderMAN.InsertVBIB
 		(
@@ -561,7 +561,7 @@ namespace NSCHARSG
 		);
 	}
 
-	void InsertIB( DWORD dwPointer, LPDIRECT3DINDEXBUFFERQ pIB, DWORD dwVertexStart, DWORD dwFaceStart, DWORD dwFaceCount )
+	void InsertIB( DWORD_PTR dwPointer, LPDIRECT3DINDEXBUFFERQ pIB, DWORD dwVertexStart, DWORD dwFaceStart, DWORD dwFaceCount )
 	{
 		//g_sMeshDynamicRenderMAN.InsertIB
 		//(
@@ -572,7 +572,7 @@ namespace NSCHARSG
 		//);
 	}
 
-	BYTE* GetFreeVB( DWORD dwPointer, const D3DXATTRIBUTERANGE& dwAttrib )
+	BYTE* GetFreeVB( DWORD_PTR dwPointer, const D3DXATTRIBUTERANGE& dwAttrib )
 	{
 		return g_sMeshDynamicRenderMAN.GetFreeVB( dwPointer, dwAttrib.VertexCount );
 	}
@@ -587,7 +587,7 @@ namespace NSCHARSG
 		g_sMeshDynamicRenderMAN.UnlockVB();
 	}
 
-	BOOL IsGetIndex( DWORD dwPointer, DWORD& dwIndex )
+	BOOL IsGetIndex( DWORD_PTR dwPointer, DWORD& dwIndex )
 	{
 		return g_sMeshDynamicRenderMAN.IsGetIndex( dwPointer, dwIndex );
 	}
@@ -660,7 +660,7 @@ _RETURN:
 		RenderSortTEST();
 	}
 
-	void ReleaseTexture( DWORD dwPointer )
+	void ReleaseTexture( DWORD_PTR dwPointer )
 	{
 		if( !dwPointer )	return;
 

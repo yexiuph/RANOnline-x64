@@ -57,7 +57,7 @@
 
 struct ROWINFO
 {
-	DWORD dwData;
+	DWORD_PTR dwData;
 	DWORD dwStates;
 	CArray<int, int> aImages;
 	CStringArray aTexts;
@@ -72,7 +72,7 @@ public:
 	CItemData() { dwData = 0; }
 	void InsertColumn(int nColumn);
 	void DeleteColumn(int nColumn);
-	DWORD dwData; // The actual 32-bit user data stores here
+	DWORD_PTR dwData; // The actual user data stores here
 	CArray<COLORREF, COLORREF> aTextColors; // Sub item text colors
 	CArray<COLORREF, COLORREF> aBkColors; // Sub item backgroud colors
 };
@@ -525,7 +525,7 @@ int CReportCtrl::MoveTo(int nItem, int nNewPosition)
 	// Backup all states and attributes
 	const int COLS = GetColumnCount();
 	const DWORD STATES = GetItemStates(nItem);
-	const DWORD DATA = static_cast<DWORD>(CListCtrl::GetItemData(nItem));
+	const DWORD_PTR DATA = CListCtrl::GetItemData(nItem);
 	CArray<int, int> aImages;
 	CStringArray aTexts;
 	aImages.SetSize(COLS);
@@ -577,8 +577,8 @@ BOOL CReportCtrl::SwapItems(int nItem1, int nItem2)
 	// record previous states first
 	const DWORD STATES1 = GetItemStates(nItem1);
 	const DWORD STATES2 = GetItemStates(nItem2);
-	const DWORD DATA1 = static_cast<DWORD>(CListCtrl::GetItemData(nItem1));
-	const DWORD DATA2 = static_cast<DWORD>(CListCtrl::GetItemData(nItem2));
+	const DWORD_PTR DATA1 = CListCtrl::GetItemData(nItem1);
+	const DWORD_PTR DATA2 = CListCtrl::GetItemData(nItem2);
 
 	// swap item texts and images
 	for (int i = 0; i < GetColumnCount(); i++)
@@ -1447,7 +1447,7 @@ void CReportCtrl::_AllocItemMemory(int nItem)
 	const int COLS = GetColumnCount();
 	ASSERT(COLS > 0);
 	CItemData* pData = new CItemData;	
-	pData->dwData = static_cast<DWORD>(CListCtrl::GetItemData(nItem));
+	pData->dwData = CListCtrl::GetItemData(nItem);
 	pData->aTextColors.SetSize(COLS);
 	pData->aBkColors.SetSize(COLS);
 	for (int i = 0; i < COLS; i++)
@@ -1472,7 +1472,7 @@ void CReportCtrl::_UpdateColumn(int nColumn, BOOL bInsert)
 	}
 }
 
-BOOL CReportCtrl::SetItemData(int nItem, DWORD dwData)
+BOOL CReportCtrl::SetItemData(int nItem, DWORD_PTR dwData)
 {
 	CItemData* p = (CItemData*)(CListCtrl::GetItemData(nItem));
 	if (p == NULL)
@@ -1481,7 +1481,7 @@ BOOL CReportCtrl::SetItemData(int nItem, DWORD dwData)
 	return CListCtrl::SetItemData(nItem, (DWORD_PTR)p);
 }
 
-DWORD CReportCtrl::GetItemData(int nItem) const
+DWORD_PTR CReportCtrl::GetItemData(int nItem) const
 {
 	CItemData* p = (CItemData*)(CListCtrl::GetItemData(nItem));
 	return p == NULL ? 0 : p->dwData;
@@ -1511,7 +1511,7 @@ BOOL CReportCtrl::SetItem(const LVITEM *pItem)
 		CItemData* p = (CItemData*)(CListCtrl::GetItemData(li.iItem));
 		if (p != NULL)
 		{
-			p->dwData = static_cast<DWORD>(li.lParam);
+			p->dwData = li.lParam;
 			li.lParam = (LPARAM)p;
 		}		
 	}
@@ -1525,7 +1525,7 @@ BOOL CReportCtrl::SetItem(int nItem, int nSubItem, UINT nMask, LPCTSTR lpszItem,
 		CItemData* p = (CItemData*)(CListCtrl::GetItemData(nItem));
 		if (p != NULL)
 		{
-			p->dwData = static_cast<DWORD>(lParam);
+			p->dwData = lParam;
 			lParam = (LPARAM)p;
 		}		
 	}
@@ -1670,7 +1670,7 @@ BOOL CReportCtrl::_PartialSort(int nStart, int nEnd)
 	{
 		int n = aIndices[i];
 		aRows[i].dwStates = GetItemStates(aIndices[i]);
-		aRows[i].dwData = static_cast<DWORD>(CListCtrl::GetItemData(aIndices[i]));
+		aRows[i].dwData = CListCtrl::GetItemData(aIndices[i]);
 		aRows[i].aImages.SetSize(COLS);
 		aRows[i].aTexts.SetSize(COLS);
 		for (int j = 0; j < COLS; j++)

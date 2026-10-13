@@ -10,6 +10,7 @@
 #include "DxSkinMeshContainer9.h"
 #include "DxBoneCollector.h"
 #include "DxSkinMeshMan.h"
+#include "YXMeshHierarchy.h"
 
 //#define DEBUG_VS   // Uncomment this line to debug vertex shaders 
 //#define DEBUG_PS   // Uncomment this line to debug pixel shaders 
@@ -249,8 +250,24 @@ HRESULT DxSkinMesh9::OnCreateSkin ( IDirect3DDevice9* pd3dDevice, const char* sz
 	StringCchCat( szPathName, MAX_PATH, szSkinFile );
 
 	SAFE_RELEASE( m_pAnimController );
-	V_RETURN( D3DXLoadMeshHierarchyFromXA ( szPathName, D3DXMESH_MANAGED, pd3dDevice,
-											&Alloc, NULL, &m_pFrameRoot, &m_pAnimController ) );
+	if ( yx::IsXFile ( szPathName ) )
+	{
+		//	.x skins stay on D3DX : trace points in .cps pieces and the .enm/.ehs/.nor files
+		//	store vertex indices that depend on its vertex order.
+		V_RETURN( D3DXLoadMeshHierarchyFromXA ( szPathName, D3DXMESH_MANAGED, pd3dDevice,
+												&Alloc, NULL, &m_pFrameRoot, &m_pAnimController ) );
+	}
+	else
+	{
+		//	Other formats (FBX, glTF, OBJ, DAE, ...) are read through YXCore and Assimp.
+		std::string strError;
+		hr = yx::LoadMeshHierarchy ( szPathName, D3DXMESH_MANAGED, pd3dDevice, &Alloc, &m_pFrameRoot, strError );
+		if ( FAILED(hr) )
+		{
+			CDebugSet::ToLogFile ( "ERROR : DxSkinMesh9::OnCreateSkin() %s, %s", szPathName, strError.c_str() );
+			return hr;
+		}
+	}
 	V_RETURN( SetupBoneMatrixPointers( m_pFrameRoot ) );
 	V_RETURN( SetupNameOnMeshContainer( m_pFrameRoot ) );
 	V_RETURN( D3DXFrameCalculateBoundingSphere( m_pFrameRoot, &m_vObjectCenter, &m_fObjectRadius ) );

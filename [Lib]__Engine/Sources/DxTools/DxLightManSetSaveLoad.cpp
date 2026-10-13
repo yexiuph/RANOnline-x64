@@ -306,13 +306,13 @@ void DxLightMan::Save ( CSerialFile &SFile )
 	m_LtDirectNight.SaveSet ( SFile );
 	m_LtDirectNoon.SaveSet ( SFile );
 
-	SFile << BOOL ( m_pLtListHead );
+	SFile << BOOL ( m_pLtListHead != NULL );
 	if ( m_pLtListHead )
 	{
 		m_pLtListHead->SaveSet ( SFile );		
 	}
 
-	SFile << BOOL ( m_pTreeHead );
+	SFile << BOOL ( m_pTreeHead != NULL );
     if ( m_pTreeHead )
 	{
 		m_pTreeHead->SaveSet ( SFile );		

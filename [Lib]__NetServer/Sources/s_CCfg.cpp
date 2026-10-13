@@ -68,11 +68,9 @@ void CCfg::SetDefault(void)
 	m_nMaxThread			= 8;	 // 최대 work thread 갯수
 	m_bTestServer			= false; // Test 서버 유무
 	m_bAdultCheck			= false; // 성인서버 테스트 유무
-	m_bUseIntelTBB			= false; // TBB 사용 여부
 	m_bUseEventThread		= false; // 이벤트 쓰레드 사용 여부
 	m_bPK                   = true;  // true:PK 서버, false:Non PK 서버
 	m_bPkLess               = false;
-	m_bGameGuardAuth        = false; // nProtect GameGuard 인증 사용여부
 
 	m_bAllowFileLoad		= false; // allow_ip.cfg파일 사용여부
 
@@ -191,20 +189,6 @@ int CCfg::Process(TCHAR* szLine)
 				return 0;
 			}
 		}
-		else if (_tcscmp(token, "use_intel_tbb") == 0)
-		{
-			// use inteltbb
-			token = ::_tcstok_s(NULL, seps, &nToken);
-			if (token)
-			{
-				if (::_tstoi(token))		m_bUseIntelTBB = true;
-				else					m_bUseIntelTBB = false;
-			}
-			else
-			{
-				return 0;
-			}
-		}
 		else if (_tcscmp(token, "use_event_thread") == 0)
 		{
 			// use event Thread
@@ -241,20 +225,6 @@ int CCfg::Process(TCHAR* szLine)
 			{
 				if (::_tstoi(token))		m_bHeartBeat = true;
 				else					m_bHeartBeat = false;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		else if (_tcscmp(token, "gameguard") == 0)
-		{
-			// HeartBeat
-			token = ::_tcstok_s(NULL, seps, &nToken);
-			if (token)
-			{
-				if (::_tstoi(token))		m_bGameGuardAuth = true;
-				else					m_bGameGuardAuth = false;
 			}
 			else
 			{
@@ -1264,12 +1234,10 @@ TCHAR* CCfg::GetAgentIP()		{ return m_szAgentIP; }
 TCHAR* CCfg::GetSessionServerIP(void) { return &m_sSESSIONServer[0].szServerIP[0] ; }
 
 bool CCfg::HeartBeatCheck(void) { return m_bHeartBeat; }
-bool CCfg::GemeGuardAuth(void)  { return m_bGameGuardAuth; }
 bool CCfg::IsTestServer(void)   { return m_bTestServer; }
 bool CCfg::AdultCheck(void)     { return m_bAdultCheck; }
 bool CCfg::IsPKServer(void)     { return m_bPK; }
 
-BOOL CCfg::IsUseIntelTBB(void)		{ return m_bUseIntelTBB; }
 BOOL CCfg::IsUserEventThread(void)  { return m_bUseEventThread; }
 int	 CCfg::GetLangSet(void) { return m_nLangSet; }
 

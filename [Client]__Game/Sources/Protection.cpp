@@ -1,5 +1,7 @@
 #include "pch.h"
 #include ".\Protection.h"
+
+#include <intrin.h>
 //#include "GlobalDefine.h"
 //#include "DEBUG_NEW.h"
 
@@ -108,17 +110,13 @@ void CProtection::RegistryDelete()
 
 BOOL CProtection::Pesudo_IsDebuggerPresent()
 {
-	BOOL Retval = 0;
-	__asm
-	{
-		push eax
-		mov eax,dword ptr fs:[0x18]
-		mov eax,dword ptr ds:[eax+0x30]
-		movzx eax,byte ptr ds:[eax+0x2]
-		mov Retval,eax
-		pop eax
-	}
-	return Retval;
+	//	Reads PEB::BeingDebugged directly instead of calling IsDebuggerPresent().
+#ifdef _WIN64
+	const BYTE* pPeb = (const BYTE*)__readgsqword( 0x60 );
+#else
+	const BYTE* pPeb = (const BYTE*)__readfsdword( 0x30 );
+#endif
+	return pPeb[2];
 }
 
 void CProtection::WindowsSyStemCompulsoryDown()

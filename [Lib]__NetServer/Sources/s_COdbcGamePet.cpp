@@ -379,22 +379,22 @@ int COdbcManager::GetPet(
         return DB_ERROR;
 	}
 
-	SQLCHAR szPetName[PETNAMESIZE+1] = {0}; SQLINTEGER cbPetName = SQL_NTS;
-	SQLINTEGER nOwnerNum = 0, cbOwnerNum = SQL_NTS;
-	SQLINTEGER nType = 0, cbType = SQL_NTS;
-	SQLINTEGER nMainID = 0, cbMainID = SQL_NTS;
-	SQLINTEGER nSubID = 0, cbSubID = SQL_NTS;
-	SQLINTEGER nPetCardMID = 0, cbPetCardMID = SQL_NTS;
-	SQLINTEGER nPetCardSID = 0, cbPetCardSID = SQL_NTS;
-	SQLINTEGER nStyle = 0, cbStyle = SQL_NTS;
-	SQLINTEGER nColor = 0, cbColor = SQL_NTS;
-	SQLINTEGER nFull = 0, cbFull = SQL_NTS;
+	SQLCHAR szPetName[PETNAMESIZE+1] = {0}; SQLLEN cbPetName = SQL_NTS;
+	SQLINTEGER nOwnerNum = 0; SQLLEN cbOwnerNum = SQL_NTS;
+	SQLINTEGER nType = 0; SQLLEN cbType = SQL_NTS;
+	SQLINTEGER nMainID = 0; SQLLEN cbMainID = SQL_NTS;
+	SQLINTEGER nSubID = 0; SQLLEN cbSubID = SQL_NTS;
+	SQLINTEGER nPetCardMID = 0; SQLLEN cbPetCardMID = SQL_NTS;
+	SQLINTEGER nPetCardSID = 0; SQLLEN cbPetCardSID = SQL_NTS;
+	SQLINTEGER nStyle = 0; SQLLEN cbStyle = SQL_NTS;
+	SQLINTEGER nColor = 0; SQLLEN cbColor = SQL_NTS;
+	SQLINTEGER nFull = 0; SQLLEN cbFull = SQL_NTS;
 	// Pet ½ºÅ²ÆÑ Ãß°¡
-	SQLINTEGER nPetSkinMID = 0, cbPetSkinMID = SQL_NTS;
-	SQLINTEGER nPetSkinSID = 0, cbPetSkinSID = SQL_NTS;
-	SQLINTEGER nPetSkinScale = 0, cbPetSkinScale = SQL_NTS;
-	SQLINTEGER nPetSkinTime = 0, cbPetSkinTime = SQL_NTS;
-	TIMESTAMP_STRUCT sPetSkinStartDate; SQLINTEGER cbPetSkinStartDate   = SQL_NTS;
+	SQLINTEGER nPetSkinMID = 0; SQLLEN cbPetSkinMID = SQL_NTS;
+	SQLINTEGER nPetSkinSID = 0; SQLLEN cbPetSkinSID = SQL_NTS;
+	SQLINTEGER nPetSkinScale = 0; SQLLEN cbPetSkinScale = SQL_NTS;
+	SQLINTEGER nPetSkinTime = 0; SQLLEN cbPetSkinTime = SQL_NTS;
+	TIMESTAMP_STRUCT sPetSkinStartDate; SQLLEN cbPetSkinStartDate   = SQL_NTS;
 
 	while (true)
 	{
@@ -591,9 +591,9 @@ int COdbcManager::GetPetSkill(
         return DB_ERROR;
 	}
 
-	SQLINTEGER nAvailable = 0, cbAvailable = SQL_NTS;
-	SQLINTEGER nMainID = 0, cbMainID = SQL_NTS;
-	SQLINTEGER nSubID = 0, cbSubID = SQL_NTS;
+	SQLINTEGER nAvailable = 0; SQLLEN cbAvailable = SQL_NTS;
+	SQLINTEGER nMainID = 0; SQLLEN cbMainID = SQL_NTS;
+	SQLINTEGER nSubID = 0; SQLLEN cbSubID = SQL_NTS;
 
 	while (true)
 	{
@@ -702,11 +702,11 @@ int COdbcManager::GetRestorePetList(
 		return DB_ERROR;
 	}
 
-	SQLCHAR    szPetName[PETNAMESIZE+1] = {0}; SQLINTEGER cbPetName = SQL_NTS;
-	SQLINTEGER nPetNum = 0, cbPetNum=SQL_NTS;
-	SQLINTEGER nPetType = 0,	cbPetType=SQL_NTS;
-	SQLINTEGER nPetCardMID = 0, cbPetCardMID=SQL_NTS;
-	SQLINTEGER nPetCardSID = 0, cbPetCardSID=SQL_NTS;
+	SQLCHAR    szPetName[PETNAMESIZE+1] = {0}; SQLLEN cbPetName = SQL_NTS;
+	SQLINTEGER nPetNum = 0; SQLLEN cbPetNum=SQL_NTS;
+	SQLINTEGER nPetType = 0; SQLLEN cbPetType=SQL_NTS;
+	SQLINTEGER nPetCardMID = 0; SQLLEN cbPetCardMID=SQL_NTS;
+	SQLINTEGER nPetCardSID = 0; SQLLEN cbPetCardSID=SQL_NTS;
 
 	
 	while (true)

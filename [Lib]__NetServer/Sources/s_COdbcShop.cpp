@@ -25,9 +25,9 @@ int COdbcManager::GetPurchaseItem(CString strUID, std::vector<SHOPPURCHASE> &v)
 	_snprintf_s( szTemp, 128, "SELECT Purkey, ItemMain, ItemSub FROM viewShopPurchase WHERE "
 							"useruid='%s' AND PurFlag=0", strUID.GetString() );
 
-	SQLCHAR    szPurKey[PURKEY_LENGTH+1] = {0}; SQLINTEGER cbPurKey = SQL_NTS;
-    SQLINTEGER nItemMain = 0, cbItemMain =SQL_NTS;
-    SQLINTEGER nItemSub  = 0, cbItemSub  =SQL_NTS;
+	SQLCHAR    szPurKey[PURKEY_LENGTH+1] = {0}; SQLLEN cbPurKey = SQL_NTS;
+    SQLINTEGER nItemMain = 0; SQLLEN cbItemMain =SQL_NTS;
+    SQLINTEGER nItemSub  = 0; SQLLEN cbItemSub  =SQL_NTS;
     SQLRETURN  sReturn=0;
 
     sReturn = ::SQLExecDirect(pConn->hStmt,

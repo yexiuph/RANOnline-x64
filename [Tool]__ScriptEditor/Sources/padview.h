@@ -93,7 +93,7 @@ protected:
 	afx_msg void OnEditChange();
 	afx_msg void OnEditCopy();
 	afx_msg void OnEditCut();
-	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	//}}AFX_MSG
 	afx_msg void OnSetTabStops();
 

@@ -8,10 +8,34 @@
 #include "./TextureManager.h"
 
 #include "./DxMapBlend.h"
+#include "SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+//	On-disk (x86) image of TILE_TEX, see SerialLayout.h.
+struct TILE_TEX_DISK
+{
+	SerialLayout::STRING_X86	szTexture;
+};
+
+static_assert ( sizeof(TILE_TEX_DISK) == 24, "x86 size of TILE_TEX" );
+
+#if SERIAL_LAYOUT_NATIVE_X86_STRING
+SERIAL_LAYOUT_ASSERT_SIZE ( TILE_TEX_DISK, TILE_TEX );
+SERIAL_LAYOUT_ASSERT_MEMBER ( TILE_TEX_DISK, TILE_TEX, szTexture );
+#endif
+
+inline void SerialFromDisk ( TILE_TEX& d, const TILE_TEX_DISK& s )
+{
+	d.szTexture = SerialLayout::DecodeString ( s.szTexture );
+}
+
+inline void SerialToDisk ( TILE_TEX_DISK& d, const TILE_TEX& s )
+{
+	SerialLayout::EncodeString ( d.szTexture, s.szTexture );
+}
 
 // -----------------------------------------------------------------------------------------------------------------------------------------
 //												B	L	E	N	D		D	A	T	A
@@ -189,7 +213,7 @@ void DxBlendData::LoadFile_Game ( LPDIRECT3DDEVICEQ pd3dDevice, CSerialFile &SFi
 // -----------------------------------------------------------------------------------------------------------------------------------------
 void DxBlend::SaveFile_Edit ( CSerialFile &SFile )
 {
-	SFile.WriteBuffer ( m_pTileTex, sizeof(TILE_TEX)*EM_TEXSIZE*EM_TEXSIZE );
+	SerialLayout::WriteArray<TILE_TEX_DISK> ( SFile, m_pTileTex, EM_TEXSIZE*EM_TEXSIZE );
 
 	int nSize;
 	nSize = (int)m_mapBlend.size();
@@ -208,7 +232,7 @@ void DxBlend::LoadFile_Edit ( LPDIRECT3DDEVICEQ pd3dDevice, CSerialFile &SFile )
 {
 	SAFE_DELETE_ARRAY ( m_pTileTex );
 	m_pTileTex = new TILE_TEX[EM_TEXSIZE*EM_TEXSIZE];
-	SFile.ReadBuffer ( m_pTileTex, sizeof(TILE_TEX)*EM_TEXSIZE*EM_TEXSIZE );
+	SerialLayout::ReadArray<TILE_TEX_DISK> ( SFile, m_pTileTex, EM_TEXSIZE*EM_TEXSIZE );
 
 	int nSize;
 	std::string	sName;

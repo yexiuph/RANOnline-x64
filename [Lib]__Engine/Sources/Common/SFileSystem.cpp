@@ -6,7 +6,11 @@
 #define new DEBUG_NEW
 #endif
 
-#ifdef _DEBUG
+#if defined(_WIN64) && defined(_DEBUG)
+#pragma comment(lib, "../[Lib]__ZLib/Bin/x64/ZLibD.lib")
+#elif defined(_WIN64)
+#pragma comment(lib, "../[Lib]__ZLib/Bin/x64/ZLib.lib")
+#elif defined(_DEBUG)
 #pragma comment(lib, "../[Lib]__ZLib/Bin/ZLibD.lib")
 #else
 #pragma comment(lib, "../[Lib]__ZLib/Bin/ZLib.lib")

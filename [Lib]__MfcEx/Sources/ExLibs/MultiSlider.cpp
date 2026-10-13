@@ -1116,7 +1116,7 @@ void CMultiSlider::SetInfoWindow(CPoint &point)
 
 /*! \fn void CMultiSlider::OnTimer(UINT nIDEvent) 
 	\brief For displaying Tooltips with a reasonable frequency.*/
-void CMultiSlider::OnTimer(UINT nIDEvent) 
+void CMultiSlider::OnTimer(UINT_PTR nIDEvent) 
 {
  	CPaintDC dc(this);
 	CPoint pt;

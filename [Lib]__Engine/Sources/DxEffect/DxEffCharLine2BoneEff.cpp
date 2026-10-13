@@ -15,6 +15,107 @@
 #include "./DxViewPort.h"
 
 #include "./DxEffCharLine2BoneEff.h"
+#include "SerialLayout.h"
+
+//	x86 file image of EFFCHAR_PROPERTY_LINE2BONEEFF (232 bytes). CMinMax has a virtual destructor,
+//	so each CMinMax member starts with a vtable pointer, which x64 widens to 8 bytes.
+struct EFFCHAR_PROPERTY_LINE2BONEEFF_DISK
+{
+	struct MINMAX
+	{
+		SerialLayout::PTR32	vptr;
+		float				min;
+		float				max;
+	};
+
+	DWORD		m_dwFlag;
+	DWORD		m_dwOtherColor;
+	DWORD		m_dwParticlePec;
+	DWORD		m_dwColor;
+	DWORD		m_dwColor2;
+	D3DXVECTOR2	m_vLife;
+	D3DXVECTOR3	m_vSize;
+	D3DXVECTOR2	m_vScaleX;
+	D3DXVECTOR3	m_vScaleY;
+	float		m_fShake;
+	DWORD		m_dwSequenceCol;
+	DWORD		m_dwSequenceRow;
+	float		m_fCreateLength;
+	MINMAX		m_fMinMaxDist;
+	MINMAX		m_fMinMaxTexRotate;
+	bool		m_bWithCamMove;
+	char		m_szTexture[BONELISTEFF_TEXNAME_SIZE];
+	char		m_szTexture2[BONELISTEFF_TEXNAME_SIZE];
+};
+
+static_assert ( sizeof(EFFCHAR_PROPERTY_LINE2BONEEFF_DISK) == 232, "x86 image of EFFCHAR_PROPERTY_LINE2BONEEFF is 232 bytes" );
+#if SERIAL_LAYOUT_NATIVE_X86
+SERIAL_LAYOUT_ASSERT_SIZE ( EFFCHAR_PROPERTY_LINE2BONEEFF_DISK, EFFCHAR_PROPERTY_LINE2BONEEFF );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_LINE2BONEEFF_DISK, EFFCHAR_PROPERTY_LINE2BONEEFF, m_fCreateLength );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_LINE2BONEEFF_DISK, EFFCHAR_PROPERTY_LINE2BONEEFF, m_fMinMaxDist );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_LINE2BONEEFF_DISK, EFFCHAR_PROPERTY_LINE2BONEEFF, m_fMinMaxTexRotate );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_LINE2BONEEFF_DISK, EFFCHAR_PROPERTY_LINE2BONEEFF, m_bWithCamMove );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_LINE2BONEEFF_DISK, EFFCHAR_PROPERTY_LINE2BONEEFF, m_szTexture );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_LINE2BONEEFF_DISK, EFFCHAR_PROPERTY_LINE2BONEEFF, m_szTexture2 );
+#endif
+
+namespace
+{
+	//	Only the values are loaded; a vtable pointer from the file means nothing to this process.
+	void SerialFromDisk ( EFFCHAR_PROPERTY_LINE2BONEEFF& p, const EFFCHAR_PROPERTY_LINE2BONEEFF_DISK& d )
+	{
+		p.m_dwFlag			= d.m_dwFlag;
+		p.m_dwOtherColor	= d.m_dwOtherColor;
+		p.m_dwParticlePec	= d.m_dwParticlePec;
+		p.m_dwColor			= d.m_dwColor;
+		p.m_dwColor2		= d.m_dwColor2;
+		p.m_vLife			= d.m_vLife;
+		p.m_vSize			= d.m_vSize;
+		p.m_vScaleX			= d.m_vScaleX;
+		p.m_vScaleY			= d.m_vScaleY;
+		p.m_fShake			= d.m_fShake;
+		p.m_dwSequenceCol	= d.m_dwSequenceCol;
+		p.m_dwSequenceRow	= d.m_dwSequenceRow;
+		p.m_fCreateLength	= d.m_fCreateLength;
+		p.m_fMinMaxDist.min			= d.m_fMinMaxDist.min;
+		p.m_fMinMaxDist.max			= d.m_fMinMaxDist.max;
+		p.m_fMinMaxTexRotate.min	= d.m_fMinMaxTexRotate.min;
+		p.m_fMinMaxTexRotate.max	= d.m_fMinMaxTexRotate.max;
+		p.m_bWithCamMove	= d.m_bWithCamMove;
+		memcpy ( p.m_szTexture, d.m_szTexture, sizeof(p.m_szTexture) );
+		memcpy ( p.m_szTexture2, d.m_szTexture2, sizeof(p.m_szTexture2) );
+	}
+
+	void SerialToDisk ( EFFCHAR_PROPERTY_LINE2BONEEFF_DISK& d, const EFFCHAR_PROPERTY_LINE2BONEEFF& p )
+	{
+		memset ( &d, 0, sizeof(d) );
+		d.m_dwFlag			= p.m_dwFlag;
+		d.m_dwOtherColor	= p.m_dwOtherColor;
+		d.m_dwParticlePec	= p.m_dwParticlePec;
+		d.m_dwColor			= p.m_dwColor;
+		d.m_dwColor2		= p.m_dwColor2;
+		d.m_vLife			= p.m_vLife;
+		d.m_vSize			= p.m_vSize;
+		d.m_vScaleX			= p.m_vScaleX;
+		d.m_vScaleY			= p.m_vScaleY;
+		d.m_fShake			= p.m_fShake;
+		d.m_dwSequenceCol	= p.m_dwSequenceCol;
+		d.m_dwSequenceRow	= p.m_dwSequenceRow;
+		d.m_fCreateLength	= p.m_fCreateLength;
+
+		//	The Win32 build always wrote the in-memory vtable pointers; keep writing those bytes.
+		d.m_fMinMaxDist.vptr		= SerialLayout::PtrToDisk ( *reinterpret_cast<void* const*> ( &p.m_fMinMaxDist ) );
+		d.m_fMinMaxDist.min			= p.m_fMinMaxDist.min;
+		d.m_fMinMaxDist.max			= p.m_fMinMaxDist.max;
+		d.m_fMinMaxTexRotate.vptr	= SerialLayout::PtrToDisk ( *reinterpret_cast<void* const*> ( &p.m_fMinMaxTexRotate ) );
+		d.m_fMinMaxTexRotate.min	= p.m_fMinMaxTexRotate.min;
+		d.m_fMinMaxTexRotate.max	= p.m_fMinMaxTexRotate.max;
+
+		d.m_bWithCamMove	= p.m_bWithCamMove;
+		memcpy ( d.m_szTexture, p.m_szTexture, sizeof(d.m_szTexture) );
+		memcpy ( d.m_szTexture2, p.m_szTexture2, sizeof(d.m_szTexture2) );
+	}
+}
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1026,7 +1127,9 @@ HRESULT	DxEffCharLine2BoneEff::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ p
 		DWORD dwSize = 0;
 
 		//	Note : 이팩트의 Property 를 로드.
-		SFile.ReadBuffer( &m_Property, sizeof(m_Property) );
+		EFFCHAR_PROPERTY_LINE2BONEEFF_DISK sDisk;
+		SFile.ReadBuffer( &sDisk, sizeof(sDisk) );
+		SerialFromDisk ( m_Property, sDisk );
 
 		SFile >> dwSize;
 		for( DWORD i=0; i<dwSize; ++i )
@@ -1067,10 +1170,12 @@ HRESULT	DxEffCharLine2BoneEff::SaveFile ( basestream &SFile )
 	SFile << VERSION;
 
 	//	Note : DATA의 사이즈를 기록한다. Load 시에 버전이 틀릴 경우 사용됨.
-	SFile << (DWORD) ( sizeof(m_Property) );
+	SFile << (DWORD) ( sizeof(EFFCHAR_PROPERTY_LINE2BONEEFF_DISK) );
 
 	//	Note : 이팩트의 Property 를 저장.
-	SFile.WriteBuffer ( &m_Property, sizeof(m_Property) );
+	EFFCHAR_PROPERTY_LINE2BONEEFF_DISK sDisk;
+	SerialToDisk ( sDisk, m_Property );
+	SFile.WriteBuffer ( &sDisk, sizeof(sDisk) );
 
 	// Note : m_vecBoneINF
 	DWORD dwSize(0);

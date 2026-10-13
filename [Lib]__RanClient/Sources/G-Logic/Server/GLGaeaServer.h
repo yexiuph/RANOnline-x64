@@ -254,7 +254,6 @@ protected:
 	int						m_nServerChannel;
 	DWORD					m_dwFieldSvrID;
 	DWORD					m_dwAgentSlot;
-	BOOL					m_bUseIntelTBB;
 
 protected:
 	BOOL					m_bUpdate;
@@ -379,8 +378,6 @@ public:
 
 	DWORD GetFieldSvrID ()				{ return m_dwFieldSvrID; }
 	int GetServerChannel ()				{ return m_nServerChannel; }
-
-	BOOL GetUseIntelTBB()				{ return m_bUseIntelTBB; }
 
 	GLPARTY_FIELD* GetParty ( DWORD dwPartyID )		{ return m_cPartyFieldMan.GetParty(dwPartyID); }
 	GLPartyFieldMan& GetPartyMan ()					{ return m_cPartyFieldMan; }
@@ -679,7 +676,7 @@ protected:
 	GLLandMan* GetInstantMapByMapID ( const SNATIVEID &sMapID );
 
 public:
-	HRESULT Create ( DWORD dwMaxClient, DxMsgServer *pMsgServer, DxConsoleMsg* pConsoleMsg, GLDBMan* pDBMan, int nServiceProvider, const char* szMapList=NULL, DWORD dwFieldSID=FIELDSERVER_MAX, int nChannel=0, BOOL bUseIntelTBB = FALSE );
+	HRESULT Create ( DWORD dwMaxClient, DxMsgServer *pMsgServer, DxConsoleMsg* pConsoleMsg, GLDBMan* pDBMan, int nServiceProvider, const char* szMapList=NULL, DWORD dwFieldSID=FIELDSERVER_MAX, int nChannel=0 );
 	HRESULT Create4Level ( LPDIRECT3DDEVICEQ pd3dDevice );
 	HRESULT CleanUp ();
 

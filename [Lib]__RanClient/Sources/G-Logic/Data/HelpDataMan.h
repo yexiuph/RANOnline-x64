@@ -11,7 +11,8 @@ struct	SHELPNODE;
 typedef	std::list<SHELPNODE*>			HELPNODE_LIST;
 typedef	HELPNODE_LIST::iterator			HELPNODE_LIST_ITER;
 typedef	HELPNODE_LIST::const_iterator	HELPNODE_LIST_CITER;
-typedef	HELPNODE_LIST::size_type		HELPNODE_SIZE;
+//	Counts and lengths are stored in the help file as 4 bytes on every platform.
+typedef	DWORD							HELPNODE_SIZE;
 
 class	CSerialFile;
 

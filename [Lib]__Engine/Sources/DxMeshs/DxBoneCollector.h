@@ -21,6 +21,8 @@
 
 #include "DxAniKeys.h"
 
+namespace yx { struct SModelFrame; }
+
 #ifndef CHR_ID_LENGTH
 #define CHR_ID_LENGTH	33
 #endif
@@ -114,6 +116,17 @@ struct DxBoneTrans
 	{
 		_mm_free(p);
 	}
+
+	//	Debug builds allocate through MFC's DEBUG_NEW : new(THIS_FILE, __LINE__).
+	void* operator new(size_t i, LPCSTR, int)
+	{
+		return _mm_malloc(i, 16);
+	}
+
+	void operator delete(void* p, LPCSTR, int)
+	{
+		_mm_free(p);
+	}
 };
 typedef DxBoneTrans*	PDXBONETRANS;
 
@@ -132,7 +145,7 @@ struct DxSkeleton
 
 	DWORD			dwRefCount;
 
-	HRESULT LoadBoneTrans ( PDXBONETRANS &pBone, LPDIRECTXFILEDATA pxofobjCur, EMBODY emBody );
+	void LoadBoneTrans ( DxBoneTrans* pParent, const yx::SModelFrame& sFrame, EMBODY emBody );
 	HRESULT LoadFile ( const char *szFile, LPDIRECT3DDEVICEQ pd3dDevice );
 
 	DxBoneTrans* FindBone ( const char *szName ) const

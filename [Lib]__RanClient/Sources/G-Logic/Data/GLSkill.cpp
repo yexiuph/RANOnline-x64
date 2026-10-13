@@ -10,6 +10,7 @@
 #include "../[Lib]__Engine/Sources/Common/SeqRandom.h"
 #include "../[Lib]__Engine/Sources/Common/StringFile.h"
 #include "../[Lib]__Engine/Sources/Common/SerialFile.h"
+#include "../[Lib]__Engine/Sources/Common/SerialLayout.h"
 #include "../[Lib]__Engine/Sources/Common/STRINGUTILS.h"
 #include "../[Lib]__Engine/Sources/Common/SUBPATH.h"
 #include "../[Lib]__Engine/Sources/DxLand/DxLandMan.h"
@@ -19,6 +20,16 @@
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#endif
+
+//	The block-size headers of these std::string structures are their x86 Release sizeof,
+//	not this build's sizeof.
+#if SERIAL_LAYOUT_NATIVE_X86_STRING
+static_assert ( sizeof(SKILL::SEXT_DATA_103) == SKILL::SEXT_DATA_103::FILE_SIZE, "SKILL::SEXT_DATA_103::FILE_SIZE must be the x86 Release sizeof(SKILL::SEXT_DATA_103)" );
+static_assert ( sizeof(SKILL::SEXT_DATA_104) == SKILL::SEXT_DATA_104::FILE_SIZE, "SKILL::SEXT_DATA_104::FILE_SIZE must be the x86 Release sizeof(SKILL::SEXT_DATA_104)" );
+static_assert ( sizeof(SKILL::SEXT_DATA_105) == SKILL::SEXT_DATA_105::FILE_SIZE, "SKILL::SEXT_DATA_105::FILE_SIZE must be the x86 Release sizeof(SKILL::SEXT_DATA_105)" );
+static_assert ( sizeof(SKILL::SEXT_DATA) == SKILL::SEXT_DATA::FILE_SIZE, "SKILL::SEXT_DATA::FILE_SIZE must be the x86 Release sizeof(SKILL::SEXT_DATA)" );
+static_assert ( sizeof(SKILL::SSPECIAL_SKILL) == SKILL::SSPECIAL_SKILL::FILE_SIZE, "SKILL::SSPECIAL_SKILL::FILE_SIZE must be the x86 Release sizeof(SKILL::SSPECIAL_SKILL)" );
 #endif
 
 GLSkillMan& GLSkillMan::GetInstance()
@@ -1451,7 +1462,7 @@ BOOL GLSKILL::SaveFile ( CSerialFile &SFile )
 	SFile << (DWORD)FILE_SEXT_DATA;
 	{
 		SFile << DWORD(SKILL::SEXT_DATA::VERSION);
-		SFile << (DWORD)sizeof(SKILL::SEXT_DATA);
+		SFile << (DWORD)SKILL::SEXT_DATA::FILE_SIZE;
 		
 		CString cstrName;
 		cstrName.Format( _T("SD_%03d_%03d"), m_sBASIC.sNATIVEID.wMainID , m_sBASIC.sNATIVEID.wSubID ); // by °æ´ë
@@ -1462,7 +1473,7 @@ BOOL GLSKILL::SaveFile ( CSerialFile &SFile )
 	SFile << (DWORD)FILE_SPECIAL_SKILL;
 	{
 		SFile << DWORD(SKILL::SSPECIAL_SKILL::VERSION);
-		SFile << (DWORD)sizeof(SKILL::SSPECIAL_SKILL);
+		SFile << (DWORD)SKILL::SSPECIAL_SKILL::FILE_SIZE;
 		m_sSPECIAL_SKILL.SAVE( SFile );
 	}
 	
@@ -1664,7 +1675,7 @@ BOOL GLSKILL::LoadFile ( basestream &SFile, bool bPastLoad )
 				else if ( dwVer==0x0103 )
 				{
 					SKILL::SEXT_DATA_103 sOLD_DATA;
-					GASSERT(sizeof(sOLD_DATA)==dwSize);
+					GASSERT(SKILL::SEXT_DATA_103::FILE_SIZE==dwSize);
 					sOLD_DATA.LOAD ( SFile );
 
 					m_sEXT_DATA.Assign ( sOLD_DATA );
@@ -1672,7 +1683,7 @@ BOOL GLSKILL::LoadFile ( basestream &SFile, bool bPastLoad )
 				else if ( dwVer==0x0104 )
 				{
 					SKILL::SEXT_DATA_104 sOLD_DATA;
-					GASSERT(sizeof(sOLD_DATA)==dwSize);
+					GASSERT(SKILL::SEXT_DATA_104::FILE_SIZE==dwSize);
 					sOLD_DATA.LOAD ( SFile );
 
 					m_sEXT_DATA.Assign ( sOLD_DATA );
@@ -1680,7 +1691,7 @@ BOOL GLSKILL::LoadFile ( basestream &SFile, bool bPastLoad )
 				else if ( dwVer==0x0105 )
 				{
 					SKILL::SEXT_DATA_105 sOLD_DATA;
-					GASSERT(sizeof(sOLD_DATA)==dwSize);
+					GASSERT(SKILL::SEXT_DATA_105::FILE_SIZE==dwSize);
 					sOLD_DATA.LOAD ( SFile );
 
 					m_sEXT_DATA.Assign ( sOLD_DATA );

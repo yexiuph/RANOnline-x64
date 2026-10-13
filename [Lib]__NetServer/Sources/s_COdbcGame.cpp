@@ -55,29 +55,29 @@ int COdbcManager::GetCharacterInfo(int nUserNumber,
         return DB_ERROR;
 	}
 
-	SQLINTEGER nUserNum = 0, cbUserNum=SQL_NTS;
-	SQLINTEGER nSGNum   = 0, cbSGNum=SQL_NTS;
-    SQLINTEGER nGuNum   = 0, cbGuNum=SQL_NTS; // Club ¹øÈ£
-	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLINTEGER cbChaName = SQL_NTS;
+	SQLINTEGER nUserNum = 0; SQLLEN cbUserNum=SQL_NTS;
+	SQLINTEGER nSGNum   = 0; SQLLEN cbSGNum=SQL_NTS;
+    SQLINTEGER nGuNum   = 0; SQLLEN cbGuNum=SQL_NTS; // Club ¹øÈ£
+	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLLEN cbChaName = SQL_NTS;
 	SQLCHAR    szChaPhoneNumber[SMS_RECEIVER] = {0}; SQLINTEGER cbChaPhoneNumber = SQL_NTS;
-	SQLINTEGER nChaClass = 0, cbChaClass=SQL_NTS;
-	SQLINTEGER nChaBright = 0, cbChaBright=SQL_NTS;
+	SQLINTEGER nChaClass = 0; SQLLEN cbChaClass=SQL_NTS;
+	SQLINTEGER nChaBright = 0; SQLLEN cbChaBright=SQL_NTS;
 
-	SQLINTEGER nChaStartMap = 0, cbChaStartMap=SQL_NTS;
-	SQLINTEGER nChaStartGate = 0, cbChaStartGate=SQL_NTS;
+	SQLINTEGER nChaStartMap = 0; SQLLEN cbChaStartMap=SQL_NTS;
+	SQLINTEGER nChaStartGate = 0; SQLLEN cbChaStartGate=SQL_NTS;
 
-	SQLFLOAT   fChaPosX = 0; SQLINTEGER cbChaPosX=SQL_NTS;
-	SQLFLOAT   fChaPosY = 0; SQLINTEGER cbChaPosY=SQL_NTS;
-	SQLFLOAT   fChaPosZ = 0; SQLINTEGER cbChaPosZ=SQL_NTS;
+	SQLFLOAT   fChaPosX = 0; SQLLEN cbChaPosX=SQL_NTS;
+	SQLFLOAT   fChaPosY = 0; SQLLEN cbChaPosY=SQL_NTS;
+	SQLFLOAT   fChaPosZ = 0; SQLLEN cbChaPosZ=SQL_NTS;
 
-	SQLINTEGER nChaSaveMap = 0, cbChaSaveMap=SQL_NTS;	
+	SQLINTEGER nChaSaveMap = 0; SQLLEN cbChaSaveMap=SQL_NTS;	
 
-	SQLFLOAT fChaSavePosX = 0; SQLINTEGER cbChaSavePosX=SQL_NTS;
-	SQLFLOAT fChaSavePosY = 0; SQLINTEGER cbChaSavePosY=SQL_NTS;
-	SQLFLOAT fChaSavePosZ = 0; SQLINTEGER cbChaSavePosZ=SQL_NTS;
+	SQLFLOAT fChaSavePosX = 0; SQLLEN cbChaSavePosX=SQL_NTS;
+	SQLFLOAT fChaSavePosY = 0; SQLLEN cbChaSavePosY=SQL_NTS;
+	SQLFLOAT fChaSavePosZ = 0; SQLLEN cbChaSavePosZ=SQL_NTS;
 
-	SQLINTEGER nChaSchool = 0, cbChaSchool=SQL_NTS;
-    TIMESTAMP_STRUCT sChaGuSecede; SQLINTEGER cbChaGuSecede = SQL_NTS; // Å¬·´Å»Åð½Ã°£
+	SQLINTEGER nChaSchool = 0; SQLLEN cbChaSchool=SQL_NTS;
+    TIMESTAMP_STRUCT sChaGuSecede; SQLLEN cbChaGuSecede = SQL_NTS; // Å¬·´Å»Åð½Ã°£
 
 	while (true)
 	{
@@ -190,7 +190,7 @@ int COdbcManager::GetChaBAInfo(int nUsrNum,
 	if (!pConn) return DB_ERROR;
 	
 	int	nPos = 0;
-	SQLINTEGER nChaNum = 0, cbChaNum = SQL_NTS; 
+	SQLINTEGER nChaNum = 0; SQLLEN cbChaNum = SQL_NTS; 
 	
 	//std::strstream strTemp;
 	//strTemp << "SELECT TOP 16 ChaNum FROM ChaInfo WITH (NOLOCK) WHERE UserNum=";
@@ -351,7 +351,7 @@ LONGLONG COdbcManager::GetChaExp(int nChaNum)
 	}
 
 	LONGLONG   llChaExp = 0;
-    SQLINTEGER cbChaExp = SQL_NTS;
+    SQLLEN cbChaExp = SQL_NTS;
 	
 	while (true)
 	{

@@ -223,9 +223,6 @@ int CAgentServer::ListenProc(void)
 			MsgSndCryptKey(dwClient); // Send crypt key
 			MsgSndRandomNumber(dwClient); // Send random password key
 
-			// nProtect 서버 인증을 사용한다면 접속후 바로 클라이언트에게 인증용 메시지를 보낸다.
-			MsgSndGameGuardFirstCheck( dwClient );			
-			
 			nClientNumber = NET_ERROR;
 
 			if( !m_bUseEventThread )	
@@ -418,11 +415,13 @@ int CAgentServer::WorkProc()
 
 		while (m_bIsRunning)
 		{	
+			ULONG_PTR dwCompletionKey = 0;
 			nRetCode = GetQueuedCompletionStatus(m_hIOServer,
 				                                 &dwByteTrans, 
-				                                 (LPDWORD) &dwClient,
+				                                 &dwCompletionKey,
 				                                 (LPOVERLAPPED *) &pPerIoData,			
 				                                 INFINITE);
+			dwClient = (DWORD) dwCompletionKey;
 	 
 			
 			// 서버를 종료하기 위해서 종료처리 루틴을 호출했을때...

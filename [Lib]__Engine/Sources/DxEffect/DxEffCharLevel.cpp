@@ -1392,7 +1392,7 @@ HRESULT	DxEffCharLevel::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3dDevi
 		{
 			SAFE_DELETE_ARRAY ( m_pMaterials );
 			m_pMaterials = new DXMATERIAL_CHAR_EFF[m_dwMaterials];
-			SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_CHAR_EFF)*m_dwMaterials );
+			SerialLayout::ReadArray<DXMATERIAL_CHAR_EFF_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 			for ( DWORD i=0; i<m_dwMaterials; i++ )
 			{
@@ -1420,7 +1420,7 @@ HRESULT	DxEffCharLevel::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3dDevi
 		{
 			DXMATERIAL_CHAR_EFF_100*	pMaterials;
 			pMaterials = new DXMATERIAL_CHAR_EFF_100[m_dwMaterials];
-			SFile.ReadBuffer ( pMaterials, sizeof(DXMATERIAL_CHAR_EFF_100)*m_dwMaterials );
+			SerialLayout::ReadArray<DXMATERIAL_CHAR_EFF_100_DISK> ( SFile, pMaterials, m_dwMaterials );
 
 			SAFE_DELETE_ARRAY ( m_pMaterials );
 			m_pMaterials = new DXMATERIAL_CHAR_EFF[m_dwMaterials];
@@ -1468,7 +1468,7 @@ HRESULT	DxEffCharLevel::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3dDevi
 		{
 			DXMATERIAL_CHAR_EFF_100*	pMaterials;
 			pMaterials = new DXMATERIAL_CHAR_EFF_100[m_dwMaterials];
-			SFile.ReadBuffer ( pMaterials, sizeof(DXMATERIAL_CHAR_EFF_100)*m_dwMaterials );
+			SerialLayout::ReadArray<DXMATERIAL_CHAR_EFF_100_DISK> ( SFile, pMaterials, m_dwMaterials );
 
 			SAFE_DELETE_ARRAY ( m_pMaterials );
 			m_pMaterials = new DXMATERIAL_CHAR_EFF[m_dwMaterials];
@@ -1516,7 +1516,7 @@ HRESULT	DxEffCharLevel::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3dDevi
 		{
 			DXMATERIAL_SPECULAR*	pMaterials;
 			pMaterials = new DXMATERIAL_SPECULAR[m_dwMaterials];
-			SFile.ReadBuffer ( pMaterials, sizeof(DXMATERIAL_SPECULAR)*m_dwMaterials );
+			SerialLayout::ReadArray<DXMATERIAL_SPECULAR_DISK> ( SFile, pMaterials, m_dwMaterials );
 
 			SAFE_DELETE_ARRAY ( m_pMaterials );
 			m_pMaterials = new DXMATERIAL_CHAR_EFF[m_dwMaterials];
@@ -1659,7 +1659,7 @@ HRESULT	DxEffCharLevel::SaveFile ( basestream &SFile )
 
 	//	Note : DATA의 사이즈를 기록한다. Load 시에 버전이 틀릴 경우 사용됨.
 	//
-	SFile << (DWORD) ( sizeof(m_Property) + sizeof(DWORD) + sizeof(DXMATERIAL_CHAR_EFF)*m_dwMaterials );
+	SFile << (DWORD) ( sizeof(m_Property) + sizeof(DWORD) + sizeof(DXMATERIAL_CHAR_EFF_DISK)*m_dwMaterials );
 
 	//	Note : 이팩트의 Property 를 저장.
 	//
@@ -1668,7 +1668,7 @@ HRESULT	DxEffCharLevel::SaveFile ( basestream &SFile )
 	SFile << m_dwMaterials;
 	if ( m_dwMaterials )
 	{
-		SFile.WriteBuffer ( m_pMaterials, sizeof(DXMATERIAL_CHAR_EFF)*m_dwMaterials );
+		SerialLayout::WriteArray<DXMATERIAL_CHAR_EFF_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 	}
 
 	return S_OK;

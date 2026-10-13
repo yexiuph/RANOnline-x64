@@ -334,13 +334,13 @@ BOOL CSimpleProcessAPI::WindowsNTBuildProcessList(CMapStringToString &ProcessPID
 
     // set the perf_object_type pointer
 
-    pObj = (PPERF_OBJECT_TYPE) ((DWORD)pPerf + pPerf->HeaderLength);
+    pObj = (PPERF_OBJECT_TYPE) ((DWORD_PTR)pPerf + pPerf->HeaderLength);
 
     // 
     // loop thru the performance counter definition records looking 
     // for the process id counter and then save its offset 
     // 
-    pCounterDef = (PPERF_COUNTER_DEFINITION) ((DWORD)pObj + pObj->HeaderLength); 
+    pCounterDef = (PPERF_COUNTER_DEFINITION) ((DWORD_PTR)pObj + pObj->HeaderLength); 
     for (i=0; i<(DWORD)pObj->NumCounters; ++i) 
 	{ 
         if (pCounterDef->CounterNameTitleIndex == dwProcessIdTitle) { 
@@ -351,7 +351,7 @@ BOOL CSimpleProcessAPI::WindowsNTBuildProcessList(CMapStringToString &ProcessPID
     } 
 
     dwNumTasks = min( dwLimit, (DWORD)pObj->NumInstances );
-    pInst = (PPERF_INSTANCE_DEFINITION) ((DWORD)pObj + pObj->DefinitionLength);
+    pInst = (PPERF_INSTANCE_DEFINITION) ((DWORD_PTR)pObj + pObj->DefinitionLength);
 
     // loop thru the performance instance data extracting each process name
 
@@ -360,7 +360,7 @@ BOOL CSimpleProcessAPI::WindowsNTBuildProcessList(CMapStringToString &ProcessPID
         //
         // pointer to the process name
         //
-        p = (LPSTR) ((DWORD)pInst + pInst->NameOffset);
+        p = (LPSTR) ((DWORD_PTR)pInst + pInst->NameOffset);
 
         //
         // convert it to ascii
@@ -381,8 +381,8 @@ BOOL CSimpleProcessAPI::WindowsNTBuildProcessList(CMapStringToString &ProcessPID
 				TRACE1("%s\t", szProcessName);
 		}
         // get the process id
-        pCounter = (PPERF_COUNTER_BLOCK) ((DWORD)pInst + pInst->ByteLength);
-        DWORD nProcessId = *((LPDWORD) ((DWORD)pCounter + dwProcessIdCounter));
+        pCounter = (PPERF_COUNTER_BLOCK) ((DWORD_PTR)pInst + pInst->ByteLength);
+        DWORD nProcessId = *((LPDWORD) ((DWORD_PTR)pCounter + dwProcessIdCounter));
 		TRACE1("%u\n", nProcessId);
 		// Do not add the _Total instance: it's NOT a process
 		if (strcmp("_Total", szProcessName) && nProcessId) {
@@ -391,7 +391,7 @@ BOOL CSimpleProcessAPI::WindowsNTBuildProcessList(CMapStringToString &ProcessPID
 			ProcessPIDNameMap.SetAt(szMapKey, szProcessName);
 		}
         // next process
-        pInst = (PPERF_INSTANCE_DEFINITION) ((DWORD)pCounter + pCounter->ByteLength);
+        pInst = (PPERF_INSTANCE_DEFINITION) ((DWORD_PTR)pCounter + pCounter->ByteLength);
     }
 
 exit:

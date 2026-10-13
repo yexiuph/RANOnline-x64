@@ -132,10 +132,10 @@ int COdbcManager::ReadUserInven(SCHARDATA2* pChaData2)
     }
 
 	LONGLONG   llUserMoney = 0;
-    SQLINTEGER cbUserMoney = SQL_NTS;
-    TIMESTAMP_STRUCT sStorageDate2; SQLINTEGER cbStorageDate2 = SQL_NTS;
-    TIMESTAMP_STRUCT sStorageDate3; SQLINTEGER cbStorageDate3 = SQL_NTS;
-    TIMESTAMP_STRUCT sStorageDate4; SQLINTEGER cbStorageDate4 = SQL_NTS;
+    SQLLEN cbUserMoney = SQL_NTS;
+    TIMESTAMP_STRUCT sStorageDate2; SQLLEN cbStorageDate2 = SQL_NTS;
+    TIMESTAMP_STRUCT sStorageDate3; SQLLEN cbStorageDate3 = SQL_NTS;
+    TIMESTAMP_STRUCT sStorageDate4; SQLLEN cbStorageDate4 = SQL_NTS;
 
 	while(true)
 	{
@@ -260,7 +260,7 @@ int	COdbcManager::ReadUserInven(int SGNum, DWORD dwUserNum, CByteStream &ByteStr
 	
 	// Retrieve and display each row of data.
 	BYTE pBuffer[DB_IMAGE_BUF_SIZE] = {0};
-	SQLINTEGER  lSize=0, lTotalSize=0;
+	SQLINTEGER lTotalSize=0; SQLLEN lSize=0;
 
 	while ((sReturn = ::SQLFetch(pConn->hStmt)) != SQL_NO_DATA) 
 	{			
@@ -391,7 +391,7 @@ int	COdbcManager::WriteUserInven(
 	}	
 	
 	// Bind parameter
-	SQLINTEGER cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
+	SQLLEN cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
 
 	sReturn = ::SQLBindParameter(pConn->hStmt, 
 								1, 
@@ -482,7 +482,7 @@ int COdbcManager::UpdateUserLastInfoAdd( DWORD dwUserID, LONGLONG lnUserMoney )
 	//	LONGLONG   llUserSaveMoney = 0;
 	//	SQLINTEGER cbUserSaveMoney = SQL_NTS;	
 	SQLCHAR    szTempStorageMoney[CHAR_TEMPMONEY] = {0}; 
-	SQLINTEGER cbTempStorageMoney = SQL_NTS;
+	SQLLEN cbTempStorageMoney = SQL_NTS;
 
 	LONGLONG lnTempMoney = 0;
 

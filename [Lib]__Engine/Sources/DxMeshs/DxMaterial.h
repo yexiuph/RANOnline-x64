@@ -5,6 +5,7 @@
 //
 #pragma once
 #include <string>
+#include "SerialLayout.h"
 
 struct DXMATERIAL
 {
@@ -89,6 +90,98 @@ struct DXMATERIAL_CHAR_EFF
 
 	~DXMATERIAL_CHAR_EFF();
 };
+
+//	----------------------------------------------------------------------------------------------
+//	On-disk (x86) images of the material structures above, see SerialLayout.h.
+//	The texture pointer is a 4-byte slot that always loads as NULL; the load paths (re)load the
+//	texture by name afterwards.  DXMATERIAL_SPECULAR and DXMATERIAL_CHAR_EFF_100 are only read
+//	(old file versions); converting them leaves pSpecTex / pEffTex NULL, so the temporaries no
+//	longer carry (and, for DXMATERIAL_SPECULAR, "release" in the destructor) a stale pointer.
+//	----------------------------------------------------------------------------------------------
+struct DXMATERIAL_SPECULAR_DISK
+{
+	BOOL					bSpecUse;
+	SerialLayout::PTR32		pSpecTex;
+	char					szTexture[MAX_PATH];
+	char					szSpecTex[MAX_PATH];
+};
+
+struct DXMATERIAL_CHAR_EFF_100_DISK
+{
+	BOOL					bEffUse;
+	float					fMaterial_Power;
+	SerialLayout::PTR32		pEffTex;
+	char					szTexture[MAX_PATH];
+	char					szEffTex[MAX_PATH];
+};
+
+struct DXMATERIAL_CHAR_EFF_DISK
+{
+	BOOL					bEffUse;
+	D3DMATERIALQ			d3dMaterial;
+	SerialLayout::PTR32		pEffTex;
+	char					szTexture[MAX_PATH];
+	char					szEffTex[MAX_PATH];
+};
+
+static_assert ( sizeof(DXMATERIAL_SPECULAR_DISK) == 528, "x86 size of DXMATERIAL_SPECULAR" );
+static_assert ( sizeof(DXMATERIAL_CHAR_EFF_100_DISK) == 532, "x86 size of DXMATERIAL_CHAR_EFF_100" );
+static_assert ( sizeof(DXMATERIAL_CHAR_EFF_DISK) == 596, "x86 size of DXMATERIAL_CHAR_EFF" );
+
+#if SERIAL_LAYOUT_NATIVE_X86
+SERIAL_LAYOUT_ASSERT_SIZE ( DXMATERIAL_SPECULAR_DISK, DXMATERIAL_SPECULAR );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_SPECULAR_DISK, DXMATERIAL_SPECULAR, bSpecUse );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_SPECULAR_DISK, DXMATERIAL_SPECULAR, pSpecTex );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_SPECULAR_DISK, DXMATERIAL_SPECULAR, szTexture );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_SPECULAR_DISK, DXMATERIAL_SPECULAR, szSpecTex );
+SERIAL_LAYOUT_ASSERT_SIZE ( DXMATERIAL_CHAR_EFF_100_DISK, DXMATERIAL_CHAR_EFF_100 );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_100_DISK, DXMATERIAL_CHAR_EFF_100, bEffUse );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_100_DISK, DXMATERIAL_CHAR_EFF_100, fMaterial_Power );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_100_DISK, DXMATERIAL_CHAR_EFF_100, pEffTex );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_100_DISK, DXMATERIAL_CHAR_EFF_100, szTexture );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_100_DISK, DXMATERIAL_CHAR_EFF_100, szEffTex );
+SERIAL_LAYOUT_ASSERT_SIZE ( DXMATERIAL_CHAR_EFF_DISK, DXMATERIAL_CHAR_EFF );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_DISK, DXMATERIAL_CHAR_EFF, bEffUse );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_DISK, DXMATERIAL_CHAR_EFF, d3dMaterial );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_DISK, DXMATERIAL_CHAR_EFF, pEffTex );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_DISK, DXMATERIAL_CHAR_EFF, szTexture );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_CHAR_EFF_DISK, DXMATERIAL_CHAR_EFF, szEffTex );
+#endif
+
+inline void SerialFromDisk ( DXMATERIAL_SPECULAR& d, const DXMATERIAL_SPECULAR_DISK& s )
+{
+	d.bSpecUse	= s.bSpecUse;
+	d.pSpecTex	= NULL;
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szSpecTex, s.szSpecTex, sizeof(d.szSpecTex) );
+}
+
+inline void SerialFromDisk ( DXMATERIAL_CHAR_EFF_100& d, const DXMATERIAL_CHAR_EFF_100_DISK& s )
+{
+	d.bEffUse			= s.bEffUse;
+	d.fMaterial_Power	= s.fMaterial_Power;
+	d.pEffTex			= NULL;
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szEffTex, s.szEffTex, sizeof(d.szEffTex) );
+}
+
+inline void SerialFromDisk ( DXMATERIAL_CHAR_EFF& d, const DXMATERIAL_CHAR_EFF_DISK& s )
+{
+	d.bEffUse		= s.bEffUse;
+	d.d3dMaterial	= s.d3dMaterial;
+	d.pEffTex		= NULL;
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szEffTex, s.szEffTex, sizeof(d.szEffTex) );
+}
+
+inline void SerialToDisk ( DXMATERIAL_CHAR_EFF_DISK& d, const DXMATERIAL_CHAR_EFF& s )
+{
+	d.bEffUse		= s.bEffUse;
+	d.d3dMaterial	= s.d3dMaterial;
+	d.pEffTex		= SerialLayout::PtrToDisk ( s.pEffTex );
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szEffTex, s.szEffTex, sizeof(d.szEffTex) );
+}
 
 //
 //struct DXMATERIAL_CHAR_EFF

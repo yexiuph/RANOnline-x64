@@ -7,10 +7,40 @@
 #include "./DxBoneCollector.h"
 
 #include "./DxEffAniTrace.h"
+#include "SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+//	On-disk (x86) image of EFFANI_PROPERTY_TRACE, see SerialLayout.h.
+struct EFFANI_PROPERTY_TRACE_DISK
+{
+	float						m_fScale;
+	SerialLayout::STRING_X86	m_strTexName;
+};
+
+static_assert ( sizeof(EFFANI_PROPERTY_TRACE_DISK) == 28, "x86 size of EFFANI_PROPERTY_TRACE" );
+
+#if SERIAL_LAYOUT_NATIVE_X86_STRING
+SERIAL_LAYOUT_ASSERT_SIZE ( EFFANI_PROPERTY_TRACE_DISK, EFFANI_PROPERTY_TRACE );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFANI_PROPERTY_TRACE_DISK, EFFANI_PROPERTY_TRACE, m_fScale );
+SERIAL_LAYOUT_ASSERT_MEMBER ( EFFANI_PROPERTY_TRACE_DISK, EFFANI_PROPERTY_TRACE, m_strTexName );
+#endif
+
+//	Only used on DxEffAniData_Trace::m_Property, whose std::string lives in an anonymous union and
+//	may never have been constructed: it is rebuilt in place (see SerialLayout::ConstructStringInPlace).
+inline void SerialFromDisk ( EFFANI_PROPERTY_TRACE& d, const EFFANI_PROPERTY_TRACE_DISK& s )
+{
+	d.m_fScale = s.m_fScale;
+	SerialLayout::ConstructStringInPlace ( d.m_strTexName, s.m_strTexName );
+}
+
+inline void SerialToDisk ( EFFANI_PROPERTY_TRACE_DISK& d, const EFFANI_PROPERTY_TRACE& s )
+{
+	d.m_fScale = s.m_fScale;
+	SerialLayout::EncodeString ( d.m_strTexName, s.m_strTexName );
+}
 
 DWORD		DxEffAniData_Trace::TYPEID		= EMEFFANI_TRACE;
 DWORD		DxEffAniData_Trace::VERSION		= 0x0100;
@@ -39,7 +69,7 @@ HRESULT	DxEffAniData_Trace::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3d
 	if ( dwVer == VERSION )
 	{
 		//	Note : 이팩트의 Property 를 저장.
-		SFile.ReadBuffer ( &m_Property, sizeof(m_Property) );
+		SerialLayout::ReadArray<EFFANI_PROPERTY_TRACE_DISK> ( SFile, &m_Property, 1 );
 	}
 	else
 	{
@@ -64,10 +94,10 @@ HRESULT	DxEffAniData_Trace::SaveFile ( CSerialFile &SFile )
 	SFile << TYPEID;
 	SFile << VERSION;
 
-	SFile << (DWORD) ( sizeof(m_Property) );
+	SFile << (DWORD) ( sizeof(EFFANI_PROPERTY_TRACE_DISK) );
 
 	//	Note : 이팩트의 Property 를 저장.
-	SFile.WriteBuffer ( &m_Property, sizeof(m_Property) );
+	SerialLayout::WriteArray<EFFANI_PROPERTY_TRACE_DISK> ( SFile, &m_Property, 1 );
 
 	return S_OK;
 }

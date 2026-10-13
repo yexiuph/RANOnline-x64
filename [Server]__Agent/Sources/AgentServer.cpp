@@ -202,7 +202,7 @@ void cmdPopupMenu(HWND hDlg)
 }
 
 
-BOOL CALLBACK MainDlgProc(HWND hDlg,UINT iMessage,WPARAM wParam,LPARAM lParam)
+INT_PTR CALLBACK MainDlgProc(HWND hDlg,UINT iMessage,WPARAM wParam,LPARAM lParam)
 {
 	int nRetCode = 0;
 	g_hWindow = hDlg;

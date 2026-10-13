@@ -35,7 +35,7 @@
 namespace DxFieldInstance
 {
 	HRESULT Create ( const char *_szAppPath, DxMsgServer *pMsgServer, DxConsoleMsg* pConsoleMsg, GLDBMan *pDBMan, int nServiceProvider, 
-					 const char* szMapList, DWORD dwFieldSID, DWORD dwMaxClient, bool bPK_MODE, int nChannel, BOOL bPKLess, BOOL bUseIntelTBB,
+					 const char* szMapList, DWORD dwFieldSID, DWORD dwMaxClient, bool bPK_MODE, int nChannel, BOOL bPKLess,
 					 DWORD dwLangSet )
 	{
 		HRESULT hr = S_OK;
@@ -211,7 +211,7 @@ namespace DxFieldInstance
 		//	Note : 서버 가동.
 		//
 		hr = GLGaeaServer::GetInstance().Create ( dwMaxClient, pMsgServer, pConsoleMsg, pDBMan, nServiceProvider, 
-												  szMapList, dwFieldSID, nChannel, bUseIntelTBB );
+												  szMapList, dwFieldSID, nChannel );
 		if ( FAILED(hr) )
 		{
 			pConsoleMsg->Write (  "[Gaea Server] Start Failed : GLGaeaServer::Create ()" );

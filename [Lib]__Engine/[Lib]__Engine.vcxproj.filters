@@ -148,6 +148,9 @@
     <ClInclude Include="Sources\Common\SerialFile.h">
       <Filter>Source Files\Common</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Common\SerialLayout.h">
+      <Filter>Source Files\Common</Filter>
+    </ClInclude>
     <ClInclude Include="Sources\Common\SerialMemory.h">
       <Filter>Source Files\Common</Filter>
     </ClInclude>

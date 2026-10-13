@@ -168,7 +168,7 @@ void CCJFlatComboBox::OnLButtonUp(UINT nFlags, CPoint point)
 	CComboBox::OnLButtonUp(nFlags, point);
 }
 
-void CCJFlatComboBox::OnTimer(UINT nIDEvent) 
+void CCJFlatComboBox::OnTimer(UINT_PTR nIDEvent) 
 {
 	POINT pt;
 	GetCursorPos(&pt);

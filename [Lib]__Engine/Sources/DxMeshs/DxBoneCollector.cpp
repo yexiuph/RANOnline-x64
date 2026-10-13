@@ -12,6 +12,7 @@
 #include "DxSkinDefine.h"
 
 #include "DxBoneCollector.h"
+#include "YXModelLoader.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -252,194 +253,81 @@ HRESULT DxSkeleton::LoadFile ( const char *szFile, LPDIRECT3DDEVICEQ pd3dDevice 
 {
 	if (szFile == NULL)	return E_INVALIDARG;
 
-	HRESULT hr = S_OK;
-	LPDIRECTXFILE pxofapi = NULL;
-	LPDIRECTXFILEENUMOBJECT pxofenum = NULL;
-	LPDIRECTXFILEDATA pxofobjCur = NULL;
-	int cchFileName;
-
 	SAFE_DELETE(pBoneRoot);
 
-	cchFileName = strlen(szFile);
-	if (cchFileName < 2)
-	{
-		hr = E_FAIL;
-		goto e_Exit;
-	}
+	int cchFileName = (int)strlen(szFile);
+	if (cchFileName < 2)	return E_FAIL;
 
 	SAFE_DELETE_ARRAY(szXFileName);
 	int nStrLen = cchFileName+1;
 	szXFileName = new char[nStrLen];
 	StringCchCopy( szXFileName, nStrLen, szFile );
 
-	//	xFile 개체를 만듬.
-	hr = DirectXFileCreate(&pxofapi);
-	if (FAILED(hr))
-		goto e_Exit;
-
-    //	xFile 템플리트 등록.
-	hr = pxofapi->RegisterTemplates((LPVOID)D3DRM_XTEMPLATES,
-		D3DRM_XTEMPLATE_BYTES);
-	if (FAILED(hr))
-		goto e_Exit;
-
-	//	Note : Path xFile 경로.
-	//
 	char szPathName[MAX_PATH] = "";
 	StringCchCopy( szPathName, MAX_PATH, DxBoneCollector::GetInstance().GetPath() );
 	StringCchCat( szPathName, MAX_PATH, szXFileName );
 
-    //	실제 xFile을 열음.
-	hr = pxofapi->CreateEnumObject((LPVOID)szPathName,
-		DXFILELOAD_FROMFILE,
-		&pxofenum);
-	if (FAILED(hr))
-		goto e_Exit;
-
-	//	Note : 최상위 오브젝트를 읽어옴.
+	//	Note : The frame hierarchy is read through YXCore (Assimp); d3dxof.dll has no 64-bit version.
 	//
+	yx::SModelFrame sRoot;
+	std::string strError;
+	if ( !yx::LoadFrameHierarchy ( szPathName, sRoot, strError ) )
+	{
+		CDebugSet::ToLogFile ( "ERROR : DxSkeleton::LoadFile() %s, %s", szPathName, strError.c_str() );
+		return E_FAIL;
+	}
+
 	pBoneRoot = new DxBoneTrans;
-	nStrLen = strlen(__ROOT)+1;
+	nStrLen = (int)strlen(__ROOT)+1;
 	pBoneRoot->szName = new char[nStrLen];
 	StringCchCopy( pBoneRoot->szName, nStrLen, __ROOT );
-	while (SUCCEEDED(pxofenum->GetNextDataObject(&pxofobjCur)))
+
+	for ( size_t i=0; i<sRoot.vecChildren.size(); ++i )
 	{
-		const GUID *type;
-
-		hr = pxofobjCur->GetType(&type);
-		if (FAILED(hr))	goto e_Exit;
-
-		//	Note : 본만 가져온다.
-		//
-		if ( *type == TID_D3DRMFrame )
-		{
-			hr = LoadBoneTrans ( pBoneRoot, pxofobjCur, EMBODY_DEFAULT );
-			if (FAILED(hr))	goto e_Exit;
-		}
-
-		GXRELEASE(pxofobjCur);
+		LoadBoneTrans ( pBoneRoot, sRoot.vecChildren[i], EMBODY_DEFAULT );
 	}
-
-e_Exit:
-    GXRELEASE(pxofobjCur);
-    GXRELEASE(pxofenum);
-    GXRELEASE(pxofapi);
-
-	return hr;
-}
-
-HRESULT DxSkeleton::LoadBoneTrans ( PDXBONETRANS &pBone, LPDIRECTXFILEDATA pxofobjCur, EMBODY emBody )
-{
-	HRESULT hr = S_OK;
-	LPDIRECTXFILEDATA pxofobjChild = NULL;
-	LPDIRECTXFILEOBJECT pxofChild = NULL;
-	const GUID *type;
-	DWORD cbSize;
-	D3DXMATRIX *pmatNew;
-	PDXBONETRANS pBoneTransCur;
-	DWORD cchName;
-    
-	//	Note : 오브젝트의 타입.
-	//
-	hr = pxofobjCur->GetType(&type);
-	if (FAILED(hr))	goto e_Exit;
-    
-    //	Note : 트렌스폼.
-	//
-	if (*type == TID_D3DRMFrameTransformMatrix)
-	{
-		hr = pxofobjCur->GetData ( NULL, &cbSize, (PVOID*)&pmatNew );
-		if (FAILED(hr))	goto e_Exit;
-        
-		//// Normal 값을 단위벡터로 유지시키기 위한 작업
-		//D3DXMATRIX	sM = *pmatNew;
-		//float fLength = sM._11*(sM._22*sM._33-sM._23*sM._32) - sM._12*(sM._21*sM._33-sM._23*sM._31) + sM._13*(sM._21*sM._32-sM._22*sM._31);
-		//fLength = 1.f/fLength;
-		//*pmatNew *= fLength;
-
-		//	update the parents matrix with the new one
-		pBone->matRot = pBone->matRotOrig = *pmatNew;
-		D3DXMatrixToSQT( pBone->m_pQuatPosCUR.m_vScale, pBone->m_pQuatPosCUR.m_vQuat, pBone->m_pQuatPosCUR.m_vPos, pBone->matRot );
-		pBone->m_pQuatPosPREV = pBone->m_pQuatPosORIG = pBone->m_pQuatPosCUR;
-	}
-	//	Note : 하위 프레임.
-	//
-	else if (*type == TID_D3DRMFrame)
-	{
-		char* szFrameName = NULL;
-
-		//	Note : 프레임의 이름이 있는지 검사.
-		//
-		hr = pxofobjCur->GetName(NULL, &cchName);
-		if ( SUCCEEDED(hr) && cchName!=0 )
-		{
-			szFrameName = (char*) _alloca(sizeof(char)*(cchName+1));
-			hr = pxofobjCur->GetName ( szFrameName, &cchName );
-			if (FAILED(hr))	goto e_Exit;
-		}
-
-		// Note : 이름이 없다면 작업 안 만듬.
-		if( !szFrameName )	goto e_Exit;
-        
-		//	Note : 새 프레임 만듬.
-		//
-		pBoneTransCur = new DxBoneTrans();
-		if (pBoneTransCur == NULL)
-		{
-			hr = E_OUTOFMEMORY;
-			goto e_Exit;
-		}
-
-		pBoneTransCur->SetName ( szFrameName );
-
-		// 상체인지 하체인지 관리한다. ( 부모가 상체면 자식도 상체이다. )
-		switch( emBody )
-		{
-		case EMBODY_DEFAULT:
-			if( strcmp(szFrameName,"Bip01_Spine1")==0 )
-			{
-				pBoneTransCur->m_emBody = EMBODY_UPBODY;
-			}
-			else
-			{
-				pBoneTransCur->m_emBody = EMBODY_DEFAULT;
-			}
-			break;
-
-		case EMBODY_UPBODY:
-			pBoneTransCur->m_emBody = EMBODY_UPBODY;
-			break;
-		};
-
-		BoneMap.insert ( std::make_pair(std::string(pBoneTransCur->szName),pBoneTransCur) );
-		pBone->AddBoneTrans(pBoneTransCur);
-
-		//	Note : 순차적으로 탐색하면서 에니메이션을 읽어온다.
-		//		QueryInterface()를 사용하여 오브젝트의 타입을 확인함.
-		//
-		while ( SUCCEEDED(pxofobjCur->GetNextObject(&pxofChild)) )
-		{
-			hr = pxofChild->QueryInterface(IID_IDirectXFileData,
-					(LPVOID *)&pxofobjChild);
-
-			if (SUCCEEDED(hr))
-			{
-				hr = LoadBoneTrans ( pBoneTransCur, pxofobjChild, pBoneTransCur->m_emBody );
-				if (FAILED(hr))		goto e_Exit;
-
-				GXRELEASE(pxofobjChild);
-            }
-
-			GXRELEASE(pxofChild);
-		}
-
-	}
-
-e_Exit:
-	GXRELEASE(pxofobjChild);
-	GXRELEASE(pxofChild);
 
 	return S_OK;
+}
+
+void DxSkeleton::LoadBoneTrans ( DxBoneTrans* pParent, const yx::SModelFrame& sFrame, EMBODY emBody )
+{
+	//	Note : Unnamed frames are skipped together with their children.
+	//
+	if ( sFrame.strName.empty() )	return;
+
+	DxBoneTrans* pBoneTransCur = new DxBoneTrans();
+	pBoneTransCur->SetName ( const_cast<char*>( sFrame.strName.c_str() ) );
+
+	switch( emBody )
+	{
+	case EMBODY_DEFAULT:
+		if( sFrame.strName == "Bip01_Spine1" )
+		{
+			pBoneTransCur->m_emBody = EMBODY_UPBODY;
+		}
+		else
+		{
+			pBoneTransCur->m_emBody = EMBODY_DEFAULT;
+		}
+		break;
+
+	case EMBODY_UPBODY:
+		pBoneTransCur->m_emBody = EMBODY_UPBODY;
+		break;
+	};
+
+	pBoneTransCur->matRot = pBoneTransCur->matRotOrig = D3DXMATRIX ( sFrame.matLocal );
+	D3DXMatrixToSQT( pBoneTransCur->m_pQuatPosCUR.m_vScale, pBoneTransCur->m_pQuatPosCUR.m_vQuat, pBoneTransCur->m_pQuatPosCUR.m_vPos, pBoneTransCur->matRot );
+	pBoneTransCur->m_pQuatPosPREV = pBoneTransCur->m_pQuatPosORIG = pBoneTransCur->m_pQuatPosCUR;
+
+	BoneMap.insert ( std::make_pair(std::string(pBoneTransCur->szName),pBoneTransCur) );
+	pParent->AddBoneTrans(pBoneTransCur);
+
+	for ( size_t i=0; i<sFrame.vecChildren.size(); ++i )
+	{
+		LoadBoneTrans ( pBoneTransCur, sFrame.vecChildren[i], pBoneTransCur->m_emBody );
+	}
 }
 
 DxBoneCollector::DxBoneCollector(void)

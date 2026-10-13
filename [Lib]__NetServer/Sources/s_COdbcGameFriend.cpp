@@ -39,10 +39,10 @@ int COdbcManager::GetChaFriend(
 		return DB_ERROR;
 	}
 
-	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLINTEGER cbChaName = SQL_NTS;
-	SQLINTEGER nChaP = 0, cbChaP=SQL_NTS;
-	SQLINTEGER nChaS = 0, cbChaS=SQL_NTS;
-	SQLINTEGER nChaFlag = 0, cbChaFlag=SQL_NTS;
+	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLLEN cbChaName = SQL_NTS;
+	SQLINTEGER nChaP = 0; SQLLEN cbChaP=SQL_NTS;
+	SQLINTEGER nChaS = 0; SQLLEN cbChaS=SQL_NTS;
+	SQLINTEGER nChaFlag = 0; SQLLEN cbChaFlag=SQL_NTS;
 	
 	while (true)
 	{

@@ -236,24 +236,6 @@ public:
 	__time64_t GetChatBlockDate (DWORD dwClient);
     void       SetChatBlockDate (DWORD dwClient, __time64_t tTime);	
 
-	//! nProtect GameGuard 인증용 쿼리를 가져오기 전에 호출
-	bool nProtectSetAuthQuery(DWORD dwClient);
-    	
-	//! nProtect GameGuard 인증용 쿼리 가져오기
-	GG_AUTH_DATA nProtectGetAuthQuery(DWORD dwClient);
-
-	//! nProtect GameGuard 인증 응답 가져오기
-	GG_AUTH_DATA nProtectGetAuthAnswer( DWORD dwClient );
-
-	//! nProtect GameGuard 인증 응답 설정
-	void nProtectSetAuthAnswer(DWORD dwClient, GG_AUTH_DATA& ggad);
-
-	//! nProtect GameGuard 인증 결과 가져오기
-	DWORD nProtectCheckAuthAnswer(DWORD dwClient);
-
-	//! nProtect GameGuard 인증 상태를 리셋시킨다.
-	void nProtectResetAuth(DWORD dwClient);
-
 	LPPER_IO_OPERATION_DATA GetFreeOverIO(int nType=0);
 	void ReleaseOperationData(PER_IO_OPERATION_DATA* pData);
 

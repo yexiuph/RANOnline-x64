@@ -11,10 +11,56 @@
 #include "./DxGlowMan.h"
 #include "./GLPeriod.h"
 #include "./DxEffectGlow.h"
+#include "SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+//	On-disk (x86) image of DXUSERMATERIAL, see SerialLayout.h.
+//	pGlowTex always loads as NULL.  m_pMaterials reload it right away; m_pFrameMaterials never
+//	loaded it (the legacy raw read left the stale file value there).
+struct DXUSERMATERIAL_DISK
+{
+	BOOL					bGlowUse;
+	BOOL					bColorUse;
+	D3DCOLOR				cColor;
+	SerialLayout::PTR32		pGlowTex;
+	char					szTexture[MAX_PATH];
+	char					szGlowTex[MAX_PATH];
+};
+
+static_assert ( sizeof(DXUSERMATERIAL_DISK) == 536, "x86 size of DXUSERMATERIAL" );
+
+#if SERIAL_LAYOUT_NATIVE_X86
+SERIAL_LAYOUT_ASSERT_SIZE ( DXUSERMATERIAL_DISK, DXUSERMATERIAL );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXUSERMATERIAL_DISK, DXUSERMATERIAL, bGlowUse );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXUSERMATERIAL_DISK, DXUSERMATERIAL, bColorUse );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXUSERMATERIAL_DISK, DXUSERMATERIAL, cColor );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXUSERMATERIAL_DISK, DXUSERMATERIAL, pGlowTex );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXUSERMATERIAL_DISK, DXUSERMATERIAL, szTexture );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXUSERMATERIAL_DISK, DXUSERMATERIAL, szGlowTex );
+#endif
+
+inline void SerialFromDisk ( DXUSERMATERIAL& d, const DXUSERMATERIAL_DISK& s )
+{
+	d.bGlowUse	= s.bGlowUse;
+	d.bColorUse	= s.bColorUse;
+	d.cColor	= s.cColor;
+	d.pGlowTex	= NULL;
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szGlowTex, s.szGlowTex, sizeof(d.szGlowTex) );
+}
+
+inline void SerialToDisk ( DXUSERMATERIAL_DISK& d, const DXUSERMATERIAL& s )
+{
+	d.bGlowUse	= s.bGlowUse;
+	d.bColorUse	= s.bColorUse;
+	d.cColor	= s.cColor;
+	d.pGlowTex	= SerialLayout::PtrToDisk ( s.pGlowTex );
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szGlowTex, s.szGlowTex, sizeof(d.szGlowTex) );
+}
 
 
 LPDIRECT3DSTATEBLOCK9	DxEffectGlow::m_pSB = NULL;
@@ -392,17 +438,17 @@ HRESULT DxEffectGlow::DxAnalysis ( LPDIRECT3DDEVICEQ pd3dDevice, DxMeshes *pmsMe
 void DxEffectGlow::SaveBuffer ( CSerialFile &SFile )
 {
 	//	읽지 않고 스킵용으로 사용됨.
-	SFile << sizeof(DWORD)+sizeof(DXUSERMATERIAL)*m_dwFrameMaterials
-			+sizeof(DWORD)+sizeof(DXUSERMATERIAL)*m_dwMaterials;
+	SFile << (DWORD)( sizeof(DWORD)+sizeof(DXUSERMATERIAL_DISK)*m_dwFrameMaterials
+			+sizeof(DWORD)+sizeof(DXUSERMATERIAL_DISK)*m_dwMaterials );
 
 	// Material 저장
 	SFile << m_dwFrameMaterials;
 	if ( m_pFrameMaterials )
-		SFile.WriteBuffer ( m_pFrameMaterials, sizeof(DXUSERMATERIAL)*m_dwFrameMaterials );
+		SerialLayout::WriteArray<DXUSERMATERIAL_DISK> ( SFile, m_pFrameMaterials, m_dwFrameMaterials );
 
 	SFile << m_dwMaterials;
 	if ( m_pMaterials )
-		SFile.WriteBuffer ( m_pMaterials, sizeof(DXUSERMATERIAL)*m_dwMaterials );
+		SerialLayout::WriteArray<DXUSERMATERIAL_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 }
 
 void DxEffectGlow::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEVICEQ pd3dDevice )
@@ -417,7 +463,7 @@ void DxEffectGlow::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDE
 	if ( m_dwFrameMaterials )
 	{
 		m_pFrameMaterials = new DXUSERMATERIAL[m_dwFrameMaterials];
-		SFile.ReadBuffer ( m_pFrameMaterials, sizeof(DXUSERMATERIAL)*m_dwFrameMaterials );
+		SerialLayout::ReadArray<DXUSERMATERIAL_DISK> ( SFile, m_pFrameMaterials, m_dwFrameMaterials );
 	}
 
 	// Material
@@ -426,7 +472,7 @@ void DxEffectGlow::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDE
 	if ( m_dwMaterials )
 	{
 		m_pMaterials = new DXUSERMATERIAL[m_dwMaterials];
-		SFile.ReadBuffer ( m_pMaterials, sizeof(DXUSERMATERIAL)*m_dwMaterials );
+		SerialLayout::ReadArray<DXUSERMATERIAL_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 		for ( DWORD i=0; i<m_dwMaterials; i++ )
 		{
@@ -448,7 +494,7 @@ void DxEffectGlow::LoadBuffer ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEVIC
 	if ( m_dwFrameMaterials )
 	{
 		m_pFrameMaterials = new DXUSERMATERIAL[m_dwFrameMaterials];
-		SFile.ReadBuffer ( m_pFrameMaterials, sizeof(DXUSERMATERIAL)*m_dwFrameMaterials );
+		SerialLayout::ReadArray<DXUSERMATERIAL_DISK> ( SFile, m_pFrameMaterials, m_dwFrameMaterials );
 	}
 
 	// Material
@@ -457,7 +503,7 @@ void DxEffectGlow::LoadBuffer ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEVIC
 	if ( m_dwMaterials )
 	{
 		m_pMaterials = new DXUSERMATERIAL[m_dwMaterials];
-		SFile.ReadBuffer ( m_pMaterials, sizeof(DXUSERMATERIAL)*m_dwMaterials );
+		SerialLayout::ReadArray<DXUSERMATERIAL_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 		for ( DWORD i=0; i<m_dwMaterials; i++ )
 		{

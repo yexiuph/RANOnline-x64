@@ -741,11 +741,13 @@ int CLoginServer::WorkProc()
 	{
 		/////////////////////////////////////////////////////////////////////////////
 		// Wait for I/O to complete on any socket
+		ULONG_PTR dwCompletionKey = 0;
 		nRetCode = GetQueuedCompletionStatus(m_hIOServer,
 											 &dwByteTrans, 
-											 (LPDWORD) &dwClient,
+											 &dwCompletionKey,
 											 (LPOVERLAPPED *) &pPerIoData,
 											 INFINITE);
+		dwClient = (DWORD) dwCompletionKey;
 		
 		// 서버를 종료하기 위해서 종료처리 루틴을 호출했을때...
 		if (dwClient == m_dwCompKey && pPerIoData == NULL && dwByteTrans == 0)

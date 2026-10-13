@@ -8,9 +8,16 @@
 #include "../[Lib]__Engine/Sources/Common/StringFile.h"
 #include "../[Lib]__Engine/Sources/Common/STRINGUTILS.h"
 #include "../[Lib]__Engine/Sources/DxMeshs/DxSkinDataDummy.h"
+#include "../[Lib]__Engine/Sources/Common/SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#endif
+
+//	The FILE_SGEN block-size header is the x86 Release sizeof(SCROWGEN) (std::string members),
+//	not this build's sizeof.
+#if SERIAL_LAYOUT_NATIVE_X86_STRING
+static_assert ( sizeof(SCROWGEN) == SCROWGEN::FILE_SIZE, "SCROWGEN::FILE_SIZE must be the x86 Release sizeof(SCROWGEN)" );
 #endif
 
 // Csv 로딩할 때 사용
@@ -1590,7 +1597,7 @@ bool SCROWACTION::SAVE ( CSerialFile &SFile )
 	SFile << m_fMobLinkScale;
 	SFile << m_fMobLinkDelay;
 
-	SFile << m_vecPatternList.size();
+	SFile << (DWORD)m_vecPatternList.size();
 	if ( m_vecPatternList.size() > 0 )
 	{
 		SFile.WriteBuffer ( &(m_vecPatternList[0]), DWORD( sizeof( SCROWPATTERN ) * m_vecPatternList.size() ) );
@@ -2018,7 +2025,7 @@ HRESULT SCROWDATA::LoadFile ( basestream &SFile, BOOL bServer, bool bPastLoad )
 				}
 				else if ( dwDataVer==SCROWGEN::VERSION )
 				{
-					GASSERT(sizeof(SCROWGEN)==dwDataSize);
+					GASSERT(SCROWGEN::FILE_SIZE==dwDataSize);
 					m_sGenerate.LOAD(SFile);
 				}
 				else
@@ -2197,7 +2204,7 @@ HRESULT SCROWDATA::SaveFile ( CSerialFile &SFile )
 	SFile << static_cast<DWORD> ( FILE_SGEN );
 	{
 		SFile << static_cast<DWORD> ( SCROWGEN::VERSION );
-		SFile << static_cast<DWORD> ( sizeof(SCROWGEN) );
+		SFile << static_cast<DWORD> ( SCROWGEN::FILE_SIZE );
 		m_sGenerate.SAVE(SFile);
 	}
 

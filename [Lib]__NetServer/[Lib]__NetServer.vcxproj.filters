@@ -17,14 +17,8 @@
     <Filter Include="Source Files\Database\ODBC">
       <UniqueIdentifier>{852dea20-3351-434c-a797-ebbc6e741324}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\DaumCrypt">
-      <UniqueIdentifier>{dba52e20-60d1-4608-98db-0039520db64e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Network">
       <UniqueIdentifier>{a84805c1-7a74-48e5-8b90-ce3ad583ffdf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\nProtect">
-      <UniqueIdentifier>{42e4bc0b-44cb-485f-9d1f-24506ec25a0b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Server">
       <UniqueIdentifier>{8f6777d8-0fa4-4253-ba93-7ca915ce1f89}</UniqueIdentifier>
@@ -76,25 +70,13 @@
     <ClInclude Include="Sources\s_COdbcSupervisor.h">
       <Filter>Source Files\Database\ODBC</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\DaumGameAuth.h">
-      <Filter>Source Files\DaumCrypt</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\DaumGameCrypt.h">
-      <Filter>Source Files\DaumCrypt</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\s_COverlapped.h">
       <Filter>Source Files\Network</Filter>
     </ClInclude>
     <ClInclude Include="Sources\s_CSMsgList.h">
       <Filter>Source Files\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ggsrv.h">
-      <Filter>Source Files\nProtect</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\s_CAgentServer.h">
-      <Filter>Source Files\Server</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\s_CAgentServerApex.h">
       <Filter>Source Files\Server</Filter>
     </ClInclude>
     <ClInclude Include="Sources\s_CFieldServer.h">
@@ -108,12 +90,6 @@
     </ClInclude>
     <ClInclude Include="Sources\s_CSessionServer.h">
       <Filter>Source Files\Server</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\ApexCloseList.h">
-      <Filter>Source Files\ServerUtil</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\ApexProxy.h">
-      <Filter>Source Files\ServerUtil</Filter>
     </ClInclude>
     <ClInclude Include="Sources\s_CAddressChecker.h">
       <Filter>Source Files\ServerUtil</Filter>
@@ -177,9 +153,6 @@
     <ClCompile Include="Sources\s_CClientAgent.cpp">
       <Filter>Source Files\Client</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\s_CClientAgentNProtect.cpp">
-      <Filter>Source Files\Client</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\s_CClientField.cpp">
       <Filter>Source Files\Client</Filter>
     </ClCompile>
@@ -193,9 +166,6 @@
       <Filter>Source Files\Client</Filter>
     </ClCompile>
     <ClCompile Include="Sources\s_CNetUser.cpp">
-      <Filter>Source Files\Client</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\s_CNetUserNProtect.cpp">
       <Filter>Source Files\Client</Filter>
     </ClCompile>
     <ClCompile Include="Sources\s_CDbAction.cpp">
@@ -279,25 +249,13 @@
     <ClCompile Include="Sources\s_COdbcUserGetUserInfo.cpp">
       <Filter>Source Files\Database\ODBC</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\DaumGameAuth.cpp">
-      <Filter>Source Files\DaumCrypt</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\DaumGameCrypt.cpp">
-      <Filter>Source Files\DaumCrypt</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\s_COverlapped.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
     <ClCompile Include="Sources\s_CSMsgList.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\ggsrv.cpp">
-      <Filter>Source Files\nProtect</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\s_CAgentServer.cpp">
-      <Filter>Source Files\Server</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\s_CAgentServerApex.cpp">
       <Filter>Source Files\Server</Filter>
     </ClCompile>
     <ClCompile Include="Sources\s_CAgentServerChannel.cpp">
@@ -312,9 +270,6 @@
     <ClCompile Include="Sources\s_CAgentServerMsgLogin.cpp">
       <Filter>Source Files\Server</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\s_CAgentServerMsgNPROTECT.cpp">
-      <Filter>Source Files\Server</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\s_CAgentServerSession.cpp">
       <Filter>Source Files\Server</Filter>
     </ClCompile>
@@ -325,9 +280,6 @@
       <Filter>Source Files\Server</Filter>
     </ClCompile>
     <ClCompile Include="Sources\s_CFieldServerMsg.cpp">
-      <Filter>Source Files\Server</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\s_CFieldServerMsgNPROTECT.cpp">
       <Filter>Source Files\Server</Filter>
     </ClCompile>
     <ClCompile Include="Sources\s_CFieldServerSession.cpp">
@@ -356,12 +308,6 @@
     </ClCompile>
     <ClCompile Include="Sources\s_CSessionServerThread.cpp">
       <Filter>Source Files\Server</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\ApexCloseList.cpp">
-      <Filter>Source Files\ServerUtil</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\ApexProxy.cpp">
-      <Filter>Source Files\ServerUtil</Filter>
     </ClCompile>
     <ClCompile Include="Sources\s_CAddressChecker.cpp">
       <Filter>Source Files\ServerUtil</Filter>

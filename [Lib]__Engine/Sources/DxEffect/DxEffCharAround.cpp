@@ -100,7 +100,7 @@ HRESULT	DxEffCharAround::SaveFile ( basestream &SFile )
 	//	Note : 이팩트의 Property 를 저장.
 	SFile.WriteBuffer ( &m_Property, sizeof(m_Property) );
 
-	SFile << m_vecAroundEffList.size();
+	SFile << (DWORD)m_vecAroundEffList.size();
 	for( DWORD i = 0; i < m_vecAroundEffList.size(); i++ )
 	{
 		SAROUNDEFF_DATA saveData = m_vecAroundEffList[i];

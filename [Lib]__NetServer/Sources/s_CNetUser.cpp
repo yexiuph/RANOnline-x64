@@ -82,8 +82,6 @@ int CNetUser::SetAcceptedClient(
 		m_emOnline			= NET_ONLINE;
 		m_bHeartBeat		= true;
 		
-		m_csa.Init(); // nProtect GameGuard 초기화
-
 		LockOff();
 		return NET_OK;
 	}
@@ -120,8 +118,6 @@ bool CNetUser::CloseClient( DWORD dwClientID )
 	switch (m_emOnline)
 	{
 	case NET_ONLINE:		
-		m_csa.Close(); // nProtect GameGuard 종료
-
 		if ( 0 == nGetRecvCount && 0 == nGetSendCount )
 		{
 			//CConsoleMessage::GetInstance()->Write("CNetUser[%u]::CloseClient, NET_ONLINE 0/0", dwClientID);
@@ -214,8 +210,6 @@ int CNetUser::CloseClient()
 
 	if (m_emOnline == NET_ONLINE)
 	{
-		m_csa.Close(); // nProtect GameGuard 종료
-
 		nRetCode = ::closesocket(m_Socket);
 		if (nRetCode == SOCKET_ERROR)
 		{
@@ -336,11 +330,6 @@ void CNetUser::Reset()
 	m_wThaiFlag = 0; // Thailand 사용자 플래그
 	m_wThaiTodayGamePlayTime = 0; // Thailand 오늘 게임플레이 타임e
 	m_nThaiCC_Class = 0; // 태국 User Class Type
-	//////////////////////////////////////////////////////////////////////////////
-	// nProtect
-	m_bNProtectAuth = true;
-	m_bNProtectFirstCheck = true;
-	m_bNProtectFirstAuthPass = false;
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 극강부 변수 초기화

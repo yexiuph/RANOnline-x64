@@ -1,5 +1,7 @@
 #pragma once
 
+#include <intrin.h>
+
 #ifdef _DEBUG
 	void* __cdecl operator new(size_t nSize, LPCSTR lpszFileName, int nLine);
 	#define DEBUG_NEW new(THIS_FILE, __LINE__)
@@ -19,7 +21,7 @@ bool _gassert ( bool bExp, const char *const szExp, const char *const szFile, co
 #ifdef  NDEBUG
 #define GASSERT(exp)	((void)0)
 #else
-#define GASSERT(exp)	{ if ( _gassert ( (exp)?true:false, #exp, __FILE__, __LINE__ ) )	{ _asm { int 3 } } }
+#define GASSERT(exp)	{ if ( _gassert ( (exp)?true:false, #exp, __FILE__, __LINE__ ) )	{ __debugbreak(); } }
 #endif
 
 

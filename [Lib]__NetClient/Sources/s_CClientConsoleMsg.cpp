@@ -155,7 +155,7 @@ void CClientConsoleMessage::UpdateEditControl(char* sbuf)
 {
 	if (!m_pEditBox) return;
 
-	DWORD dwRetCode;
+	DWORD_PTR dwRetCode;
 	// Update Control and Scroll to end of the line	
 	char TempBuffer[C_BUFFER_SIZE+3] = {0};
 	::StringCchCopy(TempBuffer, C_BUFFER_SIZE,   sbuf);

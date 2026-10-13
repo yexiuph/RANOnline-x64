@@ -65,10 +65,8 @@ protected:
 	int		m_nMaxThread;							// 최대 Work Thread 갯수.
 	bool    m_bTestServer;							// 테스트 서버 유/무
 	bool    m_bAdultCheck;							// 성인체크
-	bool	m_bUseIntelTBB;							// TBB 사용 여부
 	bool	m_bPK;									// true:PK 서버, false:Non PK 서버
 	bool    m_bPkLess;                              /// 선도클럽, PK, 학원간 PK 등 모든 적대행위 Disable
-	bool    m_bGameGuardAuth;                       // nProtect GameGuard 인증 사용여부
 	int		m_nLangSet;								// Language Set
 
 	TCHAR	m_szWhiteRockServerName[DB_SVR_NAME_LENGTH+1];		// 일본 WhiteRock 서버명
@@ -236,9 +234,7 @@ public:
 	int					GetMaxClient(void)	{ return GetServerMaxClient(); }
 	int					GetMaxThread(void);
 	bool				HeartBeatCheck(void);
-	bool                GemeGuardAuth(void);
 	bool				AdultCheck(void);
-	BOOL				IsUseIntelTBB(void);
 	BOOL				IsUserEventThread(void);
 	bool				IsTestServer(void);
 	bool				IsPKServer(void);          // 해당 서버가 PK 서버인지 조사한다. Field

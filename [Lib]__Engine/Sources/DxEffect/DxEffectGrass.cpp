@@ -834,7 +834,7 @@ void DxEffectGrass::SaveBuffer ( CSerialFile &SFile )
 	}
 
 	//	읽지 않고 스킵용으로 사용됨.
-	SFile << sizeof(DWORD) + dwSize;
+	SFile << (DWORD)( sizeof(DWORD) + dwSize );
 
 	SFile << (DWORD)m_vectorBass.size();
 

@@ -192,7 +192,7 @@ int COdbcManager::CreateNewCharacter(SCHARDATA2* pCharData2)
 		return DB_ERROR;
 	}
 
-	SQLINTEGER nChaNewNum=0, cbChaNewNum=SQL_NTS;
+	SQLINTEGER nChaNewNum=0; SQLLEN cbChaNewNum=SQL_NTS;
 
 	while(true)
 	{

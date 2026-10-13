@@ -67,7 +67,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	//}}AFX_MSG
-	afx_msg LONG OnSetText(UINT, LONG lParam);
+	afx_msg LRESULT OnSetText(WPARAM, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	int m_iTextFormat;

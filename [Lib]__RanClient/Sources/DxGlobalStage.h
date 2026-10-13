@@ -18,17 +18,6 @@
 #define _PRELOAD_ANI	"preload_ani.lst"
 #define _PRELOAD_SKIN	"preload_skin.lst"
 
-typedef struct _AUTH_DATA
-{
-	GG_AUTH_DATA	gg_Auth_Data;
-	UINT			Auth_Msg;
-
-	_AUTH_DATA() :
-		Auth_Msg(0)
-	{
-	}
-} AUTH_DATA, *P_AUTH_DATA;
-
 class DxGlobalStage : public DxMsgProcessor
 {
 public:
@@ -50,13 +39,6 @@ public:
 public:
 	typedef std::vector<PBYTE>			MSGBUFFERLIST;
 	typedef MSGBUFFERLIST::iterator		MSGBUFFERLIST_ITER;
-
-private:
-	typedef std::queue<P_AUTH_DATA>		GG_AUTH_QUEUE;
-	GG_AUTH_QUEUE	m_GGAuthBuffer;
-
-public:
-	UINT GetGGAuthData( PGG_AUTH_DATA pGG );
 
 protected:
 	HWND				m_hWnd;

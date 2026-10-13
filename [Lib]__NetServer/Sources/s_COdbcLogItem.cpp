@@ -203,10 +203,10 @@ LONGLONG COdbcManager::GetItemMaxNum(
     std::vector<VIEWLOGITEMEXCHANGEMAX> &v)
 {
     SQLRETURN sReturn = 0;
-	LONGLONG llMaxNum = 0; SQLINTEGER cbMaxNum=SQL_NTS;
-    SQLINTEGER nNIDMain = 0, cbNIDMain =SQL_NTS;
-    SQLINTEGER nNIDSub  = 0, cbNIDSub  =SQL_NTS;
-    SQLINTEGER nMakeType= 0, cbMakeType=SQL_NTS;
+	LONGLONG llMaxNum = 0; SQLLEN cbMaxNum=SQL_NTS;
+    SQLINTEGER nNIDMain = 0; SQLLEN cbNIDMain =SQL_NTS;
+    SQLINTEGER nNIDSub  = 0; SQLLEN cbNIDSub  =SQL_NTS;
+    SQLINTEGER nMakeType= 0; SQLLEN cbMakeType=SQL_NTS;
 
     ODBC_STMT* pConn = m_pLogDB->GetConnection();
 	if (!pConn) return DB_ERROR;

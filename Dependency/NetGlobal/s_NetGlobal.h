@@ -41,9 +41,6 @@
 
 #include "GLDefine.h"
 
-// nProtect GameGuard Server module
-#include "ggsrv.h"
-
 // Apex RSA
 #include "gamecode.h"
 
@@ -57,7 +54,6 @@
 #pragma comment (lib, "ws2_32.lib") // Windows socket2 library
 #pragma comment (lib, "Winmm.lib") // Windows multimedia library
 #pragma comment (lib, "strsafe.lib") // Safe string library
-#pragma comment (lib, "ggsrvlib.lib") // nProtect GameGuard server library
 
 static CMinLzo* g_pMinLzo;
 
@@ -174,7 +170,6 @@ enum EM_NET_STATE
 
 #define SERVER_NAME_LENGTH			50
 #define MAP_NAME_LENGTH				50
-#define MAX_APEX_PACKET_LENGTH		640
 
 #define ENCRYPT_KEY					12
 
@@ -793,6 +788,7 @@ enum EMNET_MSG
 
 	///////////////////////////////////////////////////////////////////////////
 	// nProtect
+	// GameGuard removed: these IDs are unused but kept so that other message IDs stay unchanged
 	NET_MSG_GAMEGUARD_AUTH          = (NET_MSG_GCTRL +  20), //< nProtect GameGuard Auth 요청 메시지
 	NET_MSG_GAMEGUARD_ANSWER        = (NET_MSG_GCTRL +  21), //< nProtect GameGuard Auth Answer 메시지
 	NET_MSG_GAMEGUARD_AUTH_1        = (NET_MSG_GCTRL +  22), //< nProtect GameGuard Auth 요청 메시지
@@ -801,6 +797,7 @@ enum EMNET_MSG
 	NET_MSG_GAMEGUARD_ANSWER_2      = (NET_MSG_GCTRL +  25), //< nProtect GameGuard Auth Answer 메시지
 
 	// Apex 적용
+	// Apex anti-hack removed: these IDs are unused but kept so that other message IDs stay unchanged
 	NET_MSG_APEX_DATA				= (NET_MSG_GCTRL +	30), //< Apex Data 메세지
 	NET_MSG_APEX_ANSWER				= (NET_MSG_GCTRL +	31), //< Apex Answer 메세지
 //	NET_MSG_APEX_RSAKEY				= (NET_MSG_GCTRL +	32), //< Apex RSA Key 메세지
@@ -3667,164 +3664,6 @@ struct USER_ATTEND_INFO
 typedef USER_ATTEND_INFO* LPUSER_ATTEND_INFO;
 
 
-// Apex 적용( 홍콩 )
-struct NET_APEX_RETURN
-{
-	NET_MSG_GENERIC nmg;
-	int nReturn;
-
-	NET_APEX_RETURN()
-		: nReturn ( 0 )
-	{
-		nmg.nType  = NET_MSG_APEX_RETURN;
-		nmg.dwSize = sizeof(NET_APEX_RETURN);		
-	}
-};
-
-//! Apex 메세지
-struct NET_APEX_DATA
-{
-	NET_MSG_GENERIC nmg;
-	CHAR szData[MAX_APEX_PACKET_LENGTH];
-	
-	NET_APEX_DATA()
-	{
-		nmg.nType  = NET_MSG_APEX_DATA;
-		nmg.dwSize = sizeof(NET_APEX_DATA);
-		memset( szData, 0, sizeof(CHAR) * MAX_APEX_PACKET_LENGTH );
-	}
-};
-typedef NET_APEX_DATA* LPNET_APEX_DATA;
-
-//! Apex 메세지
-struct NET_APEX_ANSWER
-{
-	NET_MSG_GENERIC nmg;
-	WORD			wAction;
-	WORD			wHour;
-
-	NET_APEX_ANSWER()
-	{
-		nmg.nType  = NET_MSG_APEX_ANSWER;
-		nmg.dwSize = sizeof(NET_APEX_ANSWER);
-		wAction = 0;
-		wHour = 0;
-	}
-};
-typedef NET_APEX_ANSWER* LPNET_APEX_ANSWER;
-
-//! nProtect GameGuard Auth 요청 메시지
-struct NET_GAMEGUARD_AUTH
-{
-	NET_MSG_GENERIC nmg;
-	GG_AUTH_DATA ggad;
-
-	NET_GAMEGUARD_AUTH()
-	{
-		nmg.nType  = NET_MSG_GAMEGUARD_AUTH;
-		nmg.dwSize = sizeof(NET_GAMEGUARD_AUTH);
-		ggad.dwIndex = 0;
-		ggad.dwValue1 = 0;
-		ggad.dwValue2 = 0;
-		ggad.dwValue3 = 0;
-	}	
-};
-typedef NET_GAMEGUARD_AUTH* LPNET_GAMEGUARD_AUTH;
-
-//! nProtect GameGuard Auth Answer 메시지
-struct NET_GAMEGUARD_ANSWER
-{
-	NET_MSG_GENERIC nmg;
-	GG_AUTH_DATA ggad;
-	
-	CHAR	szEnCrypt[ENCRYPT_KEY+1];
-
-
-	NET_GAMEGUARD_ANSWER()
-	{
-		nmg.nType  = NET_MSG_GAMEGUARD_ANSWER;
-		nmg.dwSize = sizeof(NET_GAMEGUARD_ANSWER);
-		ggad.dwIndex = 0;
-		ggad.dwValue1 = 0;
-		ggad.dwValue2 = 0;
-		ggad.dwValue3 = 0;
-		SecureZeroMemory(szEnCrypt, sizeof(CHAR) * (ENCRYPT_KEY+1));
-	}	
-};
-typedef NET_GAMEGUARD_ANSWER* LPNET_GAMEGUARD_ANSWER;
-
-//! nProtect GameGuard Auth 요청 메시지 #1
-struct NET_GAMEGUARD_AUTH_1
-{
-	NET_MSG_GENERIC nmg;
-	GG_AUTH_DATA ggad;
-
-	NET_GAMEGUARD_AUTH_1()
-	{
-		nmg.nType  = NET_MSG_GAMEGUARD_AUTH_1;
-		nmg.dwSize = sizeof(NET_GAMEGUARD_AUTH_1);
-		ggad.dwIndex = 0;
-		ggad.dwValue1 = 0;
-		ggad.dwValue2 = 0;
-		ggad.dwValue3 = 0;
-	}	
-};
-typedef NET_GAMEGUARD_AUTH_1* LPNET_GAMEGUARD_AUTH_1;
-
-//! nProtect GameGuard Auth Answer 메시지 #1
-struct NET_GAMEGUARD_ANSWER_1
-{
-	NET_MSG_GENERIC nmg;
-	GG_AUTH_DATA ggad;
-
-	NET_GAMEGUARD_ANSWER_1()
-	{
-		nmg.nType  = NET_MSG_GAMEGUARD_ANSWER_1;
-		nmg.dwSize = sizeof(NET_GAMEGUARD_ANSWER_1);
-		ggad.dwIndex = 0;
-		ggad.dwValue1 = 0;
-		ggad.dwValue2 = 0;
-		ggad.dwValue3 = 0;
-	}	
-};
-typedef NET_GAMEGUARD_ANSWER_1* LPNET_GAMEGUARD_ANSWER_1;
-
-//! nProtect GameGuard Auth 요청 메시지 #2
-struct NET_GAMEGUARD_AUTH_2
-{
-	NET_MSG_GENERIC nmg;
-	GG_AUTH_DATA ggad;
-
-	NET_GAMEGUARD_AUTH_2()
-	{
-		nmg.nType  = NET_MSG_GAMEGUARD_AUTH_2;
-		nmg.dwSize = sizeof(NET_GAMEGUARD_AUTH_2);
-		ggad.dwIndex = 0;
-		ggad.dwValue1 = 0;
-		ggad.dwValue2 = 0;
-		ggad.dwValue3 = 0;
-	}	
-};
-typedef NET_GAMEGUARD_AUTH_2* LPNET_GAMEGUARD_AUTH_2;
-
-//! nProtect GameGuard Auth Answer 메시지 #2
-struct NET_GAMEGUARD_ANSWER_2
-{
-	NET_MSG_GENERIC nmg;
-	GG_AUTH_DATA ggad;
-
-	NET_GAMEGUARD_ANSWER_2()
-	{
-		nmg.nType  = NET_MSG_GAMEGUARD_ANSWER_2;
-		nmg.dwSize = sizeof(NET_GAMEGUARD_ANSWER_2);
-		ggad.dwIndex = 0;
-		ggad.dwValue1 = 0;
-		ggad.dwValue2 = 0;
-		ggad.dwValue3 = 0;
-	}	
-};
-typedef NET_GAMEGUARD_ANSWER_2* LPNET_GAMEGUARD_ANSWER_2;
-
 // 추적할 id 추가
 struct NET_UPDATE_TRACINGCHAR_ALL
 {
@@ -3988,12 +3827,6 @@ int	NET_InitializeSocket(void);
 void NET_CloseSocket(void);
 /// Winsock2 에러 코드->문자열 함수
 CString NET_ERROR_STRING(int nCode);
-
-/******************************************************************************
-* GameGuard 에러 코드 체크 함수
-* \param dwErrCode nProtect GameGuard 에러코드
-*/
-std::string GetGameGuardErrorString(DWORD dwErrCode);
 
 #endif // S_NETGLOBAL_H_
 

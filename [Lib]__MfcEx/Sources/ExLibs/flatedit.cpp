@@ -61,7 +61,7 @@ void CFlatEdit::OnLButtonUp(UINT nFlags, CPoint point)
 	CEdit::OnLButtonUp(nFlags, point);
 }
 
-void CFlatEdit::OnTimer(UINT nIDEvent) 
+void CFlatEdit::OnTimer(UINT_PTR nIDEvent) 
 {
 	POINT pt;
 	GetCursorPos(&pt);

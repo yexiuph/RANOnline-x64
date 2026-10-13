@@ -270,9 +270,9 @@ int COdbcManager::GetClubMember(DWORD dwClub, std::vector<GLCLUBMEMBER> &vMember
 		return DB_ERROR;
 	}
 
-	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLINTEGER cbChaName = SQL_NTS;
-	SQLINTEGER nChaNum     = 0, cbChaNum     = SQL_NTS;
-	SQLINTEGER nGuPosition = 0, cbGuPosition = SQL_NTS;
+	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0}; SQLLEN cbChaName = SQL_NTS;
+	SQLINTEGER nChaNum     = 0; SQLLEN cbChaNum     = SQL_NTS;
+	SQLINTEGER nGuPosition = 0; SQLLEN cbGuPosition = SQL_NTS;
 	
 	while (true)
 	{
@@ -328,15 +328,15 @@ int COdbcManager::GetClubInfo(std::vector<GLCLUBINFO> &vClub)
 
 // 클럽 배틀 시스템 추가로 인해서 GuildInfo Table 컬럼 추가
 // GuildInfo Table 컬럼 추가, viewGuildInfo 수정 필요
-	SQLINTEGER nGuBattleWin    = 0, cbGuBattleWin=SQL_NTS;
-    SQLINTEGER nGuBattleDraw   = 0, cbGuBattleDraw=SQL_NTS;
-	SQLINTEGER nGuBattleLose   = 0, cbGuBattleLose=SQL_NTS;
+	SQLINTEGER nGuBattleWin    = 0; SQLLEN cbGuBattleWin=SQL_NTS;
+    SQLINTEGER nGuBattleDraw   = 0; SQLLEN cbGuBattleDraw=SQL_NTS;
+	SQLINTEGER nGuBattleLose   = 0; SQLLEN cbGuBattleLose=SQL_NTS;
 
-	SQLINTEGER nGuAllianceBattleWin    = 0, cbGuAllianceBattleWin=SQL_NTS;
-    SQLINTEGER nGuAllianceBattleDraw   = 0, cbGuAllianceBattleDraw=SQL_NTS;
-	SQLINTEGER nGuAllianceBattleLose   = 0, cbGuAllianceBattleLose=SQL_NTS;
+	SQLINTEGER nGuAllianceBattleWin    = 0; SQLLEN cbGuAllianceBattleWin=SQL_NTS;
+    SQLINTEGER nGuAllianceBattleDraw   = 0; SQLLEN cbGuAllianceBattleDraw=SQL_NTS;
+	SQLINTEGER nGuAllianceBattleLose   = 0; SQLLEN cbGuAllianceBattleLose=SQL_NTS;
 
-	TIMESTAMP_STRUCT sBattleLastTime;    SQLINTEGER cbBattleLastTime=SQL_NTS;
+	TIMESTAMP_STRUCT sBattleLastTime;    SQLLEN cbBattleLastTime=SQL_NTS;
 
 	TCHAR szTemp[512] = {0};
 	_snprintf_s( szTemp, 512, "SELECT GuNum, ChaNum, GuDeputy, ChaName, GuName, "
@@ -358,24 +358,24 @@ int COdbcManager::GetClubInfo(std::vector<GLCLUBINFO> &vClub)
 		return DB_ERROR;
 	}
 
-	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0};    SQLINTEGER cbChaName  = SQL_NTS;
-	SQLCHAR    szGuName[CHR_ID_LENGTH+1] = {0};     SQLINTEGER cbGuName   = SQL_NTS;
-	SQLCHAR    szGuNotice[EMCLUB_NOTICE_LEN+1]= {0};  SQLINTEGER cbGuNotice = SQL_NTS;
+	SQLCHAR    szChaName[CHR_ID_LENGTH+1] = {0};    SQLLEN cbChaName  = SQL_NTS;
+	SQLCHAR    szGuName[CHR_ID_LENGTH+1] = {0};     SQLLEN cbGuName   = SQL_NTS;
+	SQLCHAR    szGuNotice[EMCLUB_NOTICE_LEN+1]= {0};  SQLLEN cbGuNotice = SQL_NTS;
 
-	SQLINTEGER nGuNum    = 0, cbGuNum=SQL_NTS;
-    SQLINTEGER nChaNum   = 0, cbChaNum=SQL_NTS;
-	SQLINTEGER nGuDeputy = 0, cbGuDeputy=SQL_NTS;
-    SQLINTEGER nGuRank   = 0, cbGuRank=SQL_NTS;
-    SQLINTEGER nGuMarkVer= 0, cbGuMarkVer=SQL_NTS;
+	SQLINTEGER nGuNum    = 0; SQLLEN cbGuNum=SQL_NTS;
+    SQLINTEGER nChaNum   = 0; SQLLEN cbChaNum=SQL_NTS;
+	SQLINTEGER nGuDeputy = 0; SQLLEN cbGuDeputy=SQL_NTS;
+    SQLINTEGER nGuRank   = 0; SQLLEN cbGuRank=SQL_NTS;
+    SQLINTEGER nGuMarkVer= 0; SQLLEN cbGuMarkVer=SQL_NTS;
 
-    TIMESTAMP_STRUCT sMakeTime;    SQLINTEGER cbMakeTime    = SQL_NTS;
-    TIMESTAMP_STRUCT sExpireTime;  SQLINTEGER cbExpireTime  = SQL_NTS;
-    TIMESTAMP_STRUCT sAuthorityTime;  SQLINTEGER cbAuthorityTime  = SQL_NTS;
-	TIMESTAMP_STRUCT sAllianceSec; SQLINTEGER cbAllianceSec = SQL_NTS;
-	TIMESTAMP_STRUCT sAllianceDis; SQLINTEGER cbAllianceDis = SQL_NTS;
+    TIMESTAMP_STRUCT sMakeTime;    SQLLEN cbMakeTime    = SQL_NTS;
+    TIMESTAMP_STRUCT sExpireTime;  SQLLEN cbExpireTime  = SQL_NTS;
+    TIMESTAMP_STRUCT sAuthorityTime;  SQLLEN cbAuthorityTime  = SQL_NTS;
+	TIMESTAMP_STRUCT sAllianceSec; SQLLEN cbAllianceSec = SQL_NTS;
+	TIMESTAMP_STRUCT sAllianceDis; SQLLEN cbAllianceDis = SQL_NTS;
 
-    LONGLONG   llGuildMoney = 0; SQLINTEGER cbGuildMoney = SQL_NTS;
-	LONGLONG   llGuildIncomeMoney = 0; SQLINTEGER cbGuildIncomeMoney = SQL_NTS;
+    LONGLONG   llGuildMoney = 0; SQLLEN cbGuildMoney = SQL_NTS;
+	LONGLONG   llGuildIncomeMoney = 0; SQLLEN cbGuildIncomeMoney = SQL_NTS;
 
     DWORD dwSize = (DWORD) (sizeof(DWORD)*EMCLUB_MARK_SX*EMCLUB_MARK_SY);
     CByteStream ByteStream;
@@ -654,7 +654,7 @@ int COdbcManager::ReadClubMarkImage(DWORD dwClub, CByteStream &ByteStream)
 	
 	// Retrieve and display each row of data.
 	BYTE pBuffer[DB_IMAGE_BUF_SIZE] = {0};
-	SQLINTEGER  lSize=0, lTotalSize=0;
+	SQLINTEGER lTotalSize=0; SQLLEN lSize=0;
 
 	while ((sReturn = ::SQLFetch(pConn->hStmt)) != SQL_NO_DATA) 
 	{			
@@ -758,7 +758,7 @@ int	COdbcManager::WriteClubMarkImage(
 	}	
 	
 	// Bind parameter
-	SQLINTEGER cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
+	SQLLEN cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
 
 	sReturn = ::SQLBindParameter(pConn->hStmt, 
 								1, 
@@ -838,7 +838,7 @@ int COdbcManager::GetChaGuildNum(DWORD dwChaNum)
 		return DB_ERROR;
 	}
 
-	SQLINTEGER nGuNum  = 0, cbGuNum=SQL_NTS;
+	SQLINTEGER nGuNum  = 0; SQLLEN cbGuNum=SQL_NTS;
     int nReturn = 0;
     
 	while (true)
@@ -938,7 +938,7 @@ LONGLONG COdbcManager::GetClubIncomeMoney(DWORD dwClub)
 	}
 
 	LONGLONG   llGuMoney = 0;
-    SQLINTEGER cbGuMoney = SQL_NTS;
+    SQLLEN cbGuMoney = SQL_NTS;
 	
 	while (true)
 	{
@@ -1036,7 +1036,7 @@ LONGLONG COdbcManager::GetClubMoney(DWORD dwClub)
 	}
 
 	LONGLONG   llGuMoney = 0;
-    SQLINTEGER cbGuMoney = SQL_NTS;
+    SQLLEN cbGuMoney = SQL_NTS;
 	
 	while (true)
 	{
@@ -1108,7 +1108,7 @@ int COdbcManager::ReadClubStorage(DWORD dwClub, CByteStream &ByteStream)
 	
 	// Retrieve and display each row of data.
 	BYTE pBuffer[DB_IMAGE_BUF_SIZE] = {0};
-	SQLINTEGER  lSize=0, lTotalSize=0;
+	SQLINTEGER lTotalSize=0; SQLLEN lSize=0;
 
 	while ((sReturn = ::SQLFetch(pConn->hStmt)) != SQL_NO_DATA) 
 	{			
@@ -1177,7 +1177,7 @@ int COdbcManager::WriteClubStorage(
 	}	
 	
 	// Bind parameter
-	SQLINTEGER cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
+	SQLLEN cbBinaryParam = SQL_LEN_DATA_AT_EXEC(0);
 
 	sReturn = ::SQLBindParameter(pConn->hStmt, 
 								1, 
@@ -1319,9 +1319,9 @@ int COdbcManager::GetClubRegion(std::vector<GLGUID_DB> &vGUID_DB)
 		return DB_ERROR;
 	}
 		
-	SQLINTEGER   nRegionID  = 0; SQLINTEGER cbRegionID  = SQL_NTS;
-	SQLINTEGER   nGuNum     = 0; SQLINTEGER cbGuNum     = SQL_NTS;
-	SQLFLOAT     fRegionTax = 0; SQLINTEGER cbRegionTax = SQL_NTS;
+	SQLINTEGER   nRegionID  = 0; SQLLEN cbRegionID  = SQL_NTS;
+	SQLINTEGER   nGuNum     = 0; SQLLEN cbGuNum     = SQL_NTS;
+	SQLFLOAT     fRegionTax = 0; SQLLEN cbRegionTax = SQL_NTS;
 		
 	while (true)
 	{
@@ -1490,8 +1490,8 @@ int COdbcManager::GetClubAlliance ( std::vector< std::pair<DWORD,DWORD> > &vecAl
 		return DB_ERROR;
 	}
 		
-	SQLINTEGER   nGuNumP = 0; SQLINTEGER cbGuNumP = SQL_NTS;
-	SQLINTEGER   nGuNumS = 0; SQLINTEGER cbGuNumS = SQL_NTS;	
+	SQLINTEGER   nGuNumP = 0; SQLLEN cbGuNumP = SQL_NTS;
+	SQLINTEGER   nGuNumS = 0; SQLLEN cbGuNumS = SQL_NTS;	
 		
 	while (true)
 	{
@@ -1661,13 +1661,13 @@ int COdbcManager::GetClubBattleInfo( DWORD dwClub, std::vector<GLCLUBBATTLE> &vB
 		return DB_ERROR;
 	}
 	
-	SQLINTEGER nGuSNum		= 0, cbGuSNum		= SQL_NTS;
-	SQLINTEGER nGuFlag		= 0, cbGuFlag		= SQL_NTS;
-	SQLINTEGER nGuKillNum	= 0, cbGuKillNum	= SQL_NTS;
-	SQLINTEGER nGuDeathNum	= 0, cbGuDeathNum	= SQL_NTS;
-	SQLINTEGER nGuAlliance	= 0, cbGuAlliance	= SQL_NTS;
-	TIMESTAMP_STRUCT sStartDate; SQLINTEGER cbStartDate	= SQL_NTS;
-	TIMESTAMP_STRUCT sEndDate; SQLINTEGER cbEndDate	= SQL_NTS;
+	SQLINTEGER nGuSNum		= 0; SQLLEN cbGuSNum		= SQL_NTS;
+	SQLINTEGER nGuFlag		= 0; SQLLEN cbGuFlag		= SQL_NTS;
+	SQLINTEGER nGuKillNum	= 0; SQLLEN cbGuKillNum	= SQL_NTS;
+	SQLINTEGER nGuDeathNum	= 0; SQLLEN cbGuDeathNum	= SQL_NTS;
+	SQLINTEGER nGuAlliance	= 0; SQLLEN cbGuAlliance	= SQL_NTS;
+	TIMESTAMP_STRUCT sStartDate; SQLLEN cbStartDate	= SQL_NTS;
+	TIMESTAMP_STRUCT sEndDate; SQLLEN cbEndDate	= SQL_NTS;
 	
 	while (true)
 	{

@@ -977,7 +977,7 @@ void DxEffectShadowLow::CreateVB ( LPDIRECT3DDEVICEQ pd3dDevice, DxMeshes* pmsMe
 void DxEffectShadowLow::SaveBuffer ( CSerialFile &SFile )
 {
 	//	읽지 않고 스킵용으로 사용됨.
-	SFile << sizeof(DWORD) + sizeof(D3DXVECTOR2)*m_dwVertices;
+	SFile << (DWORD)( sizeof(DWORD) + sizeof(D3DXVECTOR2)*m_dwVertices );
 
 
 	SFile << m_dwVertices;

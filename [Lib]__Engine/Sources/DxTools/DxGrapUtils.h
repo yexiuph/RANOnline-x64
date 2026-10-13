@@ -9,7 +9,6 @@ namespace DxGrapUtils
 {
 	void SetPath( LPCTSTR szPath );
 
-	HRESULT ScreenGrab ( LPDIRECT3DDEVICEQ pDev, LPCTSTR fileName );
+	HRESULT ScreenGrab ( LPDIRECT3DDEVICEQ pDev, LPCTSTR fileName, D3DXIMAGE_FILEFORMAT emFormat = D3DXIFF_BMP );
 	HRESULT CaptureScreen ( LPDIRECT3DDEVICEQ pDev );
-	BOOL BitmapToJPG ( LPCTSTR lpszPathName, BOOL bBitmapDelete );
 };

@@ -737,9 +737,10 @@ HRESULT SAnimContainer::CreateAnimationData ( SANIMCONINFO &sAnimInfo, LPDIRECT3
 	std::for_each( m_listAniUPBODY.begin(), m_listAniUPBODY.end(), std_afunc::DeleteObject() );
 	m_listAniUPBODY.clear();
 
-	LPDIRECTXFILE pxofapi = NULL;
-	LPDIRECTXFILEENUMOBJECT pxofenum = NULL;
-	LPDIRECTXFILEDATA pxofobjCur = NULL;
+	LPD3DXFILE pxofapi = NULL;
+	LPD3DXFILEENUMOBJECT pxofenum = NULL;
+	LPD3DXFILEDATA pxofobjCur = NULL;
+	SIZE_T cChildren = 0;
 	int cchFileName;
 
 	m_pSkeleton = DxBoneCollector::GetInstance().Load ( m_szSkeletion, pd3dDevice );
@@ -755,7 +756,7 @@ HRESULT SAnimContainer::CreateAnimationData ( SANIMCONINFO &sAnimInfo, LPDIRECT3
 	}
     
 	//	xFile 개체를 만듬.
-	hr = DirectXFileCreate(&pxofapi);
+	hr = D3DXFileCreate(&pxofapi);
 	if (FAILED(hr))	goto e_Exit;
     
     //	xFile 템플리트 등록.
@@ -770,27 +771,33 @@ HRESULT SAnimContainer::CreateAnimationData ( SANIMCONINFO &sAnimInfo, LPDIRECT3
 	StringCchCat( szPath, MAX_PATH, m_szName );
 
     //	실제 xFile을 열음.
-	hr = pxofapi->CreateEnumObject((LPVOID)szPath,
-		DXFILELOAD_FROMFILE,
+	hr = pxofapi->CreateEnumObject((LPCVOID)szPath,
+		D3DXF_FILELOAD_FROMFILE,
 		&pxofenum);
 	if (FAILED(hr))	goto e_Exit;
 
 	//	Note : 최상위 오브젝트를 읽어옴.
 	//
-	while (SUCCEEDED(pxofenum->GetNextDataObject(&pxofobjCur)))
+	hr = pxofenum->GetChildren ( &cChildren );
+	if (FAILED(hr))	goto e_Exit;
+
+	for ( SIZE_T iChild=0; iChild<cChildren; ++iChild )
 	{
-		const GUID *type;
+		hr = pxofenum->GetChild ( iChild, &pxofobjCur );
+		if (FAILED(hr))	goto e_Exit;
+
+		GUID type;
 
 		hr = pxofobjCur->GetType(&type);
 		if (FAILED(hr))	goto e_Exit;
 
 		//	Note : 에니메이션 오브젝트.
 		//
-		if ( *type == TID_D3DRMAnimationSet )
+		if ( type == TID_D3DRMAnimationSet )
 		{
 			LoadAnimationSet ( pxofobjCur );
 		}
-		else if ( *type == TID_D3DRMAnimation )
+		else if ( type == TID_D3DRMAnimation )
 		{
 			LoadAnimation ( pxofobjCur );
 		}
@@ -819,7 +826,7 @@ e_Exit:
 //	Note : 에니메이션을 읽어옴.
 //
 //
-HRESULT SAnimContainer::LoadAnimation ( LPDIRECTXFILEDATA pxofobjCur )
+HRESULT SAnimContainer::LoadAnimation ( LPD3DXFILEDATA pxofobjCur )
 {
 	HRESULT hr = S_OK;
 	SRotateKeyXFile *pFileRotateKey;
@@ -827,16 +834,16 @@ HRESULT SAnimContainer::LoadAnimation ( LPDIRECTXFILEDATA pxofobjCur )
 	SPositionKeyXFile *pFilePosKey;
 	SMatrixKeyXFile *pFileMatrixKey;
 	SAnimation *pAnimationCur;
-	LPDIRECTXFILEDATA pxofobjChild = NULL;
-	LPDIRECTXFILEOBJECT pxofChild = NULL;
-	LPDIRECTXFILEDATAREFERENCE pxofobjChildRef = NULL;
-	const GUID *type;
-	DWORD dwSize;
+	LPD3DXFILEDATA pxofobjChild = NULL;
+	SIZE_T cChildren = 0;
+	bool bLocked = false;
+	GUID type;
+	SIZE_T dwSize;
 	PBYTE pData;
 	DWORD dwKeyType;
 	DWORD cKeys;
 	DWORD iKey;
-	DWORD cchName;
+	SIZE_T cchName;
 	TCHAR *szBoneName;
     
 	//	Note : 새로운 Animation 만듬.
@@ -851,15 +858,18 @@ HRESULT SAnimContainer::LoadAnimation ( LPDIRECTXFILEDATA pxofobjCur )
 	//	Note : 순차적으로 탐색하면서 에니메이션을 읽어온다.
 	//		QueryInterface()를 사용하여 오브젝트의 타입을 확인함.
 	//
-	while ( SUCCEEDED(pxofobjCur->GetNextObject(&pxofChild)) )
+	hr = pxofobjCur->GetChildren ( &cChildren );
+	if (FAILED(hr))	goto e_Exit;
+
+	for ( SIZE_T iChild=0; iChild<cChildren; ++iChild )
 	{
         //	Note : Object가 "FileDataReference"일때.
 		//
-		hr = pxofChild->QueryInterface ( IID_IDirectXFileDataReference, (LPVOID *)&pxofobjChildRef );
-		if (SUCCEEDED(hr))
+		hr = pxofobjCur->GetChild ( iChild, &pxofobjChild );
+		if (FAILED(hr))	goto e_Exit;
+
+		if ( pxofobjChild->IsReference() )
 		{
-			hr = pxofobjChildRef->Resolve (&pxofobjChild);
-			if (SUCCEEDED(hr))
 			{
 				hr = pxofobjChild->GetType(&type);
 				if (FAILED(hr))
@@ -867,7 +877,7 @@ HRESULT SAnimContainer::LoadAnimation ( LPDIRECTXFILEDATA pxofobjCur )
                 
 				//	Note : 에니에이션에 연결된 프레임을 지정.
 				//
-				if ( TID_D3DRMFrame == *type )
+				if ( TID_D3DRMFrame == type )
 				{
 					if ( pAnimationCur->pBoneToAnimate != NULL )
 					{
@@ -912,20 +922,12 @@ HRESULT SAnimContainer::LoadAnimation ( LPDIRECTXFILEDATA pxofobjCur )
 					pAnimationCur->m_strBone = szBoneName;
 				}
                 
-				GXRELEASE(pxofobjChild);
-
-			}	//	Resolve()
-            
-			GXRELEASE(pxofobjChildRef);
-
-		}	// IID_IDirectXFileDataReference ?
+			}
+		}	// IsReference()
 		else
 		{
             //	Note : Object가 "FileData"일 경우.
 			//
-			hr = pxofChild->QueryInterface(IID_IDirectXFileData,
-				(LPVOID *)&pxofobjChild);
-			if (SUCCEEDED(hr))
 			{
 				hr = pxofobjChild->GetType(&type);
 				if (FAILED(hr))
@@ -933,13 +935,14 @@ HRESULT SAnimContainer::LoadAnimation ( LPDIRECTXFILEDATA pxofobjCur )
 					goto e_Exit;
 				}
                 
-				if ( TID_D3DRMAnimationKey == *type )
+				if ( TID_D3DRMAnimationKey == type )
 				{
-					hr = pxofobjChild->GetData ( NULL, &dwSize, (PVOID*)&pData );
+					hr = pxofobjChild->Lock ( &dwSize, (LPCVOID*)&pData );
 					if (FAILED(hr))
 					{
 						goto e_Exit;
 					}
+					bLocked = true;
                     
 					dwKeyType = ((DWORD*)pData)[0];
 					cKeys = ((DWORD*)pData)[1];
@@ -1149,11 +1152,15 @@ HRESULT SAnimContainer::LoadAnimation ( LPDIRECTXFILEDATA pxofobjCur )
 					}
                 }
                 
-                GXRELEASE(pxofobjChild);
+                if ( bLocked )
+                {
+                    pxofobjChild->Unlock();
+                    bLocked = false;
+                }
             }
         }
         
-        GXRELEASE(pxofChild);
+        GXRELEASE(pxofobjChild);
     }
 
 	//	Note : 에니메이션 리스트에 등록.
@@ -1168,52 +1175,56 @@ HRESULT SAnimContainer::LoadAnimation ( LPDIRECTXFILEDATA pxofobjCur )
 	};	
     
 e_Exit:
+    if ( bLocked )
+        pxofobjChild->Unlock();
     GXRELEASE(pxofobjChild);
-    GXRELEASE(pxofChild);
-    GXRELEASE(pxofobjChildRef);
     return hr;
 }
 
 //	Note : AnimationSet 를 읽어와 구성함.
 //
-HRESULT SAnimContainer::LoadAnimationSet ( LPDIRECTXFILEDATA pxofobjCur )
+HRESULT SAnimContainer::LoadAnimationSet ( LPD3DXFILEDATA pxofobjCur )
 {
-    const GUID *type;
+    GUID type;
     HRESULT hr = S_OK;
-    LPDIRECTXFILEDATA pxofobjChild = NULL;
-    LPDIRECTXFILEOBJECT pxofChild = NULL;
+    LPD3DXFILEDATA pxofobjChild = NULL;
+    SIZE_T cChildren = 0;
     
    
 	//	Note : 순차적으로 탐색하면서 에니메이션을 읽어온다.
 	//		QueryInterface()를 사용하여 오브젝트의 타입을 확인함.
 	//
-    while (SUCCEEDED(pxofobjCur->GetNextObject(&pxofChild)))
+    hr = pxofobjCur->GetChildren ( &cChildren );
+    if (FAILED(hr))
+        goto e_Exit;
+
+    for ( SIZE_T iChild=0; iChild<cChildren; ++iChild )
     {
-        // Query the child for it's FileData
-        hr = pxofChild->QueryInterface ( IID_IDirectXFileData, (LPVOID *)&pxofobjChild );
-        
-		if (SUCCEEDED(hr))
+        hr = pxofobjCur->GetChild ( iChild, &pxofobjChild );
+        if (FAILED(hr))
+            goto e_Exit;
+
+        // References are skipped, as they were with d3dxof.
+        if ( !pxofobjChild->IsReference() )
         {
             hr = pxofobjChild->GetType(&type);
             if (FAILED(hr))
                 goto e_Exit;
             
-            if( TID_D3DRMAnimation == *type )
+            if( TID_D3DRMAnimation == type )
             {
                 hr = LoadAnimation ( pxofobjChild );
                 if (FAILED(hr))
                     goto e_Exit;
             }
             
-            GXRELEASE(pxofobjChild);
         }
         
-        GXRELEASE(pxofChild);
+        GXRELEASE(pxofobjChild);
     }
     
 e_Exit:
     GXRELEASE(pxofobjChild);
-    GXRELEASE(pxofChild);
     return hr;
 }
 

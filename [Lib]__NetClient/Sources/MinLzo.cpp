@@ -109,11 +109,14 @@ int CMinLzo::lzoCompress (byte* pInBuffer,
 	
 	::EnterCriticalSection(&m_CriticalSection);
 	// compress from `in' to `out' with LZO1X-1	
+	// lzo_uint is 64-bit on x64, so the length can't be written straight into the int.
+	lzo_uint nCompressed = 0;
 	nReturn = lzo1x_1_compress(pInBuffer,
 						nInLength,
 						pOutBuffer,
-						(lzo_uint*) &nOutLength,
+						&nCompressed,
 						m_pWorkmem);
+	nOutLength = (int) nCompressed;
 					
 	if (nReturn == LZO_E_OK)
 	{
@@ -153,11 +156,13 @@ int CMinLzo::lzoDeCompress (byte* pOutBuffer,
 	::EnterCriticalSection(&m_CriticalSection);	
 	int nReturn = 0;
 	// decompress, now going from `out' to `in'	
+	lzo_uint nDecompressed = 0;
 	nReturn = lzo1x_decompress(pOutBuffer, 
 							nOutLength,
 							pInBuffer,
-							(lzo_uint*) &nNewLength,
+							&nDecompressed,
 							NULL);
+	nNewLength = (int) nDecompressed;
 
 	if (nReturn == LZO_E_OK && nNewLength >= nOutLength)
 	{		

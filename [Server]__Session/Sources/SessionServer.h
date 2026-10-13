@@ -19,7 +19,7 @@ BOOL g_bConnect = FALSE;
 CSessionServer*	g_pServer = NULL;
 
 // function
-BOOL CALLBACK MainDlgProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK MainDlgProc(HWND, UINT, WPARAM, LPARAM);
 void setFirstFocus(HWND hDlg);
 void cmdStartOrStop(HWND hDlg);
 void cmdPause(HWND hDlg);

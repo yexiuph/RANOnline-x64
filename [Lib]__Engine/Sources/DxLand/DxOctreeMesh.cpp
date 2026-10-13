@@ -7,10 +7,42 @@
 #include "./TextureManager.h"
 
 #include "SerialFile.h"
+#include "SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+//	On-disk (x86) image of DXOCMATERIAL, see SerialLayout.h.
+struct DXOCMATERIAL_DISK
+{
+	D3DMATERIALQ			rgMaterial;
+	SerialLayout::PTR32		pTexture;
+	char					szTexture[MAX_PATH];
+};
+
+static_assert ( sizeof(DXOCMATERIAL_DISK) == 332, "x86 size of DXOCMATERIAL" );
+
+#if SERIAL_LAYOUT_NATIVE_X86
+SERIAL_LAYOUT_ASSERT_SIZE ( DXOCMATERIAL_DISK, DXOCMATERIAL );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXOCMATERIAL_DISK, DXOCMATERIAL, rgMaterial );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXOCMATERIAL_DISK, DXOCMATERIAL, pTexture );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXOCMATERIAL_DISK, DXOCMATERIAL, szTexture );
+#endif
+
+inline void SerialFromDisk ( DXOCMATERIAL& d, const DXOCMATERIAL_DISK& s )
+{
+	d.rgMaterial	= s.rgMaterial;
+	d.pTexture	= NULL;
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+}
+
+inline void SerialToDisk ( DXOCMATERIAL_DISK& d, const DXOCMATERIAL& s )
+{
+	d.rgMaterial	= s.rgMaterial;
+	d.pTexture	= SerialLayout::PtrToDisk ( s.pTexture );
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+}
 
 
 DxOctreeMesh::~DxOctreeMesh()
@@ -550,7 +582,7 @@ void DxOcMeshes::ClearAll ()
 BOOL	 DxOcMeshes::SaveFile ( CSerialFile &SFile )
 {
 	SFile << cMaterials;
-	SFile.WriteBuffer ( pMaterials, sizeof(DXOCMATERIAL)*cMaterials );
+	SerialLayout::WriteArray<DXOCMATERIAL_DISK> ( SFile, pMaterials, cMaterials );
 
 	pOcMesh->SaveFile ( SFile );
 
@@ -565,7 +597,7 @@ BOOL	 DxOcMeshes::LoadFile ( CSerialFile &SFile, LPDIRECT3DDEVICEQ pd3dDevice )
 
 	SAFE_DELETE_ARRAY(pMaterials);
 	pMaterials = new DXOCMATERIAL[cMaterials];
-	SFile.ReadBuffer ( pMaterials, sizeof(DXOCMATERIAL)*cMaterials );
+	SerialLayout::ReadArray<DXOCMATERIAL_DISK> ( SFile, pMaterials, cMaterials );
 
 	for ( DWORD i=0; i<cMaterials; i++ )
 	{

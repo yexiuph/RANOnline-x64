@@ -19,7 +19,7 @@ extern bool g_bConnect;
 extern CLoginServer* g_pServer;
 
 // function
-BOOL CALLBACK MainDlgProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK MainDlgProc(HWND, UINT, WPARAM, LPARAM);
 
 void setFirstFocus(HWND hDlg);
 void cmdStartOrStop(HWND hDlg);

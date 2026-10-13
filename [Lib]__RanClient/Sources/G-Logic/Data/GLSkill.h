@@ -689,6 +689,8 @@ namespace SKILL
 
 	struct SEXT_DATA_103
 	{
+		enum { FILE_SIZE = 1100, };	// sizeof() in the x86 Release build : the value stored in data files
+
 		EMANI_MAINTYPE		emANIMTYPE;								//	스킬 사용시 캐릭터의 에니메이션 종류.		
 		EMANI_SUBTYPE		emANISTYPE;								//	스킬 사용시 캐릭터의 에니메이션 종류.		
 
@@ -734,6 +736,8 @@ namespace SKILL
 
 	struct SEXT_DATA_104
 	{
+		enum { FILE_SIZE = 1104, };	// sizeof() in the x86 Release build : the value stored in data files
+
 		EMANI_MAINTYPE		emANIMTYPE;								//	스킬 사용시 캐릭터의 에니메이션 종류.		
 		EMANI_SUBTYPE		emANISTYPE;								//	스킬 사용시 캐릭터의 에니메이션 종류.		
 
@@ -780,6 +784,8 @@ namespace SKILL
 
 	struct SEXT_DATA_105
 	{
+		enum { FILE_SIZE = 1108, };	// sizeof() in the x86 Release build : the value stored in data files
+
 		EMANI_MAINTYPE		emANIMTYPE;								//	스킬 사용시 캐릭터의 에니메이션 종류.		
 		EMANI_SUBTYPE		emANISTYPE;								//	스킬 사용시 캐릭터의 에니메이션 종류.		
 
@@ -829,6 +835,7 @@ namespace SKILL
 	struct SEXT_DATA
 	{
 		enum { VERSION = 0x0106, };
+		enum { FILE_SIZE = 1876, };	// sizeof() in the x86 Release build : the value stored in data files
 
 		EMANI_MAINTYPE		emANIMTYPE;								//	스킬 사용시 캐릭터의 에니메이션 종류.		
 		EMANI_SUBTYPE		emANISTYPE;								//	스킬 사용시 캐릭터의 에니메이션 종류.		
@@ -941,6 +948,7 @@ namespace SKILL
 	struct SSPECIAL_SKILL
 	{
 		enum { VERSION = 0x0100, };
+		enum { FILE_SIZE = 416, };	// sizeof() in the x86 Release build : the value stored in data files
 
 		EMSPECIALSKILLTYPE	emSSTYPE;					//  특수 스킬 타입
 		std::string			strEffectName;				//  종료전 스킬 이름

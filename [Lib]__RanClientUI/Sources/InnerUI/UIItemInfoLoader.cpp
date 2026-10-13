@@ -541,7 +541,7 @@ namespace NS_ITEMINFO
 			AddTextNoSplit ( strText, COMMENT::ITEMCOLOR[dwLevel] );
 
 			//	ÄÚ½ºÃã
-			if ( sItemCustom.nidDISGUISE!=SNATIVEID(false) )
+			if ( sItemCustom.nidDISGUISE!=SNATIVEID(false) && GLItemMan::GetInstance().GetItem ( sItemCustom.nidDISGUISE ) )
 			{
 				SITEM* pDisguiseData = GLItemMan::GetInstance().GetItem ( sItemCustom.nidDISGUISE );
 
@@ -856,7 +856,7 @@ namespace NS_ITEMINFO
 						AddTextNoSplit ( strSchool, NS_UITEXTCONTROL::GetEvaluateColor ( pItemData->sBasicOp.dwReqSchool & index2school(pCharacter->m_wSchool) ) );
 					}
 
-					if( sItemCustom.nidDISGUISE != NATIVEID_NULL() )
+					if( sItemCustom.nidDISGUISE != NATIVEID_NULL() && GLItemMan::GetInstance().GetItem ( sItemCustom.nidDISGUISE ) )
 					{
 						SITEM* pItemDisguise = GLItemMan::GetInstance().GetItem ( sItemCustom.nidDISGUISE );
 						DWORD dwReqCharClass_Disguise = pItemDisguise->sBasicOp.dwReqCharClass;

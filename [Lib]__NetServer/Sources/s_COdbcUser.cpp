@@ -68,7 +68,7 @@ __time64_t COdbcManager::GetChatBlockTime(int nUserNum)
 		break;
 	}
 
-    TIMESTAMP_STRUCT sChatBlockDate; SQLINTEGER cbChatBlockDate = SQL_NTS;
+    TIMESTAMP_STRUCT sChatBlockDate; SQLLEN cbChatBlockDate = SQL_NTS;
     __time64_t tChatBlockDate = 0;
 
     sReturn = ::SQLExecDirect(pConn->hStmt,
@@ -273,7 +273,7 @@ __time64_t COdbcManager::GetPremiumTime(int nUserNum)
 		break;
 	}
 
-    TIMESTAMP_STRUCT sPremiumDate; SQLINTEGER cbPremiumDate = SQL_NTS;
+    TIMESTAMP_STRUCT sPremiumDate; SQLLEN cbPremiumDate = SQL_NTS;
     __time64_t tPremiumDate = 0;
 
     sReturn = ::SQLExecDirect(pConn->hStmt,
@@ -1081,7 +1081,7 @@ int COdbcManager::GetUserNum( const TCHAR* szUsrId )
 	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-	SQLINTEGER nUserNum=0, cbUserNum=SQL_NTS;
+	SQLINTEGER nUserNum=0; SQLLEN cbUserNum=SQL_NTS;
 
 	//std::strstream strTemp;	
 

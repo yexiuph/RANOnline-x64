@@ -36,7 +36,7 @@ USER_INFO_BASIC COdbcManager::GetUserInfo(
 	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return uib;
 
-	SQLINTEGER nUserNum=0, cbUserNum=SQL_NTS;
+	SQLINTEGER nUserNum=0; SQLLEN cbUserNum=SQL_NTS;
 
 	sReturn = ::SQLExecDirect(pConn->hStmt, 
 							  (SQLCHAR*)szTemp, 
@@ -92,14 +92,14 @@ int COdbcManager::ThaiGetUserInfo(
 	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-    SQLINTEGER nUserNum       = 0, cbUserNum       = SQL_NTS;
-    SQLINTEGER nUserType      = 0, cbUserType      = SQL_NTS;
-    SQLINTEGER nChaRemain     = 0, cbChaRemain     = SQL_NTS;
-    SQLINTEGER nChaTestRemain = 0, cbChaTestRemain = SQL_NTS;
-	SQLINTEGER nUserThaiFlag  = 0, cbUserThaiFlag  = SQL_NTS;
+    SQLINTEGER nUserNum       = 0; SQLLEN cbUserNum       = SQL_NTS;
+    SQLINTEGER nUserType      = 0; SQLLEN cbUserType      = SQL_NTS;
+    SQLINTEGER nChaRemain     = 0; SQLLEN cbChaRemain     = SQL_NTS;
+    SQLINTEGER nChaTestRemain = 0; SQLLEN cbChaTestRemain = SQL_NTS;
+	SQLINTEGER nUserThaiFlag  = 0; SQLLEN cbUserThaiFlag  = SQL_NTS;
     
-    TIMESTAMP_STRUCT sPremiumDate;   SQLINTEGER cbPremiumDate   = SQL_NTS;
-	TIMESTAMP_STRUCT sChatBlockDate; SQLINTEGER cbChatBlockDate = SQL_NTS;
+    TIMESTAMP_STRUCT sPremiumDate;   SQLLEN cbPremiumDate   = SQL_NTS;
+	TIMESTAMP_STRUCT sChatBlockDate; SQLLEN cbChatBlockDate = SQL_NTS;
     
  //   std::strstream strTemp;
 	//strTemp << "SELECT UserNum, UserType, PremiumDate, ChaRemain, ChaTestRemain, ChatBlockDate, UserThaiFlag FROM UserInfo WHERE UserID='" << szUserID << "'";
@@ -204,8 +204,8 @@ int COdbcManager::ThaiGetUserInfo(
 	pConn = m_pGameDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-	SQLINTEGER nExtremeM = 0, cbExtremeM = SQL_NTS;
-	SQLINTEGER nExtremeW = 0, cbExtremeW = SQL_NTS;
+	SQLINTEGER nExtremeM = 0; SQLLEN cbExtremeM = SQL_NTS;
+	SQLINTEGER nExtremeW = 0; SQLLEN cbExtremeW = SQL_NTS;
 
 	// 극강부 생성가능 여부 체크 
 	//std::strstream strTemp1;
@@ -275,19 +275,19 @@ int COdbcManager::GetUserInfo(
 	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-    SQLINTEGER nUserNum       = 0, cbUserNum       = SQL_NTS;
-    SQLINTEGER nUserType      = 0, cbUserType      = SQL_NTS;
-    SQLINTEGER nChaRemain     = 0, cbChaRemain     = SQL_NTS;
-    SQLINTEGER nChaTestRemain = 0, cbChaTestRemain = SQL_NTS;
+    SQLINTEGER nUserNum       = 0; SQLLEN cbUserNum       = SQL_NTS;
+    SQLINTEGER nUserType      = 0; SQLLEN cbUserType      = SQL_NTS;
+    SQLINTEGER nChaRemain     = 0; SQLLEN cbChaRemain     = SQL_NTS;
+    SQLINTEGER nChaTestRemain = 0; SQLLEN cbChaTestRemain = SQL_NTS;
     
-    TIMESTAMP_STRUCT sPremiumDate;   SQLINTEGER cbPremiumDate   = SQL_NTS;
-	TIMESTAMP_STRUCT sChatBlockDate; SQLINTEGER cbChatBlockDate = SQL_NTS;	
+    TIMESTAMP_STRUCT sPremiumDate;   SQLLEN cbPremiumDate   = SQL_NTS;
+	TIMESTAMP_STRUCT sChatBlockDate; SQLLEN cbChatBlockDate = SQL_NTS;	
 
     
  //   std::strstream strTemp;
 	//strTemp << "SELECT UserNum, UserType, PremiumDate, ChaRemain, ChaTestRemain, ChatBlockDate FROM UserInfo WHERE UserID='" << szUserID << "'";
 	//strTemp << std::ends;
-	TIMESTAMP_STRUCT sLastLoginTime; SQLINTEGER cbLastLoginTime = SQL_NTS;	
+	TIMESTAMP_STRUCT sLastLoginTime; SQLLEN cbLastLoginTime = SQL_NTS;	
 
 #if defined(_RELEASED)
 	TCHAR szTemp[256] = {0};
@@ -403,8 +403,8 @@ int COdbcManager::GetUserInfo(
 	pConn = m_pGameDB->GetConnection(); 
 	if (!pConn)	return DB_ERROR;
 
-	SQLINTEGER nExtremeM = 0, cbExtremeM = SQL_NTS;
-	SQLINTEGER nExtremeW = 0, cbExtremeW = SQL_NTS;
+	SQLINTEGER nExtremeM = 0; SQLLEN cbExtremeM = SQL_NTS;
+	SQLINTEGER nExtremeW = 0; SQLLEN cbExtremeW = SQL_NTS;
 
 	// 극강부 생성가능 여부 체크 
 	//std::strstream strTemp1;
@@ -474,13 +474,13 @@ int COdbcManager::DaumGetUserInfo(
 	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-    SQLINTEGER nUserNum  = 0,  cbUserNum   = SQL_NTS;
-    SQLINTEGER nUserType = 0, cbUserType   = SQL_NTS;
-    SQLINTEGER nChaRemain = 0, cbChaRemain = SQL_NTS;
-    SQLINTEGER nChaTestRemain = 0, cbChaTestRemain = SQL_NTS;
+    SQLINTEGER nUserNum  = 0; SQLLEN cbUserNum   = SQL_NTS;
+    SQLINTEGER nUserType = 0; SQLLEN cbUserType   = SQL_NTS;
+    SQLINTEGER nChaRemain = 0; SQLLEN cbChaRemain = SQL_NTS;
+    SQLINTEGER nChaTestRemain = 0; SQLLEN cbChaTestRemain = SQL_NTS;
     
-    TIMESTAMP_STRUCT sPremiumDate;   SQLINTEGER cbPremiumDate   = SQL_NTS;
-	TIMESTAMP_STRUCT sChatBlockDate; SQLINTEGER cbChatBlockDate = SQL_NTS;
+    TIMESTAMP_STRUCT sPremiumDate;   SQLLEN cbPremiumDate   = SQL_NTS;
+	TIMESTAMP_STRUCT sChatBlockDate; SQLLEN cbChatBlockDate = SQL_NTS;
     
  //   std::strstream strTemp;
 	//strTemp << "SELECT UserNum, UserType, PremiumDate, ChaRemain, ChaTestRemain, ChatBlockDate FROM DaumUserInfo WHERE UserUID='" << szUID << "'";
@@ -583,8 +583,8 @@ int COdbcManager::DaumGetUserInfo(
 	pConn = m_pGameDB->GetConnection(); 
 	if (!pConn)	return DB_ERROR;
 
-	SQLINTEGER nExtremeM = 0, cbExtremeM = SQL_NTS;
-	SQLINTEGER nExtremeW = 0, cbExtremeW = SQL_NTS;
+	SQLINTEGER nExtremeM = 0; SQLLEN cbExtremeM = SQL_NTS;
+	SQLINTEGER nExtremeW = 0; SQLLEN cbExtremeW = SQL_NTS;
 
 	// 극강부 생성가능 여부 체크 
 	//std::strstream strTemp1;
@@ -645,7 +645,7 @@ int COdbcManager::DaumGetUserInfo(
 	pConn = m_pUserDB->GetConnection();
 	if (!pConn) return DB_ERROR;
 
-	SQLINTEGER nCheckFlag = 0, cbCheckFlag = SQL_NTS;
+	SQLINTEGER nCheckFlag = 0; SQLLEN cbCheckFlag = SQL_NTS;
 
 	// User의 패스워드 입력 여부 판단
 	//std::strstream strTemp2;
@@ -713,13 +713,13 @@ int COdbcManager::GspGetUserInfo(
 	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-    SQLINTEGER nUserNum  = 0, cbUserNum   = SQL_NTS;
-    SQLINTEGER nUserType = 0, cbUserType   = SQL_NTS;
-    SQLINTEGER nChaRemain = 0, cbChaRemain = SQL_NTS;
-    SQLINTEGER nChaTestRemain = 0, cbChaTestRemain = SQL_NTS;
+    SQLINTEGER nUserNum  = 0; SQLLEN cbUserNum   = SQL_NTS;
+    SQLINTEGER nUserType = 0; SQLLEN cbUserType   = SQL_NTS;
+    SQLINTEGER nChaRemain = 0; SQLLEN cbChaRemain = SQL_NTS;
+    SQLINTEGER nChaTestRemain = 0; SQLLEN cbChaTestRemain = SQL_NTS;
     
-    TIMESTAMP_STRUCT sPremiumDate;   SQLINTEGER cbPremiumDate   = SQL_NTS;
-	TIMESTAMP_STRUCT sChatBlockDate; SQLINTEGER cbChatBlockDate = SQL_NTS;
+    TIMESTAMP_STRUCT sPremiumDate;   SQLLEN cbPremiumDate   = SQL_NTS;
+	TIMESTAMP_STRUCT sChatBlockDate; SQLLEN cbChatBlockDate = SQL_NTS;
     
  //   std::strstream strTemp;
 	//strTemp << "SELECT UserNum, UserType, PremiumDate, ChaRemain, ChaTestRemain, ChatBlockDate ";
@@ -826,13 +826,13 @@ int COdbcManager::TerraGetUserInfo(
 	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-    SQLINTEGER nUserNum  = 0, cbUserNum   = SQL_NTS;
-    SQLINTEGER nUserType = 0, cbUserType   = SQL_NTS;
-    SQLINTEGER nChaRemain = 0, cbChaRemain = SQL_NTS;
-    SQLINTEGER nChaTestRemain = 0, cbChaTestRemain = SQL_NTS;
+    SQLINTEGER nUserNum  = 0; SQLLEN cbUserNum   = SQL_NTS;
+    SQLINTEGER nUserType = 0; SQLLEN cbUserType   = SQL_NTS;
+    SQLINTEGER nChaRemain = 0; SQLLEN cbChaRemain = SQL_NTS;
+    SQLINTEGER nChaTestRemain = 0; SQLLEN cbChaTestRemain = SQL_NTS;
     
-    TIMESTAMP_STRUCT sPremiumDate;   SQLINTEGER cbPremiumDate   = SQL_NTS;
-	TIMESTAMP_STRUCT sChatBlockDate; SQLINTEGER cbChatBlockDate = SQL_NTS;
+    TIMESTAMP_STRUCT sPremiumDate;   SQLLEN cbPremiumDate   = SQL_NTS;
+	TIMESTAMP_STRUCT sChatBlockDate; SQLLEN cbChatBlockDate = SQL_NTS;
     
  //   std::strstream strTemp;
 	//strTemp << "SELECT UserNum, UserType, PremiumDate, ChaRemain, ChaTestRemain, ChatBlockDate ";
@@ -934,8 +934,8 @@ int COdbcManager::TerraGetUserInfo(
 	pConn = m_pGameDB->GetConnection(); 
 	if (!pConn)	return DB_ERROR;
 
-	SQLINTEGER nExtremeM = 0, cbExtremeM = SQL_NTS;
-	SQLINTEGER nExtremeW = 0, cbExtremeW = SQL_NTS;
+	SQLINTEGER nExtremeM = 0; SQLLEN cbExtremeM = SQL_NTS;
+	SQLINTEGER nExtremeW = 0; SQLLEN cbExtremeW = SQL_NTS;
 
 	// 극강부 생성가능 여부 체크 
 	//std::strstream strTemp1;
@@ -996,7 +996,7 @@ int COdbcManager::TerraGetUserInfo(
 	pConn = m_pUserDB->GetConnection();
 	if (!pConn) return DB_ERROR;
 
-	SQLINTEGER nCheckFlag = 0, cbCheckFlag = SQL_NTS;
+	SQLINTEGER nCheckFlag = 0; SQLLEN cbCheckFlag = SQL_NTS;
 
 	// User의 패스워드 입력 여부 판단
 	//std::strstream strTemp1;
@@ -1067,13 +1067,13 @@ int COdbcManager::ExciteGetUserInfo(
 	if (!pConn)	return DB_ERROR;
 
 
-    SQLINTEGER nUserNum  = 0, cbUserNum   = SQL_NTS;
-    SQLINTEGER nUserType = 0, cbUserType   = SQL_NTS;
-    SQLINTEGER nChaRemain = 0, cbChaRemain = SQL_NTS;
-    SQLINTEGER nChaTestRemain = 0, cbChaTestRemain = SQL_NTS;
+    SQLINTEGER nUserNum  = 0; SQLLEN cbUserNum   = SQL_NTS;
+    SQLINTEGER nUserType = 0; SQLLEN cbUserType   = SQL_NTS;
+    SQLINTEGER nChaRemain = 0; SQLLEN cbChaRemain = SQL_NTS;
+    SQLINTEGER nChaTestRemain = 0; SQLLEN cbChaTestRemain = SQL_NTS;
     
-    TIMESTAMP_STRUCT sPremiumDate;   SQLINTEGER cbPremiumDate   = SQL_NTS;
-	TIMESTAMP_STRUCT sChatBlockDate; SQLINTEGER cbChatBlockDate = SQL_NTS;
+    TIMESTAMP_STRUCT sPremiumDate;   SQLLEN cbPremiumDate   = SQL_NTS;
+	TIMESTAMP_STRUCT sChatBlockDate; SQLLEN cbChatBlockDate = SQL_NTS;
     
  //   std::strstream strTemp;
 	//strTemp << "SELECT UserNum, UserType, PremiumDate, ChaRemain, ChaTestRemain, ChatBlockDate ";
@@ -1178,7 +1178,7 @@ int COdbcManager::ExciteGetUserInfo(
 	pConn = m_pUserDB->GetConnection();
 	if (!pConn) return DB_ERROR;
 
-	SQLINTEGER nCheckFlag = 0, cbCheckFlag = SQL_NTS;
+	SQLINTEGER nCheckFlag = 0; SQLLEN cbCheckFlag = SQL_NTS;
 
 	// User의 패스워드 입력 여부 판단
 	_snprintf_s( szTemp, 256, "SELECT CheckFlag FROM "
@@ -1238,13 +1238,13 @@ int COdbcManager::JapanGetUserInfo( const TCHAR* szUserID, JAPAN_NET_LOGIN_FEEDB
 	if (!pConn)	return DB_ERROR;
 
 
-    SQLINTEGER nUserNum  = 0, cbUserNum   = SQL_NTS;
-    SQLINTEGER nUserType = 0, cbUserType   = SQL_NTS;
-    SQLINTEGER nChaRemain = 0, cbChaRemain = SQL_NTS;
-    SQLINTEGER nChaTestRemain = 0, cbChaTestRemain = SQL_NTS;
+    SQLINTEGER nUserNum  = 0; SQLLEN cbUserNum   = SQL_NTS;
+    SQLINTEGER nUserType = 0; SQLLEN cbUserType   = SQL_NTS;
+    SQLINTEGER nChaRemain = 0; SQLLEN cbChaRemain = SQL_NTS;
+    SQLINTEGER nChaTestRemain = 0; SQLLEN cbChaTestRemain = SQL_NTS;
     
-    TIMESTAMP_STRUCT sPremiumDate;   SQLINTEGER cbPremiumDate   = SQL_NTS;
-	TIMESTAMP_STRUCT sChatBlockDate; SQLINTEGER cbChatBlockDate = SQL_NTS; 
+    TIMESTAMP_STRUCT sPremiumDate;   SQLLEN cbPremiumDate   = SQL_NTS;
+	TIMESTAMP_STRUCT sChatBlockDate; SQLLEN cbChatBlockDate = SQL_NTS; 
 
 	TCHAR szTemp[256] = {0};
 	_snprintf_s( szTemp, 256, "SELECT UserNum, UserType, PremiumDate, ChaRemain, ChaTestRemain, ChatBlockDate "
@@ -1341,8 +1341,8 @@ int COdbcManager::JapanGetUserInfo( const TCHAR* szUserID, JAPAN_NET_LOGIN_FEEDB
 	pConn = m_pGameDB->GetConnection(); 
 	if (!pConn)	return DB_ERROR;
 
-	SQLINTEGER nExtremeM = 0, cbExtremeM = SQL_NTS;
-	SQLINTEGER nExtremeW = 0, cbExtremeW = SQL_NTS;
+	SQLINTEGER nExtremeM = 0; SQLLEN cbExtremeM = SQL_NTS;
+	SQLINTEGER nExtremeW = 0; SQLLEN cbExtremeW = SQL_NTS;
 
 	// 극강부 생성가능 여부 체크 
 	_snprintf_s( szTemp, 256, "Exec sp_Extreme %d", nUserNum );
@@ -1403,13 +1403,13 @@ int COdbcManager::GsGetUserInfo(
 	ODBC_STMT* pConn = m_pUserDB->GetConnection();
 	if (!pConn)	return DB_ERROR;
 
-    SQLINTEGER nUserNum       = 0, cbUserNum       = SQL_NTS;
-    SQLINTEGER nUserType      = 0, cbUserType      = SQL_NTS;
-    SQLINTEGER nChaRemain     = 0, cbChaRemain     = SQL_NTS;
-    SQLINTEGER nChaTestRemain = 0, cbChaTestRemain = SQL_NTS;
+    SQLINTEGER nUserNum       = 0; SQLLEN cbUserNum       = SQL_NTS;
+    SQLINTEGER nUserType      = 0; SQLLEN cbUserType      = SQL_NTS;
+    SQLINTEGER nChaRemain     = 0; SQLLEN cbChaRemain     = SQL_NTS;
+    SQLINTEGER nChaTestRemain = 0; SQLLEN cbChaTestRemain = SQL_NTS;
     
-    TIMESTAMP_STRUCT sPremiumDate;   SQLINTEGER cbPremiumDate   = SQL_NTS;
-	TIMESTAMP_STRUCT sChatBlockDate; SQLINTEGER cbChatBlockDate = SQL_NTS;	
+    TIMESTAMP_STRUCT sPremiumDate;   SQLLEN cbPremiumDate   = SQL_NTS;
+	TIMESTAMP_STRUCT sChatBlockDate; SQLLEN cbChatBlockDate = SQL_NTS;	
 
     
  //   std::strstream strTemp;
@@ -1512,8 +1512,8 @@ int COdbcManager::GsGetUserInfo(
 	pConn = m_pGameDB->GetConnection(); 
 	if (!pConn)	return DB_ERROR;
 
-	SQLINTEGER nExtremeM = 0, cbExtremeM = SQL_NTS;
-	SQLINTEGER nExtremeW = 0, cbExtremeW = SQL_NTS;
+	SQLINTEGER nExtremeM = 0; SQLLEN cbExtremeM = SQL_NTS;
+	SQLINTEGER nExtremeW = 0; SQLLEN cbExtremeW = SQL_NTS;
 
 	// 극강부 생성가능 여부 체크 
 	//std::strstream strTemp1;

@@ -827,42 +827,6 @@ int CClientManager::GetChannel(DWORD dwClient)
 	return m_pClient[dwClient].GetChannel();
 }
 
-//! nProtect GameGuard 인증용 쿼리를 가져오기 전에 호출
-bool CClientManager::nProtectSetAuthQuery(DWORD dwClient)
-{
-	return m_pClient[dwClient].nProtectSetAuthQuery();
-}
-    	
-//! nProtect GameGuard 인증용 쿼리 가져오기
-GG_AUTH_DATA CClientManager::nProtectGetAuthQuery(DWORD dwClient)
-{
-	return m_pClient[dwClient].nProtectGetAuthQuery();
-}
-
-//! nProtect GameGuard 인증 응답 가져오기
-GG_AUTH_DATA CClientManager::nProtectGetAuthAnswer( DWORD dwClient )
-{
-	return m_pClient[dwClient].nProtectGetAuthAnswer();
-}
-
-//! nProtect GameGuard 인증 응답 설정
-void CClientManager::nProtectSetAuthAnswer(DWORD dwClient, GG_AUTH_DATA& ggad)
-{
-	return m_pClient[dwClient].nProtectSetAuthAnswer(ggad);
-}
-
-//! nProtect GameGuard 인증 결과 가져오기
-DWORD CClientManager::nProtectCheckAuthAnswer(DWORD dwClient)
-{
-	return m_pClient[dwClient].nProtectCheckAuthAnswer();
-}
-
-//! nProtect GameGuard 인증 상태를 리셋시킨다.
-void CClientManager::nProtectResetAuth(DWORD dwClient)
-{
-	m_pClient[dwClient].nProtectResetAuth();
-}
-
 void CClientManager::SetRandomPassNumber(DWORD dwClient, int nNumber)
 {
 	m_pClient[dwClient].SetRandomPassNumber(nNumber);

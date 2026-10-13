@@ -982,10 +982,10 @@ BOOL DxEffectCloth::IsDetectDivision ( D3DXVECTOR3 &vDivMax, D3DXVECTOR3 &vDivMi
 void DxEffectCloth::SaveBuffer ( CSerialFile &SFile )
 {
 	//	읽지 않고 스킵용으로 사용됨.
-	SFile << sizeof(DWORD)+sizeof(VERTEX)*m_dwNumVertices
+	SFile << (DWORD)( sizeof(DWORD)+sizeof(VERTEX)*m_dwNumVertices
 			+sizeof(DWORD)+sizeof(WORD)*m_dwNumIndices
 			+sizeof(DWORD)+sizeof(WORD)*m_dwNumLockIndex
-			+sizeof(int)+sizeof(NODE)*m_iNodeCount;
+			+sizeof(int)+sizeof(NODE)*m_iNodeCount );
 
 	SFile << m_dwNumVertices;
 	SFile.WriteBuffer( m_pBaseVertArray, sizeof(VERTEX)*m_dwNumVertices );

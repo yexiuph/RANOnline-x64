@@ -23,7 +23,7 @@ CFieldServer*		g_pServer = NULL;
 
 // function
 void setFirstFocus(HWND hDlg);
-BOOL CALLBACK MainDlgProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK MainDlgProc(HWND, UINT, WPARAM, LPARAM);
 void executeCmdParameter(HWND hDlg);
 void initDialog(HWND hDlg);
 void executeCommand(HWND hDlg);

@@ -1026,7 +1026,7 @@ void DxEffectRainPoint::FindPoint ( SEPERATEOBJ* pCur, D3DXVECTOR3 vMax, D3DXVEC
 void DxEffectRainPoint::SaveBuffer ( CSerialFile &SFile )
 {
 	//	읽지 않고 스킵용으로 사용됨.
-	SFile << sizeof(DWORD)+sizeof(POSITIONBOOL)*m_dwFaces;
+	SFile << (DWORD)( sizeof(DWORD)+sizeof(POSITIONBOOL)*m_dwFaces );
 
 	if( m_bNewRainEffect )
 	{

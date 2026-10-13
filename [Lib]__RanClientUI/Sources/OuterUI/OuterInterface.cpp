@@ -460,7 +460,7 @@ void COuterInterface::RunMMOSpeed()
 	// UserID, 게임 식별번호, 지역번호
 	strCmd.Format( "%s %d %d", strUserID.c_str(), 1, RANPARAM::nChinaRegion+1 );
 
-	int result = (int)ShellExecute( NULL , "open", str.GetString() ,strCmd.GetString(), NULL, SW_SHOW );
+	INT_PTR result = (INT_PTR)ShellExecute( NULL , "open", str.GetString() ,strCmd.GetString(), NULL, SW_SHOW );
 
 	if( result < 32  )
 	{

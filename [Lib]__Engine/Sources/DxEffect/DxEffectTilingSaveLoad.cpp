@@ -13,13 +13,53 @@
 #include "./DxEffectMan.h"
 
 #include "./DxEffectTiling.h"
+#include "SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+//	On-disk (x86) image of DxEffectTiling::POINTEX, see SerialLayout.h.  pPoint is written as
+//	NULL (SaveBuffer uses a fresh POINTEX) and always loads as NULL.  POINTEX is protected, so the
+//	conversions are templates and its layout proof sits in DxEffectTiling::SaveBuffer.
+struct DXEFFECTTILING_POINTEX_DISK
+{
+	SerialLayout::PTR32		pPoint;
+	D3DXVECTOR3				vPos;
+	DWORD					dwMaterial;
+	DWORD					dwColor;
+};
+
+static_assert ( sizeof(DXEFFECTTILING_POINTEX_DISK) == 24, "x86 size of DxEffectTiling::POINTEX" );
+
+template < class TPOINTEX >
+inline void SerialFromDisk ( TPOINTEX& d, const DXEFFECTTILING_POINTEX_DISK& s )
+{
+	d.pPoint		= NULL;
+	d.vPos		= s.vPos;
+	d.dwMaterial	= s.dwMaterial;
+	d.dwColor	= s.dwColor;
+}
+
+template < class TPOINTEX >
+inline void SerialToDisk ( DXEFFECTTILING_POINTEX_DISK& d, const TPOINTEX& s )
+{
+	d.pPoint		= SerialLayout::PtrToDisk ( s.pPoint );
+	d.vPos		= s.vPos;
+	d.dwMaterial	= s.dwMaterial;
+	d.dwColor	= s.dwColor;
+}
+
 void DxEffectTiling::SaveBuffer ( CSerialFile &SFile )
 {
+#if SERIAL_LAYOUT_NATIVE_X86
+	SERIAL_LAYOUT_ASSERT_SIZE ( DXEFFECTTILING_POINTEX_DISK, POINTEX );
+	SERIAL_LAYOUT_ASSERT_MEMBER ( DXEFFECTTILING_POINTEX_DISK, POINTEX, pPoint );
+	SERIAL_LAYOUT_ASSERT_MEMBER ( DXEFFECTTILING_POINTEX_DISK, POINTEX, vPos );
+	SERIAL_LAYOUT_ASSERT_MEMBER ( DXEFFECTTILING_POINTEX_DISK, POINTEX, dwMaterial );
+	SERIAL_LAYOUT_ASSERT_MEMBER ( DXEFFECTTILING_POINTEX_DISK, POINTEX, dwColor );
+#endif
+
 	char strTexture[255];
 
 	SFile.BeginBlock();
@@ -40,7 +80,7 @@ void DxEffectTiling::SaveBuffer ( CSerialFile &SFile )
 				sPointEX.dwMaterial = m_pPointEX[i].dwMaterial;
 				sPointEX.dwColor	= m_pPointEX[i].dwColor;
 
-				SFile.WriteBuffer ( &sPointEX, sizeof(POINTEX) );			//	SAVE
+				SerialLayout::WriteArray<DXEFFECTTILING_POINTEX_DISK> ( SFile, &sPointEX, 1 );			//	SAVE
 			}
 		}
 	}
@@ -121,7 +161,7 @@ void DxEffectTiling::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3D
 			m_pPointEX_Load = new POINTEX[m_dwPointEX_Load];
 			for ( DWORD i=0; i<m_dwPointEX_Load; ++i )
 			{
-				SFile.ReadBuffer ( &m_pPointEX_Load[i], sizeof(POINTEX) );
+				SerialLayout::ReadArray<DXEFFECTTILING_POINTEX_DISK> ( SFile, &m_pPointEX_Load[i], 1 );
 			}
 		}
 
@@ -178,7 +218,7 @@ void DxEffectTiling::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3D
 			m_pPointEX_Load = new POINTEX[m_dwPointEX_Load];
 			for ( DWORD i=0; i<m_dwPointEX_Load; ++i )
 			{
-				SFile.ReadBuffer ( &m_pPointEX_Load[i], sizeof(POINTEX) );
+				SerialLayout::ReadArray<DXEFFECTTILING_POINTEX_DISK> ( SFile, &m_pPointEX_Load[i], 1 );
 			}
 		}
 
@@ -269,7 +309,7 @@ void DxEffectTiling::LoadBuffer ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEV
 			m_pPointEX_Load = new POINTEX[m_dwPointEX_Load];
 			for ( DWORD i=0; i<m_dwPointEX_Load; ++i )
 			{
-				SFile.ReadBuffer ( &m_pPointEX_Load[i], sizeof(POINTEX) );
+				SerialLayout::ReadArray<DXEFFECTTILING_POINTEX_DISK> ( SFile, &m_pPointEX_Load[i], 1 );
 			}
 		}
 
@@ -342,7 +382,7 @@ void DxEffectTiling::LoadBuffer ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEV
 			m_pPointEX_Load = new POINTEX[m_dwPointEX_Load];
 			for ( DWORD i=0; i<m_dwPointEX_Load; ++i )
 			{
-				SFile.ReadBuffer ( &m_pPointEX_Load[i], sizeof(POINTEX) );
+				SerialLayout::ReadArray<DXEFFECTTILING_POINTEX_DISK> ( SFile, &m_pPointEX_Load[i], 1 );
 			}
 		}
 

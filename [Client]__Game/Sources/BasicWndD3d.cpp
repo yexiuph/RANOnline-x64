@@ -576,7 +576,7 @@ BOOL CBasicWnd::OnNcActivate(BOOL bActive)
 	return __super::OnNcActivate(bActive);
 }
 
-void CBasicWnd::OnTimer(UINT nIDEvent)
+void CBasicWnd::OnTimer(UINT_PTR nIDEvent)
 {
 	__super::OnTimer(nIDEvent);
 }

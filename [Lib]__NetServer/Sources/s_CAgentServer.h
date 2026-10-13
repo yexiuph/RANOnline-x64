@@ -14,11 +14,7 @@
 #include "s_Util.h"
 #include "s_CDbAction.h"
 #include "minTea.h"
-#include "ApexCloseList.h"
 #include "s_CWhiteRock.h"
-
-#include "./ApexProxy.h"
-#include "s_CAgentServerApex.h"
 
 #include "../[Lib]__MfcEx/Sources/ExceptionHandler.h"
 
@@ -71,7 +67,6 @@ protected :
 	CClientAgent* m_pClientManager; ///< Client 관리용
 	int m_ChannelUser[MAX_CHANNEL_NUMBER]; ///< 채널별 사용자 숫자 관리
 	
-	CDaumGameAuth m_DaumAuth; ///< Daum Game Decrypt Module
 	SERVER_UTIL::CMinMd5 m_MinMd5; ///< Excite Japan MD5
 	minTea m_Tea; ///< Encrypt algorithm
 	bool m_bHeartBeat;
@@ -79,13 +74,6 @@ protected :
 	HMODULE m_hCheckStrDLL;
 
 	BOOL (_stdcall *m_pCheckString)(CString);
-
-	// typedef	std::pair<DWORD,DWORD>		APEX_ID_TIME;
-	// typedef	std::list<APEX_ID_TIME>		APEX_CLOSE_LIST;
-	// typedef	APEX_CLOSE_LIST::iterator	APEX_CLOSE_LIST_ITER;
-
-	ApexCloseList m_ApexClose;
-	// APEX_CLOSE_LIST m_listApexClose;
 
 	// INFO:Reached Max Client Number 메시지가 뜰때 UpdateProc가 제대로 작동하는지를 알아보기 위한 변수
 	bool m_bReachedMAX;
@@ -116,8 +104,6 @@ public:
 	        int	 StartClientManager();
 	        int	 StartDbManager();
 
-			void WriteNprotectLog( DWORD dwClient, DWORD dwResult );
-	
 	virtual int	 WorkProc();
 	virtual int	 UpdateProc();	
 	virtual int  ListenProc();	
@@ -464,48 +450,6 @@ public:
 
 	//! 랜덤 암호를 위한 번호를 보낸다.
 	void MsgSndRandomNumber(DWORD dwClient);
-
-	//! Apex Data 메세지	// Apex 적용
-	void MsgApexData( MSG_LIST* pMsg );
-	void MsgApexReturn( MSG_LIST* pMsg );	// Apex 적용( 홍콩 )
-
-	//! Apex 가 사용자를 블럭 시킬때 호출됨 Block
-	void ApexUserBlock( DWORD dwClient, WORD dwHour );
-
-	//! Apex 가 사용자 채팅을 금지 시킬때 호출됨 
-	void ApexUserChatBlock( DWORD dwClient, WORD dwHour );
-
-	//! Apex 가 사용자 로그를 남길때 호출됨
-	void ApexUserHackLog( DWORD dwClient, TCHAR* szComment );
-
-	//! Apex 가 경고메시지를 클라이언트에게 보낸다.
-	void ApexSendMessageToClient( DWORD dwClient, WORD wAction, WORD wHour );
-
-	void ApexCloseClient( DWORD dwClient );
-
-	void ApexCloseClientFinal();
-
-	///////////////////////////////////////////////////////////////////////////
-	/// nPortect 관련 함수들
-	///////////////////////////////////////////////////////////////////////////	
-	
-	//! nProtect 인증용 메시지 전송
-	void MsgSndGameGuard( DWORD dwClient, NET_GAMEGUARD_AUTH& nga );
-
-	//! nProtect 클라이언트 인증 First
-	void MsgSndGameGuardFirstCheck( DWORD dwClient );
-
-	//! nProtect 클라이언트 인증 Second
-	void MsgSndGameGuardSecondCheck( DWORD dwClient );
-
-	//! nProtect 인증용 메세지 결과
-	void MsgGameGuardAnswer( MSG_LIST* pMsg );
-
-	//! nProtect 인증용 메세지 결과
-	void MsgGameGuardAnswerFirst( MSG_LIST* pMsg );
-
-	//! nProtect 인증용 메세지 결과
-	void MsgGameGuardAnswerSecond( MSG_LIST* pMsg );
 
 	//! 필드서버와 클라이언트에서 받은 추적 로그를 찍는다.
 	void MsgTracingLogPrint( MSG_LIST* pMsg );

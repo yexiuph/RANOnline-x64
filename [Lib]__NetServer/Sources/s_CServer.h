@@ -35,9 +35,6 @@
 #include "../[Lib]__Engine/Sources/G-Logic/GLDefine.h"
 #include "../[Lib]__RanClient/Sources/G-Logic/GLCharDefine.h"
 
-// Daum Game Crypt lib
-#include "DaumGameAuth.h"
-
 #define S_HEURISTIC_NUM			1 // IOCP Worker thread number per CPU 
 #define S_HEURISTIC_QUEUE_SIZE	20 // 큐사이즈는 기본 최대사용자 X S_HEURISTIC_QUEUE_SIZE 배를 형성한다.
 
@@ -148,9 +145,6 @@ protected:
 	// int					m_nPacketOutSize;			// Outbound Packet Size (Byte)
 
 	DWORD				m_dwLastDropClient;		    // Last Drop Client;
-
-	bool                m_bGameGuardInit;           // nProtect GameGuard 초기화 성공여부
-	bool                m_bGameGuardAuth;           // nProtect GameGuard 인증 사용여부
 
 	VEC_TRACING			m_vecTracingData;           // 추척 캐릭터들 리스트
 

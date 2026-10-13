@@ -154,40 +154,6 @@ public :
 	void IncLoginAttempt(DWORD dwClient);
 	//! 로그인 요청 횟수 가져옴
 	WORD GetLoginAttempt(DWORD dwClient);	
-
-	//////////////////////////////////////////////////////////////////////////////
-	// nProtect
-	//////////////////////////////////////////////////////////////////////////////
-	//! nProtect GameGuard 인증용 쿼리를 가져오기 전에 호출
-	bool nProtectSetAuthQuery(DWORD dwClient);
-    	
-	//! nProtect GameGuard 인증용 쿼리 가져오기
-	GG_AUTH_DATA nProtectGetAuthQuery(DWORD dwClient);
-
-	//! nProtect GameGuard 인증 응답 가져오기
-	GG_AUTH_DATA nProtectGetAuthAnswer( DWORD dwClient );
-
-	//! nProtect GameGuard 인증 응답 설정
-	void nProtectSetAuthAnswer(DWORD dwClient, GG_AUTH_DATA& ggad);
-
-	//! nProtect GameGuard 인증 결과 가져오기
-	DWORD nProtectCheckAuthAnswer(DWORD dwClient);
-
-	//! nProtect GameGuard 인증 상태를 리셋시킨다.
-	void nProtectResetAuth(DWORD dwClient);
-
-	//! nProtect 처음 인증여부 세팅
-	void nProtectFirstCheck(DWORD dwClient, bool bState);
-
-	//! nProtect 처음 인증인가?
-	bool nProtectIsFirstCheck(DWORD dwClient);
-	
-	//! nProtect GameGuard 처음 인증을 통과했는가?
-	//! 이 인증을 통과해야 게임플레이를 할 수 있다.
-	bool nProtectFirstAuthPass( DWORD dwClient );
-
-	//! nProtect GameGuard 처음인증 통과상태 세팅
-	void nProtectSetFirstAuthPass( DWORD dwClient, bool bState );
 };
 
 #endif // S_CCLIENTAGENT_H_

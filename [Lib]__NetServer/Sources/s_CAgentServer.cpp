@@ -324,8 +324,6 @@ int CAgentServer::Start()
 	switch (m_nServiceProvider)
 	{
 	case SP_KOREA :
-		// 다음게임 인증키 초기화
-		m_DaumAuth.Init("Ran72pCsA1yXge3psD63Uu0o3GqpAzyBjm7pcyeODYKefE37fNadf2ng34ejiPja");
 		break;
 	case SP_JAPAN : 
 		// Excite Japan, 암호키 초기화
@@ -378,33 +376,6 @@ int CAgentServer::Start()
 		break;
 	} // switch (m_nServiceProvider)
 
-	// nProtect GameGuard dll 을 초기화 한다.
-	DWORD dwGGErrCode = ERROR_SUCCESS;
-	dwGGErrCode = InitGameguardAuth ("", 1000, FALSE, 0x03);
-	if (dwGGErrCode != ERROR_SUCCESS)
-	{	
-		m_bGameGuardInit = false;
-		CConsoleMessage::GetInstance()->WriteFile(
-			_T("INFO:nProtect GameGuard server DLL load failed") );
-	}
-	else
-	{
-		m_bGameGuardInit = true;		
-		CConsoleMessage::GetInstance()->WriteFile(
-			_T("INFO:nProtect GameGuard server DLL load success") );
-		m_bGameGuardAuth = CCfg::GetInstance()->GemeGuardAuth();
-		if (m_bGameGuardAuth == true)
-		{
-			CConsoleMessage::GetInstance()->WriteFile(
-				_T("INFO:nProtect GameGuard Auth ON") );
-		}
-		else
-		{
-			CConsoleMessage::GetInstance()->WriteFile(
-				_T("INFO:nProtect GameGuard Auth OFF") );
-		}
-	}
-	
 	// 채널 설정이 올바른지 체크한다.
 	if (m_nMaxClient != (m_nMaxChannelUser * m_nServerChannelNumber))
 	{
@@ -553,12 +524,6 @@ int CAgentServer::Stop()
 	CConsoleMessage::GetInstance()->WriteFile(_T("== Database Manager closed OK"));
 	// CFG class 종료
 	CCfg::GetInstance()->ReleaseInstance();	
-
-	// nProtect GameGuard 종료
-	if (m_bGameGuardInit == true)
-	{
-		CleanupGameguardAuth();
-	}
 
 	// Put message to console
 	CConsoleMessage::GetInstance()->Write(_T("======================================================="));
@@ -810,11 +775,6 @@ void CAgentServer::SendAllClientChannel( LPVOID pBuffer, int nServerChannel)
 //													m_nServerGroup,
 //													m_nServerNum );
 //					COdbcManager::GetInstance()->AddUserJob( (CDbAction*) pAction5 );
-//
-//					if( m_nServiceProvider == SP_CHINA )
-//					{
-//						APEX_SERVER::NoticeApexProxy_UserLogout( dwClient, szUserID );
-//					}
 //				}
 //
 //				///////////////////////////////////////////////////////////////////////////
@@ -1276,40 +1236,6 @@ void CAgentServer::AgentSrvHeartBeatCheck( DWORD dwUdpateTime )
 			}
 		}
 
-		if (m_bGameGuardInit == true && m_bGameGuardAuth ==true)
-		{
-			// GameGuard Check
-			if (m_bHeartBeat)
-			{
-				CConsoleMessage::GetInstance()->WriteInfo(_T("Send GameGuardAuth Request"));
-				// 게임가드 인증용 메시지
-				NET_GAMEGUARD_AUTH nga;
-				for (dwN = NET_RESERVED_SLOT; dwN < (DWORD)m_nMaxClient; ++dwN)
-				{
-					m_pClientManager->ResetHeartBeat( dwN );
-					MsgSndGameGuard( dwN, nga );
-				}
-			}
-			else
-			{
-				CConsoleMessage::GetInstance()->WriteInfo(_T("Check GameGuardAuth"));
-				DWORD dwResult = 0;
-				for (dwN = NET_RESERVED_SLOT; dwN < (DWORD)m_nMaxClient; ++dwN)
-				{
-					if (m_pClientManager->IsOnline(dwN))
-					{
-						dwResult = m_pClientManager->nProtectCheckAuthAnswer( dwN );
-						if (dwResult != 0 && false == m_pClientManager->CheckHeartBeat(dwN) )
-						{
-
-							WriteNprotectLog( dwN, dwResult );
-							CloseClient(dwN);
-						}
-					}
-				}
-			}
-		}
-		else
 		{
 			// Hearbeat Check
 			if (m_bHeartBeat)

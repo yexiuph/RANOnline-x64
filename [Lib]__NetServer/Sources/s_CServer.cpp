@@ -53,8 +53,6 @@ CServer::CServer(
 	, m_bUseEventThread		 (false)
 
 	, m_dwWorkerThreadNumber (2) // Worker Thread 의 갯수
-	, m_bGameGuardInit       (false) // nProtect GameGuard 초기화 성공여부
-	, m_bGameGuardAuth       (false) // nProtect GameGuard 인증 사용여부	
 	, m_dwCpuCount           (0)
 	, m_dwLangSet(0)
 	, m_dwHeartBeatTime(0)

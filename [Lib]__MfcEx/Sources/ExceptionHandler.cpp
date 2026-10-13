@@ -48,6 +48,7 @@
 #include "dbghelp.h"
 #include "CrashFileNames.h"
 #include "strsafe.h"
+#include <tlhelp32.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -60,6 +61,19 @@
 
 const int NumCodeBytes = 16;	// Number of code bytes to record.
 const int MaxStackDump = 3072;	// Maximum number of DWORDS in stack dumps.
+
+//	Pointer-sized values for hprintf : wvsprintf has no 64-bit specifier, so x64 prints two halves.
+#ifdef _WIN64
+#define HEX_PTR_FMT			_T("%08x%08x")
+#define HEX_PTR_ARG(v)		(DWORD)( (DWORD64)(v) >> 32 ), (DWORD)(DWORD64)(v)
+#define CONTEXT_IP(c)		((c)->Rip)
+#define CONTEXT_SP(c)		((c)->Rsp)
+#else
+#define HEX_PTR_FMT			_T("%08x")
+#define HEX_PTR_ARG(v)		(DWORD)(v)
+#define CONTEXT_IP(c)		((c)->Eip)
+#define CONTEXT_SP(c)		((c)->Esp)
+#endif
 const int StackColumns = 4;		// Number of columns in stack dump.
 
 #define	ONEK			1024
@@ -247,8 +261,8 @@ static bool DumpModuleInfo(HANDLE LogFile, HINSTANCE ModuleHandle, int nModuleNo
 			}
 			hprintf(LogFile, _T("Module %d\r\n"), nModuleNo);
 			hprintf(LogFile, _T("%s\r\n"), szModName);
-			hprintf(LogFile, _T("Image Base: 0x%08x  Image Size: 0x%08x\r\n"), 
-				NTHeader->OptionalHeader.ImageBase, 
+			hprintf(LogFile, _T("Image Base: 0x") HEX_PTR_FMT _T("  Image Size: 0x%08x\r\n"), 
+				HEX_PTR_ARG(NTHeader->OptionalHeader.ImageBase), 
 				NTHeader->OptionalHeader.SizeOfImage), 
 
 			hprintf(LogFile, _T("Checksum:   0x%08x  Time Stamp: 0x%08x\r\n"), 
@@ -304,6 +318,22 @@ static bool DumpModuleInfo(HANDLE LogFile, HINSTANCE ModuleHandle, int nModuleNo
 // modules.
 static void DumpModuleList(HANDLE LogFile)
 {
+#ifdef _WIN64
+	//	The low-4GB page walk below finds nothing on x64, where modules load high; ask Toolhelp instead.
+	HANDLE hSnapshot = CreateToolhelp32Snapshot ( TH32CS_SNAPMODULE, GetCurrentProcessId() );
+	if ( hSnapshot == INVALID_HANDLE_VALUE )
+		return;
+
+	int nModuleNo = 1;
+	MODULEENTRY32 ModuleEntry;
+	ModuleEntry.dwSize = sizeof(ModuleEntry);
+	for ( BOOL bMore = Module32First(hSnapshot, &ModuleEntry); bMore; bMore = Module32Next(hSnapshot, &ModuleEntry) )
+	{
+		if ( DumpModuleInfo(LogFile, (HINSTANCE)ModuleEntry.modBaseAddr, nModuleNo) )
+			nModuleNo++;
+	}
+	CloseHandle ( hSnapshot );
+#else
 	SYSTEM_INFO	SystemInfo;
 	GetSystemInfo(&SystemInfo);
 
@@ -351,6 +381,7 @@ static void DumpModuleList(HANDLE LogFile)
 		// If VirtualQuery fails we advance by 64K because that is the
 		// granularity of address space doled out by VirtualAlloc()
 	}
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -517,16 +548,7 @@ static void DumpStack(HANDLE LogFile, DWORD *pStack)
 	{
 		// Esp contains the bottom of the stack, or at least the bottom of
 		// the currently used area.
-		DWORD* pStackTop;
-
-		__asm
-		{
-			// Load the top (highest address) of the stack from the
-			// thread information block. It will be found there in
-			// Win9x and Windows NT.
-			mov	eax, fs:[4]
-			mov pStackTop, eax
-		}
+		DWORD* pStackTop = (DWORD*)( (NT_TIB*)NtCurrentTeb() )->StackBase;
 
 		if (pStackTop > pStack + MaxStackDump)
 			pStackTop = pStack + MaxStackDump;
@@ -543,7 +565,7 @@ static void DumpStack(HANDLE LogFile, DWORD *pStack)
 			{
 				pStackStart = pStack;
 				nDwordsPrinted = 0;
-				hprintf(LogFile, _T("0x%08x: "), pStack);
+				hprintf(LogFile, _T("0x") HEX_PTR_FMT _T(": "), HEX_PTR_ARG(pStack));
 			}
 
 			if ((++Count % StackColumns) == 0 || pStack + 2 > pStackTop)
@@ -601,6 +623,20 @@ static void DumpRegisters(HANDLE LogFile, PCONTEXT Context)
 	// Print out the register values in an XP error window compatible format.
 	hprintf(LogFile, _T("\r\n"));
 	hprintf(LogFile, _T("Context:\r\n"));
+#ifdef _WIN64
+	hprintf(LogFile, _T("RDI: 0x") HEX_PTR_FMT _T("  RSI: 0x") HEX_PTR_FMT _T("  RAX: 0x") HEX_PTR_FMT _T("\r\n"),
+				HEX_PTR_ARG(Context->Rdi), HEX_PTR_ARG(Context->Rsi), HEX_PTR_ARG(Context->Rax));
+	hprintf(LogFile, _T("RBX: 0x") HEX_PTR_FMT _T("  RCX: 0x") HEX_PTR_FMT _T("  RDX: 0x") HEX_PTR_FMT _T("\r\n"),
+				HEX_PTR_ARG(Context->Rbx), HEX_PTR_ARG(Context->Rcx), HEX_PTR_ARG(Context->Rdx));
+	hprintf(LogFile, _T("R8:  0x") HEX_PTR_FMT _T("  R9:  0x") HEX_PTR_FMT _T("  R10: 0x") HEX_PTR_FMT _T("\r\n"),
+				HEX_PTR_ARG(Context->R8), HEX_PTR_ARG(Context->R9), HEX_PTR_ARG(Context->R10));
+	hprintf(LogFile, _T("R11: 0x") HEX_PTR_FMT _T("  R12: 0x") HEX_PTR_FMT _T("  R13: 0x") HEX_PTR_FMT _T("\r\n"),
+				HEX_PTR_ARG(Context->R11), HEX_PTR_ARG(Context->R12), HEX_PTR_ARG(Context->R13));
+	hprintf(LogFile, _T("R14: 0x") HEX_PTR_FMT _T("  R15: 0x") HEX_PTR_FMT _T("  RBP: 0x") HEX_PTR_FMT _T("\r\n"),
+				HEX_PTR_ARG(Context->R14), HEX_PTR_ARG(Context->R15), HEX_PTR_ARG(Context->Rbp));
+	hprintf(LogFile, _T("RIP: 0x") HEX_PTR_FMT _T("  RSP: 0x") HEX_PTR_FMT _T("  EFlags: 0x%08x  SegCs: 0x%04x  SegSs: 0x%04x\r\n"),
+				HEX_PTR_ARG(Context->Rip), HEX_PTR_ARG(Context->Rsp), Context->EFlags, Context->SegCs, Context->SegSs);
+#else
 	hprintf(LogFile, _T("EDI:    0x%08x  ESI: 0x%08x  EAX:   0x%08x\r\n"),
 				Context->Edi, Context->Esi, Context->Eax);
 	hprintf(LogFile, _T("EBX:    0x%08x  ECX: 0x%08x  EDX:   0x%08x\r\n"),
@@ -609,6 +645,7 @@ static void DumpRegisters(HANDLE LogFile, PCONTEXT Context)
 				Context->Eip, Context->Ebp, Context->SegCs);
 	hprintf(LogFile, _T("EFlags: 0x%08x  ESP: 0x%08x  SegSs: 0x%08x\r\n"),
 				Context->EFlags, Context->Esp, Context->SegSs);
+#endif
 }
 
 
@@ -676,7 +713,7 @@ int __cdecl RecordExceptionInfo(PEXCEPTION_POINTERS pExceptPtrs,
 	// VirtualQuery can be used to get the allocation base associated with a
 	// code address, which is the same as the ModuleHandle. This can be used
 	// to get the filename of the module that the crash happened in.
-	if (VirtualQuery((void*)Context->Eip, &MemInfo, sizeof(MemInfo)) &&
+	if (VirtualQuery((void*)CONTEXT_IP(Context), &MemInfo, sizeof(MemInfo)) &&
 						(GetModuleFileName((HINSTANCE)MemInfo.AllocationBase,
 										  szCrashModulePathName,
 										  sizeof(szCrashModulePathName)-2) > 0))
@@ -686,10 +723,10 @@ int __cdecl RecordExceptionInfo(PEXCEPTION_POINTERS pExceptPtrs,
 
 	// Print out the beginning of the error log in a Win95 error window
 	// compatible format.
-	hprintf(hLogFile, _T("%s caused %s (0x%08x) \r\nin module %s at %04x:%08x.\r\n\r\n"),
+	hprintf(hLogFile, _T("%s caused %s (0x%08x) \r\nin module %s at %04x:") HEX_PTR_FMT _T(".\r\n\r\n"),
 				szFileName, GetExceptionDescription(Exception->ExceptionCode),
 				Exception->ExceptionCode,
-				pszCrashModuleFileName, Context->SegCs, Context->Eip);
+				pszCrashModuleFileName, Context->SegCs, HEX_PTR_ARG(CONTEXT_IP(Context)));
 
 	hprintf(hLogFile, _T("Exception handler called in %s.\r\n"), lpszMessage);
 
@@ -704,8 +741,8 @@ int __cdecl RecordExceptionInfo(PEXCEPTION_POINTERS pExceptPtrs,
 		const TCHAR* readwrite = _T("Read from");
 		if (Exception->ExceptionInformation[0])
 			readwrite = _T("Write to");
-		wsprintf(szDebugMessage, _T("%s location %08x caused an access violation.\r\n"),
-					readwrite, Exception->ExceptionInformation[1]);
+		wsprintf(szDebugMessage, _T("%s location ") HEX_PTR_FMT _T(" caused an access violation.\r\n"),
+					readwrite, HEX_PTR_ARG(Exception->ExceptionInformation[1]));
 
 #ifdef	_DEBUG
 		// The Visual C++ debugger doesn't actually tell you whether a read
@@ -726,7 +763,7 @@ int __cdecl RecordExceptionInfo(PEXCEPTION_POINTERS pExceptPtrs,
 	// is no memory to read. If the dereferencing of code[] fails, the
 	// exception handler will print '??'.
 	hprintf(hLogFile, _T("\r\nBytes at CS:EIP:\r\n"));
-	BYTE * code = (BYTE *)Context->Eip;
+	BYTE * code = (BYTE *)CONTEXT_IP(Context);
 	for (int codebyte = 0; codebyte < NumCodeBytes; ++codebyte)
 	{
 		__try
@@ -745,7 +782,7 @@ int __cdecl RecordExceptionInfo(PEXCEPTION_POINTERS pExceptPtrs,
 
 	// Esp contains the bottom of the stack, or at least the bottom of
 	// the currently used area
-	DWORD* pStack = (DWORD *)Context->Esp;
+	DWORD* pStack = (DWORD *)CONTEXT_SP(Context);
 
 	DumpStack(hLogFile, pStack);
 

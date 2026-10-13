@@ -101,9 +101,9 @@ int COdbcManager::LogUserAttend( int nUserNum, std::vector<USER_ATTEND_INFO> &ve
 		return DB_ERROR;
 	}
 	
-	TIMESTAMP_STRUCT sAttendTime;   SQLINTEGER cbAttendTime   = SQL_NTS;
-	SQLINTEGER nCount = 0, cbCount=SQL_NTS;
-	SQLINTEGER nAttendReward = 0, cbAttendReward=SQL_NTS;
+	TIMESTAMP_STRUCT sAttendTime;   SQLLEN cbAttendTime   = SQL_NTS;
+	SQLINTEGER nCount = 0; SQLLEN cbCount=SQL_NTS;
+	SQLINTEGER nAttendReward = 0; SQLLEN cbAttendReward=SQL_NTS;
 
 	while (true)
 	{

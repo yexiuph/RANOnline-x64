@@ -207,7 +207,7 @@ BOOL CBubble::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 //*******************************************************************************************
-afx_msg LONG CBubble::OnSetText(UINT, LONG lParam)
+afx_msg LRESULT CBubble::OnSetText(WPARAM, LPARAM lParam)
 {
   // resize the bubble window to fit the new string
   int i;

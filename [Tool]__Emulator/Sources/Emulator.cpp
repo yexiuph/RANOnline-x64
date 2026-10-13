@@ -52,6 +52,8 @@ CEmulatorApp::CEmulatorApp()
 
 CEmulatorApp theApp;
 
+extern BOOL AUTO_PLAY;	// EmulatorViewD3d.cpp
+
 // CEmulatorApp 초기화
 
 BOOL CEmulatorApp::InitInstance()
@@ -105,6 +107,14 @@ BOOL CEmulatorApp::InitInstance()
 		RUNTIME_CLASS(CEmulatorView));
 	AddDocTemplate(pDocTemplate);
 	// 표준 셸 명령, DDE, 파일 열기에 대한 명령줄을 구문 분석합니다.
+	//	/autoplay : start right away with the default character and map list, without the
+	//	file dialogs (unattended smoke tests).
+	for ( int i=1; i<__argc; ++i )
+	{
+		if ( _stricmp ( __argv[i], "/autoplay" ) == 0 || _stricmp ( __argv[i], "-autoplay" ) == 0 )
+			AUTO_PLAY = TRUE;
+	}
+
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 	// 명령줄에 지정된 명령을 디스패치합니다. 응용 프로그램이 /RegServer, /Register, /Unregserver 또는 /Unregister로 시작된 경우 FALSE를 반환합니다.

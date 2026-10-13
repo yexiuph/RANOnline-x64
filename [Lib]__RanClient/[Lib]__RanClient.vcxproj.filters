@@ -64,9 +64,6 @@
     <ClInclude Include="Sources\DbAction\DbActionLogic.h">
       <Filter>Source Files\DbAction</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\ClientApex.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\DxCharSham.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -422,9 +419,6 @@
     </ClCompile>
     <ClCompile Include="Sources\DbAction\DbActionLogicVehicle.cpp">
       <Filter>Source Files\DbAction</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\ClientApex.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\DxCharSham.cpp">
       <Filter>Source Files</Filter>

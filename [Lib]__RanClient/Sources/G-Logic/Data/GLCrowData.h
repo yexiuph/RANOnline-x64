@@ -1037,6 +1037,7 @@ struct SCROWGEN_101
 struct SCROWGEN
 {
 	enum { VERSION = 0x0102, };
+	enum { FILE_SIZE = 60, };	// sizeof() in the x86 Release build : the value stored in data files
 
 	//	발생아이템.
 	DWORD				m_dwGenMoney;				//	발생 금액.

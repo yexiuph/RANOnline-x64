@@ -106,9 +106,9 @@ struct _IMAGELIST { }; // unresolved typeref token
 #endif
 #else
 #ifdef _DEBUG
-#pragma comment(lib, "zlibSD-x64.lib")
+#pragma comment(lib, "ZLibD.lib")
 #else
-#pragma comment(lib, "zlibS-x64.lib")
+#pragma comment(lib, "ZLib.lib")
 #endif
 #endif
 #else

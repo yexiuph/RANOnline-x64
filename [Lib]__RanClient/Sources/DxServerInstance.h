@@ -14,7 +14,7 @@ struct F_SERVER_INFO;
 
 namespace DxFieldInstance
 {
-	HRESULT Create ( const char *szAppPath, DxMsgServer *pMsgServer, DxConsoleMsg* pConsoleMsg, GLDBMan *pDBMan, int nServiceProvider, const char* szMapList=NULL, DWORD dwFieldSID=FIELDSERVER_MAX, DWORD dwMaxClient=1000, bool bPK_MODE=true, int nChannel=0, BOOL bPKLess=FALSE, BOOL bUseIntelTBB = FALSE, DWORD dwLangSet = 0 );
+	HRESULT Create ( const char *szAppPath, DxMsgServer *pMsgServer, DxConsoleMsg* pConsoleMsg, GLDBMan *pDBMan, int nServiceProvider, const char* szMapList=NULL, DWORD dwFieldSID=FIELDSERVER_MAX, DWORD dwMaxClient=1000, bool bPK_MODE=true, int nChannel=0, BOOL bPKLess=FALSE, DWORD dwLangSet = 0 );
 
 	HRESULT FrameMove ();
 

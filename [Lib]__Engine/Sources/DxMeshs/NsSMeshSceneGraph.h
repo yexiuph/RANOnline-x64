@@ -44,12 +44,12 @@ private:
 
 public:
 	void Reset();
-	void InitVBIB( DWORD dwPointer );
+	void InitVBIB( DWORD_PTR dwPointer );
 	void InsertVBIB( VERTEX* pVertices, WORD* pIndices, DWORD dwVertexNUM, DWORD dwFaceNUM );
 	void InsertIB( LPDIRECT3DINDEXBUFFERQ pIB, const D3DXATTRIBUTERANGE& sAttribTable );
 	void Clone( LPDIRECT3DVERTEXBUFFERQ pVB, LPDIRECT3DINDEXBUFFERQ pIB );
 
-	void SetTexture( DWORD dwPointer );
+	void SetTexture( DWORD_PTR dwPointer );
 	void CheckVBIB( DWORD dwVertexCount, DWORD dwFaceCount );
 	BYTE* GetFreeVB( DWORD dwVertexNUM );
 	void UnlockVB();
@@ -74,7 +74,7 @@ public:
 //----------------------------------------------------------------------------------------------------------------
 struct IDFACE
 {
-	DWORD	dwID;
+	DWORD_PTR	dwID;
 	DWORD	dwFace;
 };
 
@@ -82,7 +82,7 @@ typedef std::multimap<DWORD,IDFACE>		MMAP_TEX;		// 버텍스 갯수 / IDFACE
 typedef MMAP_TEX::iterator				MMAP_TEX_ITER;
 typedef MMAP_TEX::reverse_iterator		MMAP_TEX_RITER;
 
-typedef std::multimap<DWORD,DWORD>		MAP_INDEX;		// 주소 /  배열의 위치.
+typedef std::multimap<DWORD_PTR,DWORD>	MAP_INDEX;		// 주소 /  배열의 위치.
 typedef MAP_INDEX::iterator				MAP_INDEX_ITER;
 
 class SMeshDynamicRenderMan
@@ -98,16 +98,16 @@ private:
 
 public:
 	void Reset();
-	void Init( DWORD dwPointer, DWORD nCount );
-	void InsertVBIB( DWORD dwPointer, VERTEX* pVertices, WORD* pIndices, DWORD dwVertexNUM, DWORD dwFaceNUM );
-	void InsertIB( DWORD dwPointer, LPDIRECT3DINDEXBUFFERQ pIB, DWORD dwVertexStart, DWORD dwFaceStart, DWORD dwFaceCount );
+	void Init( DWORD_PTR dwPointer, DWORD nCount );
+	void InsertVBIB( DWORD_PTR dwPointer, VERTEX* pVertices, WORD* pIndices, DWORD dwVertexNUM, DWORD dwFaceNUM );
+	void InsertIB( DWORD_PTR dwPointer, LPDIRECT3DINDEXBUFFERQ pIB, DWORD dwVertexStart, DWORD dwFaceStart, DWORD dwFaceCount );
 	void Clone( LPDIRECT3DVERTEXBUFFERQ pVB, LPDIRECT3DINDEXBUFFERQ pIB );
 
-	BYTE* GetFreeVB( DWORD dwPointer, DWORD dwVertexNUM );
+	BYTE* GetFreeVB( DWORD_PTR dwPointer, DWORD dwVertexNUM );
 	BYTE* GetFreeVBInsertIB( DWORD dwIndex, LPDIRECT3DINDEXBUFFERQ pIB, const D3DXATTRIBUTERANGE& sAttribTable );
 	void UnlockVB();
 	void GetVertexFaceMAX( DWORD& dwVertexMAX, DWORD& dwFaceMAX );
-	BOOL IsGetIndex( DWORD dwPointer, DWORD& nIndex );
+	BOOL IsGetIndex( DWORD_PTR dwPointer, DWORD& nIndex );
 
 	void Render();
 
@@ -125,14 +125,14 @@ namespace NSCHARSG
 	void OnDestroyDevice();
 
 	void Reset();				// g_mapIDnCOUNT Reset
-	void InsertRenderTexID( DWORD dwID, DWORD dwVertex, DWORD dwFace );
-	void InsertVBIB( DWORD dwPointer, VERTEX* pVertices, WORD* pIndices, const D3DXATTRIBUTERANGE& dwAttrib );
-	void InsertIB( DWORD dwPointer, WORD* pIndices, const D3DXATTRIBUTERANGE& dwAttrib );
-	BYTE* GetFreeVB( DWORD dwPointer, DWORD dwVertexStart, DWORD dwFaceCount );
+	void InsertRenderTexID( DWORD_PTR dwID, DWORD dwVertex, DWORD dwFace );
+	void InsertVBIB( DWORD_PTR dwPointer, VERTEX* pVertices, WORD* pIndices, const D3DXATTRIBUTERANGE& dwAttrib );
+	void InsertIB( DWORD_PTR dwPointer, WORD* pIndices, const D3DXATTRIBUTERANGE& dwAttrib );
+	BYTE* GetFreeVB( DWORD_PTR dwPointer, DWORD dwVertexStart, DWORD dwFaceCount );
 	BYTE* GetFreeVBInsertIB( DWORD dwIndex, LPDIRECT3DINDEXBUFFERQ pIB, const D3DXATTRIBUTERANGE& sAttribTable );
 	void UnlockVB();
-	BOOL IsGetIndex( DWORD dwPointer, DWORD& nIndex );
+	BOOL IsGetIndex( DWORD_PTR dwPointer, DWORD& nIndex );
 	void Render( IDirect3DDevice9* pd3dDevice );
 
-	void ReleaseTexture( DWORD dwPointer );
+	void ReleaseTexture( DWORD_PTR dwPointer );
 };

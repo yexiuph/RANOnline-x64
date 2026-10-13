@@ -17,10 +17,48 @@
 #include "./DxViewPort.h"
 
 #include "./DxEffectSpecReflect.h"
+#include "SerialLayout.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+//	On-disk (x86) image of DXMATERIAL_SPECREFLECT, see SerialLayout.h.
+//	pSpecTex always loads as NULL.  m_pMaterials reload it right away; m_pTempMaterials never
+//	loaded it (the legacy raw read left the stale file value there).
+struct DXMATERIAL_SPECREFLECT_DISK
+{
+	BOOL					bSpecUse;
+	SerialLayout::PTR32		pSpecTex;
+	char					szTexture[MAX_PATH];
+	char					szSpecTex[MAX_PATH];
+};
+
+static_assert ( sizeof(DXMATERIAL_SPECREFLECT_DISK) == 528, "x86 size of DXMATERIAL_SPECREFLECT" );
+
+#if SERIAL_LAYOUT_NATIVE_X86
+SERIAL_LAYOUT_ASSERT_SIZE ( DXMATERIAL_SPECREFLECT_DISK, DXMATERIAL_SPECREFLECT );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_SPECREFLECT_DISK, DXMATERIAL_SPECREFLECT, bSpecUse );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_SPECREFLECT_DISK, DXMATERIAL_SPECREFLECT, pSpecTex );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_SPECREFLECT_DISK, DXMATERIAL_SPECREFLECT, szTexture );
+SERIAL_LAYOUT_ASSERT_MEMBER ( DXMATERIAL_SPECREFLECT_DISK, DXMATERIAL_SPECREFLECT, szSpecTex );
+#endif
+
+inline void SerialFromDisk ( DXMATERIAL_SPECREFLECT& d, const DXMATERIAL_SPECREFLECT_DISK& s )
+{
+	d.bSpecUse	= s.bSpecUse;
+	d.pSpecTex	= NULL;
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szSpecTex, s.szSpecTex, sizeof(d.szSpecTex) );
+}
+
+inline void SerialToDisk ( DXMATERIAL_SPECREFLECT_DISK& d, const DXMATERIAL_SPECREFLECT& s )
+{
+	d.bSpecUse	= s.bSpecUse;
+	d.pSpecTex	= SerialLayout::PtrToDisk ( s.pSpecTex );
+	memcpy ( d.szTexture, s.szTexture, sizeof(d.szTexture) );
+	memcpy ( d.szSpecTex, s.szSpecTex, sizeof(d.szSpecTex) );
+}
 
 const DWORD DxEffectSpecReflect::TYPEID = DEF_EFFECT_SPECREFLECT;
 const DWORD	DxEffectSpecReflect::VERSION = 0x00000100;
@@ -406,17 +444,17 @@ HRESULT DxEffectSpecReflect::DxAnalysis ( LPDIRECT3DDEVICEQ pd3dDevice, DxMeshes
 void DxEffectSpecReflect::SaveBuffer ( CSerialFile &SFile )
 {
 	//	읽지 않고 스킵용으로 사용됨.
-	SFile << sizeof(DWORD)+sizeof(DXMATERIAL_SPECREFLECT)*m_dwTempMaterials
-			+sizeof(DWORD)+sizeof(DXMATERIAL_SPECREFLECT)*m_dwMaterials;
+	SFile << (DWORD)( sizeof(DWORD)+sizeof(DXMATERIAL_SPECREFLECT_DISK)*m_dwTempMaterials
+			+sizeof(DWORD)+sizeof(DXMATERIAL_SPECREFLECT_DISK)*m_dwMaterials );
 
 	// Material 저장
 	SFile << m_dwTempMaterials;
 	if ( m_pTempMaterials )
-		SFile.WriteBuffer ( m_pTempMaterials, sizeof(DXMATERIAL_SPECREFLECT)*m_dwTempMaterials );
+		SerialLayout::WriteArray<DXMATERIAL_SPECREFLECT_DISK> ( SFile, m_pTempMaterials, m_dwTempMaterials );
 
 	SFile << m_dwMaterials;
 	if ( m_pMaterials )
-		SFile.WriteBuffer ( m_pMaterials, sizeof(DXMATERIAL_SPECREFLECT)*m_dwMaterials );
+		SerialLayout::WriteArray<DXMATERIAL_SPECREFLECT_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 }
 
 void DxEffectSpecReflect::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIRECT3DDEVICEQ pd3dDevice )
@@ -431,7 +469,7 @@ void DxEffectSpecReflect::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIR
 	if ( m_dwTempMaterials )
 	{
 		m_pTempMaterials = new DXMATERIAL_SPECREFLECT[m_dwTempMaterials];
-		SFile.ReadBuffer ( m_pTempMaterials, sizeof(DXMATERIAL_SPECREFLECT)*m_dwTempMaterials );
+		SerialLayout::ReadArray<DXMATERIAL_SPECREFLECT_DISK> ( SFile, m_pTempMaterials, m_dwTempMaterials );
 	}
 
 	// Material
@@ -440,7 +478,7 @@ void DxEffectSpecReflect::LoadBufferSet ( CSerialFile &SFile, DWORD dwVer, LPDIR
 	if ( m_dwMaterials )
 	{
 		m_pMaterials = new DXMATERIAL_SPECREFLECT[m_dwMaterials];
-		SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_SPECREFLECT)*m_dwMaterials );
+		SerialLayout::ReadArray<DXMATERIAL_SPECREFLECT_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 		for ( DWORD i=0; i<m_dwMaterials; i++ )
 		{
@@ -462,7 +500,7 @@ void DxEffectSpecReflect::LoadBuffer ( CSerialFile &SFile, DWORD dwVer, LPDIRECT
 	if ( m_dwTempMaterials )
 	{
 		m_pTempMaterials = new DXMATERIAL_SPECREFLECT[m_dwTempMaterials];
-		SFile.ReadBuffer ( m_pTempMaterials, sizeof(DXMATERIAL_SPECREFLECT)*m_dwTempMaterials );
+		SerialLayout::ReadArray<DXMATERIAL_SPECREFLECT_DISK> ( SFile, m_pTempMaterials, m_dwTempMaterials );
 	}
 
 	// Material
@@ -471,7 +509,7 @@ void DxEffectSpecReflect::LoadBuffer ( CSerialFile &SFile, DWORD dwVer, LPDIRECT
 	if ( m_dwMaterials )
 	{
 		m_pMaterials = new DXMATERIAL_SPECREFLECT[m_dwMaterials];
-		SFile.ReadBuffer ( m_pMaterials, sizeof(DXMATERIAL_SPECREFLECT)*m_dwMaterials );
+		SerialLayout::ReadArray<DXMATERIAL_SPECREFLECT_DISK> ( SFile, m_pMaterials, m_dwMaterials );
 
 		for ( DWORD i=0; i<m_dwMaterials; i++ )
 		{

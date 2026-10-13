@@ -155,13 +155,14 @@
 
 #ifndef __gassert_
 	#define __gassert_
+	#include <intrin.h>
 	bool _gassert ( bool bExp, const char *const szExp, const char *const szFile, const long nLine  );
 
 	#ifdef _RELEASED
 		#undef assert
 		#define assert(exp) \
 			if ( _gassert ( (exp)?true:false, #exp, __FILE__, __LINE__ ) ) \
-				{ _asm { int 3 } }
+				{ __debugbreak(); }
 	#endif
 #endif
 

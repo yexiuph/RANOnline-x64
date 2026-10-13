@@ -374,8 +374,8 @@ public:
 	DWORD Release()		{ if (m_dwRefCount!=0) m_dwRefCount--; return m_dwRefCount; }
 
 protected:
-	HRESULT LoadAnimationSet ( LPDIRECTXFILEDATA pxofobjCur );
-	HRESULT LoadAnimation ( LPDIRECTXFILEDATA pxofobjCur );
+	HRESULT LoadAnimationSet ( LPD3DXFILEDATA pxofobjCur );
+	HRESULT LoadAnimation ( LPD3DXFILEDATA pxofobjCur );
 
 public:
 	HRESULT CreateAnimationData ( SANIMCONINFO &AnimInfo, LPDIRECT3DDEVICEQ pd3dDevice, bool bREPRESH=false );

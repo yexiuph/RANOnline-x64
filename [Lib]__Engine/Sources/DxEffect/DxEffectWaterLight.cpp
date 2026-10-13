@@ -462,11 +462,11 @@ HRESULT DxEffectWaterLight::ReMakeWaterLight	( LPDIRECT3DDEVICEQ pd3dDevice )
 void DxEffectWaterLight::SaveBuffer ( CSerialFile &SFile )
 {
 	//	읽지 않고 스킵용으로 사용됨.
-	SFile << sizeof(DWORD)+sizeof(DWORD)+sizeof(DWORD)
+	SFile << (DWORD)( sizeof(DWORD)+sizeof(DWORD)+sizeof(DWORD)
 			+sizeof(DWORD)+sizeof(DIFFVERTEX)*m_pDiffNum
 			+sizeof(DWORD)+sizeof(WATERVERTEX)*m_dwVertices
 			+sizeof(DWORD)+sizeof(WORD)*m_dwFaces*3
-			+sizeof(D3DXVECTOR2)*m_dwVertices;
+			+sizeof(D3DXVECTOR2)*m_dwVertices );
 
 
 	//	높이 저장
