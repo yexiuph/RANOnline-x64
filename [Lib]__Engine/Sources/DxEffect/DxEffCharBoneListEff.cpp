@@ -42,6 +42,7 @@ DxEffCharBoneListEff::DxEffCharBoneListEff(void) :
 	m_fVelocityDiff(0.f),
 	m_pBoneTran(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharBoneListEff::~DxEffCharBoneListEff(void)

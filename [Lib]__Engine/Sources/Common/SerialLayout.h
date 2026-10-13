@@ -125,18 +125,6 @@ namespace SerialLayout
 		}
 	}
 
-	//	(Re)constructs the std::string in storage that may never have been constructed.  Needed for
-	//	the std::string members of property blocks that live in anonymous unions (DxEffCharTexDiff,
-	//	DxEffAniData_Trace): MSVC never constructs or destroys such members, so before the first load
-	//	the storage holds raw heap bytes, which the legacy code simply overwrote with the file image.
-	//	Assigning to that storage would run std::string code on garbage; constructing in place mirrors
-	//	the legacy overwrite (a previous value is not destroyed) and always leaves a valid object.  A
-	//	decoded string has at most 15 characters, so the new object owns no heap memory.
-	inline void ConstructStringInPlace ( std::string& storage, const STRING_X86& d )
-	{
-		::new ( static_cast<void*> ( &storage ) ) std::string ( DecodeString ( d ) );
-	}
-
 	//	Reads dwNum records of the on-disk type DISK and converts them with SerialFromDisk().
 	template < class DISK, class STREAM, class T >
 	inline void ReadArray ( STREAM& SFile, T* pDst, unsigned long dwNum )

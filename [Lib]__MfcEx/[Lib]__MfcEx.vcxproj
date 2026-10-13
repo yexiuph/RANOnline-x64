@@ -321,7 +321,6 @@
     <ClInclude Include="Sources\ExLibs\WusDV_Util.h" />
     <ClInclude Include="Sources\GetWinVer.h" />
     <ClInclude Include="Sources\HPro.h" />
-    <ClInclude Include="Sources\MinBugTrap.h" />
     <ClInclude Include="Sources\MiniVersion.h" />
     <ClInclude Include="Sources\RanFilter.h" />
     <ClInclude Include="Sources\RanOnlineLanchClipboard\rol_clipboard.h" />
@@ -367,7 +366,6 @@
     <ClCompile Include="Sources\ExLibs\WusDV_Util.cpp" />
     <ClCompile Include="Sources\GetWinVer.cpp" />
     <ClCompile Include="Sources\HPro.cpp" />
-    <ClCompile Include="Sources\MinBugTrap.cpp" />
     <ClCompile Include="Sources\MiniVersion.cpp" />
     <ClCompile Include="Sources\RanFilter.cpp" />
     <ClCompile Include="Sources\RanOnlineLanchClipboard\rol_clipboard.cpp" />

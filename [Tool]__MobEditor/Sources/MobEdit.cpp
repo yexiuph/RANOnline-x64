@@ -4,7 +4,6 @@
 #include "pch.h"
 #include "MobEdit.h"
 #include "MobEditDlg.h"
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 #include ".\mobedit.h"
 
 #ifdef _DEBUG
@@ -25,7 +24,6 @@ CMobEditApp::CMobEditApp()
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
-	BUG_TRAP::BugTrapInstall( std::string(_T("MobNpc Edit")));
 }
 
 

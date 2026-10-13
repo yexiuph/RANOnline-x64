@@ -31,6 +31,7 @@ DxEffCharUserColor::DxEffCharUserColor(void) :
 	m_pMaterials(NULL),
 	m_pTempMaterials(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharUserColor::~DxEffCharUserColor(void)

@@ -6,7 +6,6 @@
 #include "ItemEdit.h"
 #include "SearchDialog.h"
 #include "ItemEditDlg.h"
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,7 +25,6 @@ CItemEditApp::CItemEditApp()
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
-//	BUG_TRAP::BugTrapInstall( std::string(_T("ItemEdit")));
 }
 
 

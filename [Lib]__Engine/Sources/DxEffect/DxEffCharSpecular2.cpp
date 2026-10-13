@@ -46,6 +46,7 @@ DxEffCharSpecular2::DxEffCharSpecular2(void) :
 	m_pTempMaterials(NULL),
 	m_dwMipMapCount(0)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharSpecular2::~DxEffCharSpecular2(void)

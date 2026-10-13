@@ -337,9 +337,6 @@
     <ResourceCompile Include="Resources\[Server]__Session.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\[Client]__BugTrap\[Client]__BugTrap.vcxproj">
-      <Project>{a50a8d67-547a-4479-b35e-b06ed398a7e8}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\[Lib]__EngineSound\[Lib]__EngineSound.vcxproj">
       <Project>{b3df4013-a7d8-4002-a529-723d1f917ca8}</Project>
     </ProjectReference>

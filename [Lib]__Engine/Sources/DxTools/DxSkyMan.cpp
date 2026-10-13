@@ -13,6 +13,7 @@
 #include "DxSkyCloud.h"
 
 #include "DxSkyMan.h"
+#include "UnionMember.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -141,6 +142,8 @@ DxSkyMan::DxSkyMan() :
 	m_emMoonCycle(EMMC_L_ZERO),
 	m_dwPrevHour(0)
 {
+	ConstructUnionMember ( m_Property );
+
 	for ( DWORD i=0; i<USTAR_NUM; ++i )
 	{
 		m_vUStarPos[i] = D3DXVECTOR3(0.f,0.f,0.f);		// À¯¼º

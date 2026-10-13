@@ -4,7 +4,6 @@
 #include "pch.h"
 #include "NpcAction.h"
 #include "NpcActionDlg.h"
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,7 +23,6 @@ CNpcActionApp::CNpcActionApp()
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
-	BUG_TRAP::BugTrapInstall( std::string(_T("NpcAction")));
 }
 
 

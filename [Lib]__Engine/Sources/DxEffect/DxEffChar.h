@@ -2,6 +2,7 @@
 #include "DxEffSinglePropGMan.h"
 
 #include "basestream.h"
+#include "UnionMember.h"
 #include "DxMaterial.h"
 #include "DxSkinEffResult.h"
 

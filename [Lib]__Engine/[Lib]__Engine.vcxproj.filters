@@ -85,9 +85,6 @@
     <ClInclude Include="Sources\Common\BaseString.h">
       <Filter>Source Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Common\BugTrapStr.h">
-      <Filter>Source Files\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Common\ByteStream.h">
       <Filter>Source Files\Common</Filter>
     </ClInclude>
@@ -149,6 +146,9 @@
       <Filter>Source Files\Common</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Common\SerialLayout.h">
+      <Filter>Source Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Common\UnionMember.h">
       <Filter>Source Files\Common</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Common\SerialMemory.h">
@@ -967,9 +967,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Common\BaseString.cpp">
-      <Filter>Source Files\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Common\BugTrapStr.cpp">
       <Filter>Source Files\Common</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Common\ByteStream.cpp">

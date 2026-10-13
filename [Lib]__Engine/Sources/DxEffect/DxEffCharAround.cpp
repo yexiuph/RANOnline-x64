@@ -24,6 +24,8 @@ char		DxEffCharAround::NAME[MAX_PATH]	= "2.EffCharAround<...>";
 
 DxEffCharAround::DxEffCharAround(void)
 {
+	ConstructUnionMember ( m_Property );
+
 	m_pTexture = NULL;	
 }
 

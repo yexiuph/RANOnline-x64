@@ -11,7 +11,6 @@
 #include "EmulatorView.h"
 #include "gassert.h"
 #include "RANPARAM.h"
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,7 +37,6 @@ CEmulatorApp::CEmulatorApp()
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
-	BUG_TRAP::BugTrapInstall( std::string(_T("Emulator")));
 	
 	memset(m_szAppPath, 0, sizeof(char) * (MAX_PATH));
 

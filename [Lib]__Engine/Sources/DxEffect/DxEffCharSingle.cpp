@@ -38,6 +38,8 @@ DxEffCharSingle::DxEffCharSingle(void) :
 	m_pSkinMesh(NULL),
 	m_fPlayTime(0.f)
 {
+	ConstructUnionMember ( m_Property );
+
 	memset( m_szFileName, 0, sizeof(char)*MAX_PATH );
 	memset( m_szTrace, 0, sizeof(char)*STRACE_NSIZE );
 	memset( m_szTraceBack, 0, sizeof(char)*STRACE_NSIZE );

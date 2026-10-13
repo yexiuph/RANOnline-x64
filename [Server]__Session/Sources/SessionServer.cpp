@@ -5,7 +5,6 @@
 #include "s_NetGlobal.h"
 #include "SessionServer.h"
 #include "ServerControllerMsgDefine.h"
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,7 +19,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      int       nCmdShow)
 {
 
-	BUG_TRAP::BugTrapInstall( std::string(_T("SessionServer")));
 
 	g_hInst = hInstance;
 	g_pServer = NULL;

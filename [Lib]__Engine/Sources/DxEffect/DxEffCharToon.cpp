@@ -45,6 +45,7 @@ DxEffCharToon::DxEffCharToon(void) :
 	m_pObliqueTex(NULL),
 	m_fObliqueTEX(1.f)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharToon::~DxEffCharToon(void)

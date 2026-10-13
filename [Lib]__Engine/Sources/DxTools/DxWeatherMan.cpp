@@ -9,6 +9,7 @@
 #include "./GLPeriod.h"
 #include "DxSkyMan.h"
 #include "dxweatherman.h"
+#include "UnionMember.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,6 +28,7 @@ DxWeatherMan::DxWeatherMan(void) :
 	m_emWeatherStats(EMWS_NULL),
 	m_fApplyRate(0.f)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxWeatherMan::~DxWeatherMan(void)

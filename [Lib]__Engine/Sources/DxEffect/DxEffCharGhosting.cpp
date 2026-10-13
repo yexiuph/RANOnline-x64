@@ -28,6 +28,7 @@ DxEffCharGhosting::DxEffCharGhosting(void) :
 	m_pmcMesh(NULL),
 	m_dwPrevKeyTime(0)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharGhosting::~DxEffCharGhosting(void)

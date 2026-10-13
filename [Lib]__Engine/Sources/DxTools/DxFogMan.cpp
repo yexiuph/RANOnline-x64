@@ -15,6 +15,7 @@
 #include "DxSurfaceTex.h"
 
 #include "DxFogMan.h"
+#include "UnionMember.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -274,6 +275,7 @@ DxFogMan::DxFogMan() :
 	m_fRangeHigh_Far(1100),
 	m_bFogEnable(FALSE)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxFogMan::~DxFogMan()

@@ -92,6 +92,7 @@ public:
 		DxEffAniData(),
 		m_bCreated(FALSE)
 	{
+		ConstructUnionMember ( m_Property );
 	}
 };
 

@@ -42,6 +42,7 @@ DxEffCharBonePosEff::DxEffCharBonePosEff(void) :
 	m_fRotateDiff(0.f),
 	m_pBoneTran(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharBonePosEff::~DxEffCharBonePosEff(void)

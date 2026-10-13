@@ -15,7 +15,6 @@
 
 #include "DaumGameParameter.h"
 #include "../[Lib]__RanClientUI/Sources/TextUI/GameTextControl.h"
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 
 #include <afxdisp.h>
 
@@ -44,7 +43,6 @@ CBasicApp::CBasicApp() :
 	m_bRedrawScreen(FALSE),
 	m_bShutDown(FALSE)
 {	
-	BUG_TRAP::BugTrapInstall( std::string(_T("Game")));
 
 	RANPARAM::emSERVICE_TYPE = EMSERVICE_KOREA;
 	SecureZeroMemory( m_szAppPath, sizeof(m_szAppPath) );

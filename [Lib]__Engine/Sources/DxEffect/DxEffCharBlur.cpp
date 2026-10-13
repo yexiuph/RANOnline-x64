@@ -38,6 +38,8 @@ DxEffCharBlur::DxEffCharBlur(void) :
 	m_fElapsedTime(0.0f),
 	m_pddsTexture(NULL)
 {
+	ConstructUnionMember ( m_Property );
+
 	m_fFullLife = 0.f;
 
 	m_vColorUP = D3DCOLOR_ARGB(255,255,255,255);

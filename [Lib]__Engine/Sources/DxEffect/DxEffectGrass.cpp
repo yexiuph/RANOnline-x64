@@ -12,6 +12,7 @@
 #include "./stlFunctions.h"
 
 #include "./DxEffectGrass.h"
+#include "UnionMember.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -63,6 +64,8 @@ DxEffectGrass::DxEffectGrass() :
 	m_pSeparateList(NULL),
 	m_pSeparateTree(NULL)
 {
+	ConstructUnionMember ( m_Property );
+
 	memset( m_szTexture, 0, sizeof(char)*MAX_PATH );
 }
 

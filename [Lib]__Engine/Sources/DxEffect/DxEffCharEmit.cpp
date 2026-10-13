@@ -28,6 +28,7 @@ DxEffCharEmit::DxEffCharEmit(void) :
 	m_pmcMesh(NULL),
 	m_pTexture(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharEmit::~DxEffCharEmit(void)

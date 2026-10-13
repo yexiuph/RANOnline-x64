@@ -35,6 +35,7 @@ DxEffCharDot3::DxEffCharDot3(void) :
 	m_pDot3Tex2(NULL),
 	m_pDot3Tex3(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharDot3::~DxEffCharDot3(void)

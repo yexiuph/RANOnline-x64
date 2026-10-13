@@ -43,6 +43,7 @@ DxEffCharReflection2::DxEffCharReflection2(void) :
 	m_pTempMaterials(NULL),
 	m_dwMipMapCount(0)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharReflection2::~DxEffCharReflection2(void)

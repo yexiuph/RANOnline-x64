@@ -6,7 +6,6 @@
 #include "CheckOrder.h"
 #include "LoginServer.h"
 #include "ServerControllerMsgDefine.h"
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -29,7 +28,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      LPSTR     lpCmdLine,
                      int       nCmdShow)
 {
-	BUG_TRAP::BugTrapInstall(std::string(_T("LoginServer")));
 
 	g_hInst=hInstance;
 	g_pServer = NULL;

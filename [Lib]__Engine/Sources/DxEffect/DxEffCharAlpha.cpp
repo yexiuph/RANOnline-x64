@@ -24,6 +24,8 @@ DxEffCharAlpha::DxEffCharAlpha(void) :
 	m_fElapsedTime(0.f),
 	m_fTimeSum(0.f)
 {
+	ConstructUnionMember ( m_Property );
+
 	m_dwZWriteEnable = NULL;
 	m_dwFogEnable = NULL;
 	m_dwAlphaBlendEnable = NULL;

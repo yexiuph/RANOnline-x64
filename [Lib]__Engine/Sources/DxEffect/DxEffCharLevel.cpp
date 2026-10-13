@@ -71,6 +71,7 @@ DxEffCharLevel::DxEffCharLevel(void) :
 	m_fLevelTime(0.f),
 	m_dwOldAmbient(0L)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharLevel::~DxEffCharLevel(void)

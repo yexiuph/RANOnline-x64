@@ -41,6 +41,7 @@ DxEffCharParticle::DxEffCharParticle(void) :
 	m_fVelocityDiff(0.f),
 	m_pParticleHEAD(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharParticle::~DxEffCharParticle(void)

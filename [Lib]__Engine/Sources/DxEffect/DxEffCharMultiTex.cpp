@@ -40,6 +40,7 @@ DxEffCharMultiTex::DxEffCharMultiTex(void) :
 	m_pTempMaterials(NULL),
 	m_pMaterials_EffUse(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharMultiTex::~DxEffCharMultiTex(void)

@@ -28,12 +28,10 @@ SERIAL_LAYOUT_ASSERT_MEMBER ( EFFANI_PROPERTY_TRACE_DISK, EFFANI_PROPERTY_TRACE,
 SERIAL_LAYOUT_ASSERT_MEMBER ( EFFANI_PROPERTY_TRACE_DISK, EFFANI_PROPERTY_TRACE, m_strTexName );
 #endif
 
-//	Only used on DxEffAniData_Trace::m_Property, whose std::string lives in an anonymous union and
-//	may never have been constructed: it is rebuilt in place (see SerialLayout::ConstructStringInPlace).
 inline void SerialFromDisk ( EFFANI_PROPERTY_TRACE& d, const EFFANI_PROPERTY_TRACE_DISK& s )
 {
 	d.m_fScale = s.m_fScale;
-	SerialLayout::ConstructStringInPlace ( d.m_strTexName, s.m_strTexName );
+	d.m_strTexName = SerialLayout::DecodeString ( s.m_strTexName );
 }
 
 inline void SerialToDisk ( EFFANI_PROPERTY_TRACE_DISK& d, const EFFANI_PROPERTY_TRACE& s )

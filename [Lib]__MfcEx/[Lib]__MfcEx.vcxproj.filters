@@ -109,9 +109,6 @@
     <ClInclude Include="Sources\HPro.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\MinBugTrap.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\MiniVersion.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -220,9 +217,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\HPro.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\MinBugTrap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sources\MiniVersion.cpp">

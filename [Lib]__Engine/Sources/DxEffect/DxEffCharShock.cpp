@@ -22,6 +22,7 @@ DxEffCharShock::DxEffCharShock(void) :
 	m_fTarDirection(0.f),
 	m_bLightEnable7(TRUE)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 

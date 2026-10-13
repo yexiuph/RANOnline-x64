@@ -22,6 +22,7 @@ LPDIRECT3DSTATEBLOCK9		DxEffCharNoAlpha::m_pEffectStateBlock	= NULL;
 DxEffCharNoAlpha::DxEffCharNoAlpha(void) :
 	DxEffChar()
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharNoAlpha::~DxEffCharNoAlpha(void)

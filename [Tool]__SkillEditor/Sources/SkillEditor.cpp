@@ -4,7 +4,6 @@
 #include "pch.h"
 #include "SkillEditor.h"
 #include "SkillEditorDlg.h"
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,7 +23,6 @@ CSkillEditorApp::CSkillEditorApp()
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
-	BUG_TRAP::BugTrapInstall( std::string(_T("Skill Editor")));
 }
 
 

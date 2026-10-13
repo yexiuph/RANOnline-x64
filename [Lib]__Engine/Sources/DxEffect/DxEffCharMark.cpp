@@ -35,6 +35,7 @@ DxEffCharMark::DxEffCharMark(void) :
 	m_pMaterials(NULL),
 	m_dwMaterials(0L)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharMark::~DxEffCharMark(void)

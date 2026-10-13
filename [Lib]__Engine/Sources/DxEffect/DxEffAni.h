@@ -1,5 +1,6 @@
 #pragma once
 #include "basestream.h"
+#include "UnionMember.h"
 
 #include <vector>
 

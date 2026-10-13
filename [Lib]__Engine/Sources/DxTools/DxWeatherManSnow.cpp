@@ -8,6 +8,7 @@
 
 #include "./GLPeriod.h"
 #include "dxweatherman.h"
+#include "UnionMember.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,6 +25,7 @@ DxEffectSnow::DxEffectSnow() :
 	m_fApplyRate(0.f),
 	m_emSnowStats(EMWS_NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffectSnow::~DxEffectSnow()

@@ -41,6 +41,7 @@ DxEffCharArrow::DxEffCharArrow(void) :
 	m_pPropGroup_C(NULL),
 	m_pSingleGroup_C(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharArrow::~DxEffCharArrow(void)

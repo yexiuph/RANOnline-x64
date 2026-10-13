@@ -295,7 +295,6 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Sources\Common\basestream.h" />
     <ClInclude Include="Sources\Common\BaseString.h" />
-    <ClInclude Include="Sources\Common\BugTrapStr.h" />
     <ClInclude Include="Sources\Common\ByteStream.h" />
     <ClInclude Include="Sources\Common\CFileFind.h" />
     <ClInclude Include="Sources\Common\charset.h" />
@@ -317,6 +316,7 @@
     <ClInclude Include="Sources\Common\seqrandom.h" />
     <ClInclude Include="Sources\Common\SerialFile.h" />
     <ClInclude Include="Sources\Common\SerialLayout.h" />
+    <ClInclude Include="Sources\Common\UnionMember.h" />
     <ClInclude Include="Sources\Common\SerialMemory.h" />
     <ClInclude Include="Sources\Common\SFileSystem.h" />
     <ClInclude Include="Sources\Common\SHA.H" />
@@ -598,7 +598,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Sources\Common\BaseString.cpp" />
-    <ClCompile Include="Sources\Common\BugTrapStr.cpp" />
     <ClCompile Include="Sources\Common\ByteStream.cpp" />
     <ClCompile Include="Sources\Common\CFileFind.cpp" />
     <ClCompile Include="Sources\Common\charset.cpp" />

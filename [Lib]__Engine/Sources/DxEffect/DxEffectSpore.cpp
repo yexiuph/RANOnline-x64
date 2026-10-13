@@ -11,6 +11,7 @@
 #include "./DxEffectMan.h"
 
 #include "./DxEffectSpore.h"
+#include "UnionMember.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -106,6 +107,7 @@ DxEffectSpore::DxEffectSpore() :
 
 	m_pSporeTex(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffectSpore::~DxEffectSpore()

@@ -4,7 +4,6 @@
 #include "pch.h"
 #include "QuestEdit.h"
 #include "QuestEditDlg.h"
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -451,6 +451,7 @@ DxEffCharLine2BoneEff::DxEffCharLine2BoneEff(void) :
 	m_fLifeDiff(0.f),
 	m_nSelectIndexLine(-1)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharLine2BoneEff::~DxEffCharLine2BoneEff(void)

@@ -9,6 +9,7 @@
 #include "./SerialFile.h"
 
 #include "./DxEffectRainDrop.h"
+#include "UnionMember.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -198,6 +199,8 @@ DxEffectRainPoint::DxEffectRainPoint() :
 	m_pSeperateList(NULL),
 	m_pSeperateTree(NULL)
 {
+	ConstructUnionMember ( m_Property );
+
 	D3DXMatrixIdentity ( &m_matWorld );
 	D3DXMatrixIdentity ( &m_matFrameComb );
 

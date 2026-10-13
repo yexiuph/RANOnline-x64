@@ -132,6 +132,7 @@ public:
 		DxEffAniData(),
 		m_pPropGroup(NULL)
 	{
+		ConstructUnionMember ( m_Property );
 	}
 };
 

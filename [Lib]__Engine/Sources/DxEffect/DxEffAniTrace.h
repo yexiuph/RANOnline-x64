@@ -71,6 +71,7 @@ public:
 	DxEffAniData_Trace () :
 		DxEffAniData()
 	{
+		ConstructUnionMember ( m_Property );
 	}
 
 	~DxEffAniData_Trace();

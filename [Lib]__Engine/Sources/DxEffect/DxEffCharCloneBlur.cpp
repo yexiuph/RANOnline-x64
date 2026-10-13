@@ -47,6 +47,8 @@ DxEffCharCloneBlur::DxEffCharCloneBlur(void) :
 	m_pd3dDevice(NULL),
 	m_pddsTexture(NULL)
 {
+	ConstructUnionMember ( m_Property );
+
 	memset( m_szTraceUP, 0, sizeof(char)*STRACE_NSIZE );
 	memset( m_szTraceDOWN, 0, sizeof(char)*STRACE_NSIZE );
 }

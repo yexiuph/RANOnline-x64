@@ -60,15 +60,13 @@ SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_DISK, EFFCHAR_PROPERTY_TE
 SERIAL_LAYOUT_ASSERT_MEMBER ( EFFCHAR_PROPERTY_TEXDIFF_DISK, EFFCHAR_PROPERTY_TEXDIFF, m_strTex );
 #endif
 
-//	Only used on DxEffCharTexDiff::m_Property, whose std::string lives in an anonymous union and
-//	may never have been constructed: it is rebuilt in place (see SerialLayout::ConstructStringInPlace).
 inline void SerialFromDisk ( EFFCHAR_PROPERTY_TEXDIFF& d, const EFFCHAR_PROPERTY_TEXDIFF_DISK& s )
 {
 	d.m_dwFlag		= s.m_dwFlag;
 	d.m_dwMaterials	= s.m_dwMaterials;
 	d.m_dwIntensity	= s.m_dwIntensity;
 	d.m_fSpeed		= s.m_fSpeed;
-	SerialLayout::ConstructStringInPlace ( d.m_strTex, s.m_strTex );
+	d.m_strTex		= SerialLayout::DecodeString ( s.m_strTex );
 }
 
 inline void SerialToDisk ( EFFCHAR_PROPERTY_TEXDIFF_DISK& d, const EFFCHAR_PROPERTY_TEXDIFF& s )
@@ -101,6 +99,7 @@ DxEffCharTexDiff::DxEffCharTexDiff(void) :
 	m_dwColor(0L),
 	m_fColor(0.f)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharTexDiff::~DxEffCharTexDiff(void)
@@ -110,6 +109,8 @@ DxEffCharTexDiff::~DxEffCharTexDiff(void)
 
 	SAFE_DELETE_ARRAY ( m_pMaterials );
 	SAFE_DELETE_ARRAY ( m_pTempMaterials );
+
+	DestroyUnionMember ( m_Property );
 }
 
 DxEffChar* DxEffCharTexDiff::CloneInstance ( LPDIRECT3DDEVICEQ pd3dDevice, DxCharPart* pCharPart, DxSkinPiece* pSkinPiece )
@@ -465,7 +466,7 @@ HRESULT	DxEffCharTexDiff::LoadFile ( basestream &SFile, LPDIRECT3DDEVICEQ pd3dDe
 		m_Property.m_dwFlag		= sProp.m_dwFlag;
 		m_Property.m_dwMaterials = sProp.m_dwMaterials;
 		m_Property.m_fSpeed		= sProp.m_fSpeed;
-		SerialLayout::ConstructStringInPlace ( m_Property.m_strTex, sProp.m_strTex );
+		m_Property.m_strTex	= SerialLayout::DecodeString ( sProp.m_strTex );
 
 		m_Property.m_dwIntensity	= 0;	// Ver.101 에서 추가
 		m_Property.m_dwFlag			|= NO_UPDOWN;

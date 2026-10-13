@@ -33,6 +33,7 @@ DxEffCharSpecular::DxEffCharSpecular(void) :
 	m_dwDetail_2(CRDT_DEFAULT),
 	m_dwDetail_3(CRDT_DEFAULT)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharSpecular::~DxEffCharSpecular(void)

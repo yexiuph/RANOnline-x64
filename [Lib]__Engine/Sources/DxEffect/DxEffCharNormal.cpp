@@ -32,6 +32,7 @@ DxEffCharNormal::DxEffCharNormal(void) :
 	m_pSkinMesh(NULL),
 	m_pmcMesh(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharNormal::~DxEffCharNormal(void)

@@ -31,6 +31,7 @@ DxEffCharDust::DxEffCharDust(void) :
 	m_dwMaterials(0L),
 	m_dwMipMapCount(2)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharDust::~DxEffCharDust(void)

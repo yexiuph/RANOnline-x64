@@ -9,7 +9,6 @@
 #include "LevelEditorView.h"
 #include ".\leveleditor.h"
 
-#include "../[Lib]__MfcEx/Sources/MinBugTrap.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,7 +34,6 @@ CLevelEditorApp::CLevelEditorApp()
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 
-	BUG_TRAP::BugTrapInstall( std::string(_T("LevelEditor")));
 }
 
 

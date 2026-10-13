@@ -42,6 +42,7 @@ DxEffCharNeon::DxEffCharNeon(void) :
 	m_pTempMaterials(NULL),
 	m_pMaterials_EffUse(NULL)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharNeon::~DxEffCharNeon(void)

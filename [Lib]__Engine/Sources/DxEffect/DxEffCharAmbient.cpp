@@ -23,6 +23,7 @@ DxEffCharAmbient::DxEffCharAmbient(void) :
 	m_dwOldColorOP(0L),
 	m_fElapsedTime(0.f)
 {
+	ConstructUnionMember ( m_Property );
 }
 
 DxEffCharAmbient::~DxEffCharAmbient(void)
